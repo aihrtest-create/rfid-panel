@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hello Park — Регистрация гостя</title>
+    <meta name="description" content="Быстрая регистрация семьи в Hello Park. Заполните анкету и получите QR-код для кассира.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Brand Background Accent -->
+    <div class="bg-blobs">
+        <div class="blob blob-orange"></div>
+    </div>
+
+    <div class="app" id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-inner">
+                <div class="logo">
+                    <img src="../HPark Logo.png" alt="Hello Park" class="logo-img">
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Bar (Glass Pill Layout) -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 33.3%"></div>
+            </div>
+            <nav class="progress-steps" aria-label="Progress">
+                <div class="step-indicator active" id="indicator-1">
+                    <div class="step-dot active" id="dot-1"><span class="dot-number">1</span></div>
+                    <span class="step-label">Согласие</span>
+                </div>
+                <div class="step-indicator" id="indicator-2">
+                    <div class="step-dot" id="dot-2"><span class="dot-number">2</span></div>
+                    <span class="step-label">Семья</span>
+                </div>
+                <div class="step-indicator" id="indicator-3">
+                    <div class="step-dot" id="dot-3"><span class="dot-number">3</span></div>
+                    <span class="step-label">Код</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- STEP 1: RULES + PHONE + SMS              -->
+        <!-- ======================================== -->
+        <section class="step step-visible" id="step-1" aria-label="Правила и согласие">
+            <div class="card">
+                <div class="card-icon card-icon--orange">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h1 class="card-title">Добро пожаловать!</h1>
+                <p class="card-subtitle">Ознакомьтесь с правилами парка и подтвердите согласие по СМС</p>
+
+                <!-- Rules Accordion -->
+                <div class="rules-box">
+                    <button class="rules-header" id="rules-toggle" type="button" aria-expanded="false" aria-controls="rules-content">
+                        <span>Правила посещения парка</span>
+                        <svg class="rules-chevron" id="rules-chevron" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="rules-content" id="rules-content">
+                        <ol>
+                            <li>Дети до 14 лет допускаются на территорию парка только в сопровождении взрослого (родителя или законного представителя).</li>
+                            <li>Сопровождающий взрослый несёт полную ответственность за безопасность и поведение ребёнка на территории парка.</li>
+                            <li>Перед использованием аттракционов необходимо ознакомиться с возрастными и ростовыми ограничениями, указанными на информационных табличках.</li>
+                            <li>RFID-браслет выдаётся на входе и подлежит возврату при выходе из парка. За утерю или умышленную порчу браслета взимается штраф.</li>
+                            <li>Запрещается проносить на территорию парка продукты питания, напитки, стеклянную тару и пиротехнические изделия.</li>
+                            <li>На территории парка запрещено курение, употребление алкоголя и нахождение в состоянии опьянения.</li>
+                            <li>Администрация парка не несёт ответственности за оставленные без присмотра личные вещи посетителей.</li>
+                            <li>В случае плохого самочувствия ребёнка или получения травмы необходимо немедленно обратиться к персоналу парка.</li>
+                            <li>Посещая парк, вы даёте согласие на фото- и видеосъёмку в рекламных и информационных целях.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Phone + SMS -->
+                <div class="form-group">
+                    <label for="phone-input" class="form-label">Номер телефона</label>
+                    <div class="phone-wrapper" id="phone-wrapper">
+                        <span class="phone-prefix">+7</span>
+                        <input type="tel" id="phone-input" class="phone-field" placeholder="(999) 000-00-00" maxlength="15" inputmode="numeric" autocomplete="tel-national" enterkeyhint="send">
+                        <div class="phone-badge hidden" id="phone-badge">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="form-error hidden" id="phone-error"></p>
+                </div>
+
+                <!-- Send SMS Button -->
+                <button class="btn btn-sms hidden" id="btn-send-sms" type="button">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    <span>Отправить СМС-код</span>
+                </button>
+
+                <!-- SMS Code Block -->
+                <div class="sms-block hidden" id="sms-block">
+                    <div class="form-group">
+                        <label for="sms-input" class="form-label">Введите 4-значный код</label>
+                        <div class="sms-row">
+                            <input type="text" id="sms-input" class="form-input sms-input-field" placeholder="••••" maxlength="4" inputmode="numeric" autocomplete="one-time-code" enterkeyhint="done">
+                            <button class="btn-verify" id="btn-verify" type="button">Подтвердить</button>
+                        </div>
+                        <p class="form-error hidden" id="sms-error"></p>
+                    </div>
+                    <button class="btn-resend" id="btn-resend" type="button" disabled>
+                        <span>Отправить повторно</span>
+                    </button>
+                </div>
+
+                <!-- Consent note -->
+                <p class="consent-note" id="consent-note">Вводя код, вы подтверждаете согласие с правилами парка и обработку персональных данных</p>
+            </div>
+
+            <button class="btn btn-next disabled" id="btn-step1" type="button" disabled>
+                <span>Далее</span>
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- STEP 2: FIO + CHILDREN                   -->
+        <!-- ======================================== -->
+        <section class="step" id="step-2" aria-label="Данные семьи">
+            <div class="card">
+                <div class="card-icon card-icon--violet">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <h1 class="card-title">Данные семьи</h1>
+                <p class="card-subtitle">Укажите ваше ФИО и добавьте детей</p>
+
+                <!-- FIO -->
+                <div class="form-group">
+                    <label for="fio-input" class="form-label">ФИО родителя *</label>
+                    <input type="text" id="fio-input" class="form-input" placeholder="Иванов Иван Иванович" autocomplete="name" required enterkeyhint="next">
+                    <p class="form-error hidden" id="fio-error">Введите ваше ФИО</p>
+                </div>
+
+                <!-- Divider -->
+                <div class="section-divider">
+                    <span class="divider-label">Дети</span>
+                </div>
+
+                <!-- Children List -->
+                <div class="children-list" id="children-list">
+                    <!-- Dynamically added -->
+                </div>
+
+                <button class="btn-add-child" id="btn-add-child" type="button">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Добавить ребёнка</span>
+                </button>
+
+                <p class="form-error hidden" id="children-error">Добавьте хотя бы одного ребёнка</p>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-back" id="btn-step2-back" type="button">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    <span>Назад</span>
+                </button>
+                <button class="btn btn-next" id="btn-step2" type="button">
+                    <span>Получить код</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- STEP 3: QR CODE                          -->
+        <!-- ======================================== -->
+        <section class="step" id="step-3" aria-label="QR-код">
+            <div class="card card-qr">
+                <div class="qr-success-badge">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h1 class="card-title">Ваш QR-код готов!</h1>
+                <p class="card-subtitle">Покажите этот код кассиру для создания аккаунта</p>
+
+                <div class="qr-frame">
+                    <div class="qr-pulse-ring"></div>
+                    <div class="qr-canvas" id="qr-canvas"></div>
+                </div>
+
+                <div class="qr-summary">
+                    <div class="qr-row">
+                        <span class="qr-label">ФИО</span>
+                        <span class="qr-value" id="qr-fio">—</span>
+                    </div>
+                    <div class="qr-row">
+                        <span class="qr-label">Телефон</span>
+                        <span class="qr-value" id="qr-phone">—</span>
+                    </div>
+                    <div class="qr-row qr-row-last">
+                        <span class="qr-label">Дети</span>
+                        <span class="qr-value" id="qr-children">—</span>
+                    </div>
+                </div>
+
+                <p class="qr-expiry">Код действителен 30 минут</p>
+            </div>
+
+            <button class="btn btn-restart" id="btn-restart" type="button">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 9a9 9 0 0115.36-5.36M20 15a9 9 0 01-15.36 5.36"/></svg>
+                <span>Начать заново</span>
+            </button>
+        </section>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- QR Code Library -->
+    <script src="qrcode.min.js"></script>
+
+    <script>
+    /* ========================================
+       STATE
+    ======================================== */
+    let step = 1;
+    let verified = false;
+    let smsTimer = null;
+    let smsCountdown = 59;
+    let childId = 0;
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+
+    /* ========================================
+       TOAST
+    ======================================== */
+    function toast(msg, type = 'info') {
+        const c = $('#toast-container');
+        const el = document.createElement('div');
+        el.className = `toast toast--${type}`;
+        const icons = {
+            success: '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>',
+            error: '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>',
+            info: '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+        };
+        el.innerHTML = (icons[type] || icons.info) + `<span>${msg}</span>`;
+        c.appendChild(el);
+        requestAnimationFrame(() => el.classList.add('toast--show'));
+        setTimeout(() => {
+            el.classList.remove('toast--show');
+            el.classList.add('toast--hide');
+            setTimeout(() => el.remove(), 300);
+        }, 3500);
+    }
+
+    /* ========================================
+       NAVIGATION
+    ======================================== */
+    function goTo(target) {
+        if (target === step || target < 1 || target > 3) return;
+        const dir = target > step ? 1 : -1;
+        const oldEl = $(`#step-${step}`);
+        step = target;
+
+        // Progress
+        $('#progress-fill').style.width = `${step * 33.3}%`;
+        for (let i = 1; i <= 3; i++) {
+            const dot = $(`#dot-${i}`);
+            const ind = $(`#indicator-${i}`);
+            dot.classList.remove('active', 'done');
+            ind.classList.remove('active', 'done');
+            if (i < step) { dot.classList.add('done'); ind.classList.add('done'); }
+            else if (i === step) { dot.classList.add('active'); ind.classList.add('active'); }
+        }
+
+        // Animate out
+        oldEl.classList.add(dir > 0 ? 'step-exit-left' : 'step-exit-right');
+        oldEl.classList.remove('step-visible');
+
+        setTimeout(() => {
+            oldEl.classList.remove('step-exit-left', 'step-exit-right');
+        }, 400);
+
+        // Animate in
+        const newEl = $(`#step-${step}`);
+        newEl.classList.add(dir > 0 ? 'step-enter-right' : 'step-enter-left');
+        newEl.classList.add('step-visible');
+
+        setTimeout(() => {
+            newEl.classList.remove('step-enter-right', 'step-enter-left');
+        }, 400);
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ========================================
+       STEP 1 — RULES + PHONE + SMS
+    ======================================== */
+    // Rules toggle
+    $('#rules-toggle').addEventListener('click', () => {
+        const content = $('#rules-content');
+        const chevron = $('#rules-chevron');
+        const isOpen = content.classList.contains('open');
+        content.classList.toggle('open');
+        chevron.classList.toggle('rotated');
+        $('#rules-toggle').setAttribute('aria-expanded', !isOpen);
+    });
+
+    // Phone formatting
+    function digits(v) { return v.replace(/\D/g, ''); }
+
+    function fmtPhone(v) {
+        let d = digits(v);
+        if (d.length >= 11 && (d[0] === '7' || d[0] === '8')) d = d.slice(1);
+        d = d.slice(0, 10);
+        if (!d) return '';
+        let r = '(' + d.slice(0, 3);
+        if (d.length > 3) r += ') ' + d.slice(3, 6);
+        if (d.length > 6) r += '-' + d.slice(6, 8);
+        if (d.length > 8) r += '-' + d.slice(8, 10);
+        return r;
+    }
+
+    function fmtPhoneFull(d) {
+        if (!d) return '';
+        let r = '+7 (' + d.slice(0, 3);
+        if (d.length > 3) r += ') ' + d.slice(3, 6);
+        if (d.length > 6) r += '-' + d.slice(6, 8);
+        if (d.length > 8) r += '-' + d.slice(8, 10);
+        return r;
+    }
+
+    const phoneInput = $('#phone-input');
+    const phoneWrap = $('#phone-wrapper');
+
+    phoneWrap.addEventListener('click', () => phoneInput.focus());
+
+    phoneInput.addEventListener('focus', () => {
+        if (!verified) phoneWrap.classList.add('focused');
+    });
+    phoneInput.addEventListener('blur', () => phoneWrap.classList.remove('focused'));
+
+    phoneInput.addEventListener('input', (e) => {
+        e.target.value = fmtPhone(e.target.value);
+        $('#phone-error').classList.add('hidden');
+        phoneWrap.classList.remove('error', 'verified');
+
+        if (verified) {
+            verified = false;
+            $('#phone-badge').classList.add('hidden');
+            $('#sms-block').classList.add('hidden');
+            updateStep1Btn();
+        }
+
+        const d = digits(e.target.value);
+        if (d.length === 10) $('#btn-send-sms').classList.remove('hidden');
+        else $('#btn-send-sms').classList.add('hidden');
+    });
+
+    // Send SMS
+    $('#btn-send-sms').addEventListener('click', () => {
+        $('#btn-send-sms').classList.add('hidden');
+        $('#sms-block').classList.remove('hidden');
+        $('#sms-input').value = '';
+        $('#sms-error').classList.add('hidden');
+        $('#sms-input').classList.remove('input-error');
+        $('#sms-input').focus();
+        toast('СМС-код отправлен на указанный номер', 'info');
+        startTimer();
+    });
+
+    function startTimer() {
+        smsCountdown = 59;
+        const btn = $('#btn-resend');
+        btn.disabled = true;
+        btn.textContent = `Отправить повторно (${smsCountdown} сек)`;
+        if (smsTimer) clearInterval(smsTimer);
+        smsTimer = setInterval(() => {
+            smsCountdown--;
+            if (smsCountdown <= 0) {
+                clearInterval(smsTimer);
+                btn.disabled = false;
+                btn.textContent = 'Отправить повторно';
+            } else {
+                btn.textContent = `Отправить повторно (${smsCountdown} сек)`;
+            }
+        }, 1000);
+    }
+
+    $('#btn-resend').addEventListener('click', () => {
+        $('#sms-input').value = '';
+        $('#sms-error').classList.add('hidden');
+        $('#sms-input').classList.remove('input-error');
+        $('#sms-input').focus();
+        toast('Новый СМС-код отправлен', 'info');
+        startTimer();
+    });
+
+    // Verify
+    function verifySms() {
+        const code = $('#sms-input').value.trim();
+        if (code.length === 4 && /^\d{4}$/.test(code)) {
+            if (code === '0000') {
+                $('#sms-error').textContent = 'Введён неверный код';
+                $('#sms-error').classList.remove('hidden');
+                $('#sms-input').classList.add('input-error');
+                return;
+            }
+            verified = true;
+            if (smsTimer) clearInterval(smsTimer);
+            $('#sms-block').classList.add('hidden');
+            $('#phone-badge').classList.remove('hidden');
+            phoneWrap.classList.remove('focused', 'error');
+            phoneWrap.classList.add('verified');
+            toast('Номер подтверждён ✓', 'success');
+            updateStep1Btn();
+
+            // Auto-advance to Step 2
+            setTimeout(() => {
+                if ($('#children-list').children.length === 0) addChild();
+                goTo(2);
+            }, 800);
+        } else {
+            $('#sms-error').textContent = 'Код должен содержать 4 цифры';
+            $('#sms-error').classList.remove('hidden');
+            $('#sms-input').classList.add('input-error');
+        }
+    }
+
+    $('#btn-verify').addEventListener('click', verifySms);
+    $('#sms-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); verifySms(); }
+    });
+
+    function updateStep1Btn() {
+        const btn = $('#btn-step1');
+        if (verified) { btn.disabled = false; btn.classList.remove('disabled'); }
+        else { btn.disabled = true; btn.classList.add('disabled'); }
+    }
+
+    $('#btn-step1').addEventListener('click', () => {
+        if (!verified) return;
+        if ($('#children-list').children.length === 0) addChild();
+        goTo(2);
+    });
+
+    /* ========================================
+       STEP 2 — FIO + CHILDREN
+    ======================================== */
+    function addChild() {
+        childId++;
+        const id = childId;
+        const card = document.createElement('div');
+        card.className = 'child-card';
+        card.dataset.id = id;
+        const num = $('#children-list').children.length + 1;
+        card.innerHTML = `
+            <div class="child-header">
+                <div class="child-title">Ребёнок <span class="child-num-text">${num}</span></div>
+                <button class="child-del" data-del="${id}" type="button" aria-label="Удалить">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+            </div>
+            <div class="child-fields">
+                <div class="child-field-group">
+                    <input type="text" class="form-input child-name-input" placeholder="Имя ребёнка" required enterkeyhint="next">
+                </div>
+                <div class="child-field-group">
+                    <input type="date" class="form-input child-dob-input" required>
+                </div>
+            </div>
+            <p class="form-error hidden child-err"></p>
+        `;
+        card.querySelector(`[data-del="${id}"]`).addEventListener('click', () => {
+            card.classList.add('child-card--exit');
+            setTimeout(() => { card.remove(); renumberChildren(); }, 250);
+        });
+        $('#children-list').appendChild(card);
+        requestAnimationFrame(() => card.classList.add('child-card--in'));
+    }
+
+    function renumberChildren() {
+        $$('.child-card').forEach((c, i) => {
+            c.querySelector('.child-num-text').textContent = i + 1;
+        });
+    }
+
+    $('#btn-add-child').addEventListener('click', () => {
+        addChild();
+        setTimeout(() => {
+            const last = $('#children-list').lastElementChild;
+            if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    });
+
+    $('#btn-step2-back').addEventListener('click', () => goTo(1));
+
+    $('#btn-step2').addEventListener('click', () => {
+        let err = false;
+        const fio = $('#fio-input').value.trim();
+
+        if (!fio) {
+            $('#fio-error').classList.remove('hidden');
+            $('#fio-input').classList.add('input-error');
+            err = true;
+        } else {
+            $('#fio-error').classList.add('hidden');
+            $('#fio-input').classList.remove('input-error');
+        }
+
+        const cards = $$('.child-card');
+        if (cards.length === 0) {
+            $('#children-error').classList.remove('hidden');
+            err = true;
+        } else {
+            $('#children-error').classList.add('hidden');
+        }
+
+        cards.forEach(c => {
+            const nameIn = c.querySelector('.child-name-input');
+            const errEl = c.querySelector('.child-err');
+            if (!nameIn.value.trim()) {
+                errEl.textContent = 'Введите имя ребёнка';
+                errEl.classList.remove('hidden');
+                nameIn.classList.add('input-error');
+                err = true;
+            } else {
+                errEl.classList.add('hidden');
+                nameIn.classList.remove('input-error');
+            }
+        });
+
+        if (err) return;
+
+        buildQR();
+        goTo(3);
+    });
+
+    /* ========================================
+       STEP 3 — QR CODE
+    ======================================== */
+    function buildQR() {
+        const fio = $('#fio-input').value.trim();
+        const phoneDig = digits($('#phone-input').value);
+        const phone = '+7' + phoneDig;
+        const children = [];
+
+        $$('.child-card').forEach(c => {
+            const name = c.querySelector('.child-name-input').value.trim();
+            const dob = c.querySelector('.child-dob-input').value || null;
+            if (name) children.push({ name, dob });
+        });
+
+        const payload = { v: 1, fio, phone, children, ts: Date.now() };
+        const json = JSON.stringify(payload);
+        const b64 = btoa(unescape(encodeURIComponent(json)));
+        const content = 'HPARK:' + b64;
+
+        // Render QR
+        const container = $('#qr-canvas');
+        container.innerHTML = '';
+
+        const canvas = document.createElement('canvas');
+        QRCode.toCanvas(canvas, content, {
+            width: 260,
+            margin: 2,
+            color: { dark: '#1f2937', light: '#ffffff' },
+            errorCorrectionLevel: 'M'
+        }, (err) => {
+            if (err) {
+                console.error(err);
+                toast('Ошибка генерации QR-кода', 'error');
+                return;
+            }
+            canvas.className = 'qr-rendered';
+            container.appendChild(canvas);
+        });
+
+        // Summary
+        $('#qr-fio').textContent = fio;
+        $('#qr-phone').textContent = fmtPhoneFull(phoneDig);
+        $('#qr-children').textContent = children.map(c => c.name).join(', ');
+    }
+
+    // Restart
+    $('#btn-restart').addEventListener('click', () => {
+        verified = false;
+        if (smsTimer) clearInterval(smsTimer);
+        childId = 0;
+
+        // Reset step 1
+        phoneInput.value = '';
+        phoneWrap.classList.remove('focused', 'error', 'verified');
+        $('#phone-error').classList.add('hidden');
+        $('#phone-badge').classList.add('hidden');
+        $('#btn-send-sms').classList.add('hidden');
+        $('#sms-block').classList.add('hidden');
+        $('#btn-step1').disabled = true;
+        $('#btn-step1').classList.add('disabled');
+
+        // Reset step 2
+        $('#fio-input').value = '';
+        $('#fio-input').classList.remove('input-error');
+        $('#fio-error').classList.add('hidden');
+        $('#children-list').innerHTML = '';
+        $('#children-error').classList.add('hidden');
+
+        // Reset step 3
+        $('#qr-canvas').innerHTML = '';
+
+        goTo(1);
+    });
+    </script>
+</body>
+</html>
