@@ -47,6 +47,8 @@
                     <img src="rocky.webp" alt="Рокки" class="card-hero-image">
                 </div>
 
+                <p class="step-explanation">Для регистрации введите ваш номер телефона. Подтверждая его кодом из СМС, вы принимаете правила парка и даете согласие на обработку персональных данных.</p>
+
                 <!-- Rules Accordion -->
                 <div class="rules-box">
                     <button class="rules-header" id="rules-toggle" type="button" aria-expanded="false" aria-controls="rules-content">
@@ -67,6 +69,20 @@
                             <li>В случае плохого самочувствия необходимо немедленно обратиться к персоналу парка.</li>
                             <li>Посещая парк, вы даёте согласие на фото- и видеосъёмку в рекламных целях.</li>
                         </ol>
+                    </div>
+                </div>
+
+                <!-- Consent Accordion -->
+                <div class="rules-box">
+                    <button class="rules-header" id="consent-toggle" type="button" aria-expanded="false" aria-controls="consent-content">
+                        <span>Согласие на обработку перс. данных</span>
+                        <svg class="rules-chevron" id="consent-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="rules-content" id="consent-content">
+                        <p class="placeholder-text">Настоящим выражаю свое безусловное согласие на обработку моих персональных данных (ФИО, телефон, данные о детях) администрацией парка Hello Park в целях предоставления услуг доступа на территорию парка, ведения статистики посещений, сохранения игрового прогресса детей и отправки важных уведомлений.</p>
+                        <p class="placeholder-text">Данное согласие действует бессрочно и может быть отозвано в любой момент путем направления соответствующего письменного заявления администрации парка.</p>
                     </div>
                 </div>
 
@@ -137,6 +153,8 @@
                     </h1>
                     <img src="rocky.webp" alt="Рокки" class="card-hero-image">
                 </div>
+
+                <p class="step-explanation">Укажите ваше ФИО и добавьте детей. Данные о датах рождения детей нужны для того, чтобы сохранять их игровой прогресс, достижения и персонажей на интерактивных аттракционах парка.</p>
 
                 <!-- FIO -->
                 <div class="form-group">
@@ -303,8 +321,15 @@
     ============================================ */
     function goTo(target) {
         if (target === step || target < 1 || target > 3) return;
-        const dir = target > step ? 1 : -1;
         const oldEl = $(`#step-${step}`);
+        const newEl = $(`#step-${target}`);
+        
+        // Measure old height to stabilize layout during transition
+        const oldHeight = oldEl.offsetHeight;
+        const app = $('#app');
+        app.style.minHeight = `${oldHeight}px`;
+        app.style.transition = 'min-height 280ms cubic-bezier(0.22, 1, 0.36, 1)';
+        
         step = target;
 
         // Update progress text
@@ -324,22 +349,44 @@
         $('#bottom-bar-2').style.display = step === 2 ? 'flex' : 'none';
         $('#bottom-bar-3').style.display = step === 3 ? 'flex' : 'none';
 
-        // Animate out old step
-        oldEl.classList.add(dir > 0 ? 'step-exit-left' : 'step-exit-right');
-        oldEl.classList.remove('step-visible');
+        // Buttery-smooth transition: fade out, then fade in
+        oldEl.style.opacity = '0';
+        oldEl.style.transform = 'translateY(-12px)';
+        oldEl.style.transition = 'opacity 180ms ease, transform 180ms ease';
+        
         setTimeout(() => {
-            oldEl.classList.remove('step-exit-left', 'step-exit-right');
-        }, 380);
-
-        // Animate in new step
-        const newEl = $(`#step-${step}`);
-        newEl.classList.add(dir > 0 ? 'step-enter-right' : 'step-enter-left');
-        newEl.classList.add('step-visible');
-        setTimeout(() => {
-            newEl.classList.remove('step-enter-right', 'step-enter-left');
-        }, 420);
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+            oldEl.classList.remove('step-visible');
+            oldEl.style.opacity = '';
+            oldEl.style.transform = '';
+            oldEl.style.transition = '';
+            
+            newEl.style.opacity = '0';
+            newEl.style.transform = 'translateY(12px)';
+            newEl.style.transition = 'none';
+            newEl.classList.add('step-visible');
+            
+            // Measure new height and transition min-height of app container
+            const newHeight = newEl.offsetHeight;
+            app.style.minHeight = `${newHeight}px`;
+            
+            window.scrollTo({ top: 0, behavior: 'instant' }); // scroll to top instantly to prevent scroll jump
+            
+            // Force reflow
+            newEl.offsetHeight;
+            
+            newEl.style.transition = 'opacity 220ms ease, transform 220ms ease';
+            newEl.style.opacity = '1';
+            newEl.style.transform = 'translateY(0)';
+            
+            // Clean up styles after transition finishes
+            setTimeout(() => {
+                newEl.style.opacity = '';
+                newEl.style.transform = '';
+                newEl.style.transition = '';
+                app.style.minHeight = '';
+                app.style.transition = '';
+            }, 250);
+        }, 180);
     }
 
     /* ============================================
@@ -353,6 +400,16 @@
         content.classList.toggle('open');
         chevron.classList.toggle('rotated');
         $('#rules-toggle').setAttribute('aria-expanded', !isOpen);
+    });
+
+    // Consent toggle
+    $('#consent-toggle').addEventListener('click', () => {
+        const content = $('#consent-content');
+        const chevron = $('#consent-chevron');
+        const isOpen = content.classList.contains('open');
+        content.classList.toggle('open');
+        chevron.classList.toggle('rotated');
+        $('#consent-toggle').setAttribute('aria-expanded', !isOpen);
     });
 
     // Phone formatting
@@ -503,8 +560,8 @@
         card.innerHTML = `
             <div class="child-header">
                 <div class="child-title">
-                    <span class="child-num-badge">${num}</span>
-                    Ребёнок <span class="child-num-text">${num}</span>
+                     <span class="child-num-badge">${num}</span>
+                     Ребёнок <span class="child-num-text">${num}</span>
                 </div>
                 <button class="child-del" data-del="${id}" type="button" aria-label="Удалить ребёнка">
                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -512,10 +569,12 @@
             </div>
             <div class="child-fields">
                 <div class="child-field-group">
-                    <input type="text" class="form-input child-name-input" placeholder="Имя ребёнка" required enterkeyhint="next">
+                    <span class="child-input-label">Имя ребёнка</span>
+                    <input type="text" class="form-input child-name-input" placeholder="Например, Александр" required enterkeyhint="next">
                 </div>
                 <div class="child-field-group">
-                    <input type="date" class="form-input child-dob-input" required>
+                    <span class="child-input-label">Дата рождения</span>
+                    <input type="text" class="form-input child-dob-input" placeholder="ДД.ММ.ГГГГ" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" required>
                 </div>
             </div>
             <p class="form-error hidden child-err"></p>
@@ -570,15 +629,28 @@
 
         cards.forEach(c => {
             const nameIn = c.querySelector('.child-name-input');
+            const dobIn  = c.querySelector('.child-dob-input');
             const errEl  = c.querySelector('.child-err');
-            if (!nameIn.value.trim()) {
-                errEl.textContent = 'Введите имя ребёнка';
+            if (!nameIn.value.trim() || !dobIn.value) {
+                if (!nameIn.value.trim() && !dobIn.value) {
+                    errEl.textContent = 'Заполните имя и дату рождения';
+                    nameIn.classList.add('input-error');
+                    dobIn.classList.add('input-error');
+                } else if (!nameIn.value.trim()) {
+                    errEl.textContent = 'Введите имя ребёнка';
+                    nameIn.classList.add('input-error');
+                    dobIn.classList.remove('input-error');
+                } else {
+                    errEl.textContent = 'Введите дату рождения';
+                    nameIn.classList.remove('input-error');
+                    dobIn.classList.add('input-error');
+                }
                 errEl.classList.remove('hidden');
-                nameIn.classList.add('input-error');
                 err = true;
             } else {
                 errEl.classList.add('hidden');
                 nameIn.classList.remove('input-error');
+                dobIn.classList.remove('input-error');
             }
         });
 
