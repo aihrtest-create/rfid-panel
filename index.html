@@ -1763,6 +1763,13 @@
 
         document.getElementById('check-bracelet-global-btn').addEventListener('click', openCheckBraceletModal);
 
+        document.getElementById('check-bracelet-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('check-bracelet-confirm-btn').click();
+            }
+        });
+
         document.getElementById('check-bracelet-confirm-btn').addEventListener('click', () => {
             const code = document.getElementById('check-bracelet-input').value.trim();
             if (!code) return;
