@@ -7,10 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>
         window.tailwind = window.tailwind || {};
         window.tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -33,6 +34,7 @@
     <style>
         body {
             background-color: #f4f5f9;
+            transition: background-color 0.3s, color 0.3s;
         }
         .container {
             max-width: 1200px;
@@ -57,188 +59,549 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+        /* Phone input: single seamless wrapper */
+        .phone-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f9fafb;
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            padding: 0 0.75rem;
+            transition: all 0.2s;
+            cursor: text;
+        }
+        .phone-input-wrapper:hover {
+            background: #f3f4f6;
+        }
+        .phone-input-wrapper.focused {
+            background: #fff;
+            border-color: #ff5a28;
+            box-shadow: 0 0 0 4px rgba(255, 90, 40, 0.1);
+        }
+        .phone-input-wrapper.verified {
+            border-color: #22c55e;
+            background: #fff;
+        }
+        .phone-input-wrapper.error {
+            border-color: #ef4444;
+            background: #fff;
+        }
+        
+        .dark .phone-input-wrapper {
+            background: #374151;
+            border-color: transparent;
+        }
+        .dark .phone-input-wrapper:hover {
+            background: #4b5563;
+        }
+        .dark .phone-input-wrapper.focused {
+            background: #1f2937;
+            border-color: #ff5a28;
+            box-shadow: 0 0 0 4px rgba(255, 90, 40, 0.2);
+        }
+        .dark .phone-input-wrapper.verified {
+            border-color: #22c55e;
+            background: #1f2937;
+        }
+        .dark .phone-input-wrapper.error {
+            border-color: #ef4444;
+            background: #1f2937;
+        }
+
+        .phone-input-wrapper .phone-prefix {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #6b7280;
+            user-select: none;
+            padding-right: 0.35rem;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+        .phone-input-wrapper.focused .phone-prefix {
+            color: #ff5a28;
+        }
+        .phone-input-wrapper.verified .phone-prefix {
+            color: #16a34a;
+        }
+        .phone-input-wrapper .phone-native-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-weight: 500;
+            font-size: 1rem;
+            font-family: inherit;
+            padding: 1rem 0;
+            color: #1f2937;
+            min-width: 0;
+        }
+        .dark .phone-input-wrapper .phone-native-input {
+            color: #f3f4f6;
+        }
+        .phone-input-wrapper .phone-native-input::placeholder {
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* Filter Pills Styling */
+        .filter-pill {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            border-radius: 9999px;
+            background-color: #ffffff;
+            color: #4b5563;
+            border: 2px solid #f3f4f6;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+        .filter-pill:hover {
+            background-color: #f3f4f6;
+            border-color: #e5e7eb;
+            color: #1f2937;
+        }
+        .filter-pill.active {
+            background-color: #5123d4;
+            border-color: transparent;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(81, 35, 212, 0.25);
+        }
+        
+        .dark .filter-pill {
+            background-color: #1f2937;
+            color: #d1d5db;
+            border-color: #374151;
+        }
+        .dark .filter-pill:hover {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: #ffffff;
+        }
+        .dark .filter-pill.active {
+            background-color: #5123d4;
+            border-color: transparent;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(81, 35, 212, 0.35);
+        }
+
+        /* Chain-binding success animation */
+        @keyframes rfid-success-pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes rfid-success-ring {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        @keyframes rfid-checkmark-draw {
+            0% { stroke-dashoffset: 24; }
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes rfid-name-out {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-12px); }
+        }
+        @keyframes rfid-name-in {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .rfid-success-icon {
+            animation: rfid-success-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .rfid-success-ring {
+            animation: rfid-success-ring 0.8s ease-out forwards;
+        }
+        .rfid-checkmark {
+            stroke-dasharray: 24;
+            stroke-dashoffset: 24;
+            animation: rfid-checkmark-draw 0.4s 0.2s ease-out forwards;
+        }
+        .rfid-name-out {
+            animation: rfid-name-out 0.25s ease-in forwards;
+        }
+        .rfid-name-in {
+            animation: rfid-name-in 0.25s ease-out forwards;
+        }
+        #rfid-chain-progress {
+            transition: opacity 0.3s;
+        }
     </style>
 </head>
-<body class="min-h-screen text-gray-800">
+<body class="min-h-screen bg-brand-bg dark:bg-slate-900 transition-colors duration-300 text-gray-800 dark:text-slate-100">
+    
     <!-- Header -->
-    <div class="bg-white rounded-b-[32px] shadow-sm pb-2 relative z-10">
+    <div class="bg-white dark:bg-slate-800 rounded-b-[32px] shadow-sm pb-2 relative z-10 transition-colors duration-300 border-b border-transparent dark:border-slate-700">
         <div class="container py-4 flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-6">
                 <img src="HPark Logo.png" alt="Hello Park" class="h-10">
+                
+                <!-- Search bar next to logo -->
+                <div class="relative w-[300px]">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </span>
+                    <input type="text" id="search-input" placeholder="Фио, ном..." class="w-full pl-11 pr-6 py-2.5 bg-gray-50 dark:bg-gray-700 border-2 border-transparent dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-medium transition-all text-sm" data-i18n-placeholder="searchPlaceholder">
+                    <button id="search-btn" class="hidden"></button>
+                </div>
             </div>
             
-            <div class="relative w-[350px]">
-                <input type="text" id="search-input" placeholder="Фио, номер телефона" class="w-full pl-6 pr-12 py-3.5 bg-gray-50 border-2 border-transparent rounded-full focus:outline-none focus:bg-white focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-medium transition-all">
-                <button id="search-btn" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-orange transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <div class="flex items-center gap-4">
+                <button id="check-bracelet-global-btn" class="bg-brand-orange text-white px-6 py-3.5 rounded-full font-bold shadow-lg shadow-brand-orange/30 hover:bg-brand-orangeHover transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-2 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <span data-i18n="checkBracelet">ПРОВЕРИТЬ БРАСЛЕТ</span>
+                </button>
+
+                <!-- Language switcher -->
+                <div class="flex border border-gray-200 dark:border-gray-600 rounded-full overflow-hidden p-0.5 bg-gray-50 dark:bg-gray-700 text-[11px] font-extrabold text-gray-500">
+                    <button id="lang-ru-btn" class="px-3 py-1.5 rounded-full transition-all focus:outline-none">RU</button>
+                    <button id="lang-en-btn" class="px-3 py-1.5 rounded-full transition-all focus:outline-none">EN</button>
+                </div>
+
+                <!-- Theme switcher -->
+                <button id="theme-toggle-btn" class="p-2.5 rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 transition-colors focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-600">
+                    <span id="theme-toggle-icon">
+                        <svg class="w-5 h-5 text-gray-500 hover:text-brand-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    </span>
                 </button>
             </div>
-            
-            <button id="check-bracelet-global-btn" class="bg-brand-orange text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-brand-orange/30 hover:bg-brand-orangeHover transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                Проверить браслет
-            </button>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="container mt-4">
-        <div class="bg-white p-8 md:p-10 rounded-[40px] shadow-sm border border-gray-100">
+        <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[40px] shadow-sm border border-gray-100 dark:border-slate-700 transition-colors duration-300">
+            
+            <!-- Cards Header -->
             <div class="flex justify-between items-center mb-8">
                 <div class="flex items-center space-x-5">
-                    <h2 class="text-3xl font-extrabold text-gray-900">Аккаунты</h2>
+                    <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white" data-i18n="accountsTitle">Аккаунты</h2>
                     <button id="add-account-btn" class="bg-brand-purple text-white font-bold px-5 py-2.5 text-sm rounded-full shadow-lg shadow-brand-purple/30 hover:bg-brand-purpleHover transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-                        Добавить аккаунт
+                        <span data-i18n="addAccountBtn">Добавить аккаунт</span>
                     </button>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <button class="flex items-center space-x-2 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold px-5 py-2.5 rounded-full transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                        <span>Фильтр</span>
-                    </button>
-                    <div class="flex items-center space-x-2 bg-gray-50 px-5 py-2.5 rounded-full">
-                        <span class="font-medium text-gray-500">Сортировка:</span>
-                        <span class="font-bold text-gray-800">Новые</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </div>
+
+            <!-- Filters & Page Limits (Matching screenshot) -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 mb-4 border-b border-gray-100 dark:border-gray-700">
+                <!-- Filters on the left -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 tracking-wider mr-1" data-i18n="filterLabel">ФИЛЬТР:</span>
+                    <button class="filter-pill active" data-filter="all" data-i18n="filterAll">Все пользователи</button>
+                    <button class="filter-pill" data-filter="nobracelet" data-i18n="filterNoBracelet">Без браслета</button>
+                    <button class="filter-pill" data-filter="bracelet" data-i18n="filterBracelet">Браслет</button>
+                    <button class="filter-pill" data-filter="avatar" data-i18n="filterAvatar">Аватар</button>
+                </div>
+                <!-- Pagination limit dropdown on the right -->
+                <div class="flex items-center gap-2 text-[11px] font-extrabold text-gray-400 dark:text-gray-500 tracking-wider">
+                    <span data-i18n="onPage">НА СТРАНИЦЕ</span>
+                    <div class="relative inline-block text-gray-700 dark:text-gray-300">
+                        <select id="items-per-page-select" class="appearance-none bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-1.5 pr-8 font-extrabold focus:outline-none cursor-pointer text-xs">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 text-[10px]">▼</span>
                     </div>
+                    <span id="total-count-badge" class="text-gray-700 dark:text-gray-300 ml-1">0</span>
                 </div>
             </div>
 
             <!-- Empty Search State -->
-            <div id="empty-search-state" class="hidden py-12 text-center">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div id="empty-search-state" class="hidden py-16 text-center">
+                <div class="w-16 h-16 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900">Ничего не найдено</h3>
-                <p class="text-gray-500">Попробуйте изменить параметры поиска</p>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white" data-i18n="searchEmpty">Ничего не найдено</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm" data-i18n="searchEmptyDesc">Попробуйте изменить параметры поиска</p>
             </div>
 
+            <!-- Accounts Table -->
             <div class="overflow-x-auto" id="table-container">
                 <table class="w-full text-left text-sm">
                     <thead>
-                        <tr class="text-gray-400 uppercase tracking-widest text-[12px] font-extrabold border-b-2 border-gray-50">
-                            <th class="py-4 px-6">ФИО</th>
-                            <th class="py-4 px-6">Номер телефона</th>
-                            <th class="py-4 px-6">Количество детей</th>
-                            <th class="py-4 px-6 text-right">Действия</th>
+                        <tr class="text-gray-400 dark:text-gray-500 uppercase tracking-widest text-[11px] font-extrabold border-b border-gray-100 dark:border-slate-700">
+                            <th class="py-4 px-6" data-i18n="colName">ФИО / РЕБЁНОК</th>
+                            <th class="py-4 px-6" data-i18n="colDob">ДАТА РОЖДЕНИЯ</th>
+                            <th class="py-4 px-6" data-i18n="colStatus">СТАТУС</th>
+                            <th class="py-4 px-6 text-right" data-i18n="colActions">ДЕЙСТВИЯ</th>
                         </tr>
                     </thead>
-                    <tbody id="accounts-table-body" class="divide-y divide-gray-50">
-                        <!-- Accounts will be added here -->
+                    <tbody id="accounts-table-body" class="divide-y divide-gray-50 dark:divide-slate-700">
+                        <!-- Accounts dynamically loaded here -->
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination Navigation Footer -->
+            <div id="pagination-footer" class="flex justify-between items-center mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                <button id="prev-page-btn" class="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
+                    Назад
+                </button>
+                <div id="pagination-pages" class="flex gap-1.5 items-center">
+                    <!-- Page buttons dynamically loaded -->
+                </div>
+                <button id="next-page-btn" class="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
+                    Вперёд
+                </button>
+            </div>
+
         </div>
     </div>
 
     <!-- Modal: Add Account -->
     <div id="add-account-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center overflow-y-auto opacity-0 transition-opacity duration-300">
-        <div class="bg-white p-8 md:p-10 rounded-[40px] shadow-2xl max-w-xl w-full mx-4 my-8 border-t-8 border-brand-orange transform scale-95 transition-transform duration-300" id="add-account-modal-content">
+        <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[40px] shadow-2xl max-w-xl w-full mx-4 my-8 border-t-8 border-brand-orange transform scale-95 transition-transform duration-300" id="add-account-modal-content">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-3xl font-extrabold text-gray-900">Новый аккаунт</h3>
-                <button id="cancel-add-account-icon" class="text-gray-400 hover:text-brand-orange bg-gray-50 hover:bg-orange-50 p-2 rounded-full transition-colors">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <h3 class="text-3xl font-extrabold text-gray-900 dark:text-white" data-i18n="addAccTitle">Новый аккаунт</h3>
+                <button id="cancel-add-account-icon" class="text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-2 rounded-full transition-colors focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="space-y-5">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1 ml-2">ФИО *</label>
-                    <input type="text" id="new-account-fio" class="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:outline-none focus:bg-white focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-medium transition-all" placeholder="Иванов Иван Иванович">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 ml-2" data-i18n="addAccFio">ФИО *</label>
+                    <input type="text" id="new-account-fio" class="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-medium transition-all" placeholder="Иванов Иван Иванович">
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1 ml-2">Номер телефона *</label>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 ml-2" data-i18n="addAccPhone">Номер телефона *</label>
                     <div class="flex gap-2 items-start">
                         <div class="flex-1 relative">
-                            <input type="text" id="new-account-phone" class="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:outline-none focus:bg-white focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-medium transition-all pr-12" placeholder="+7 999 000 00 00" maxlength="16">
+                            <div class="phone-input-wrapper" id="phone-input-wrapper">
+                                <span class="phone-prefix">+7</span>
+                                <input type="tel" id="new-account-phone" class="phone-native-input" placeholder="(999) 000-00-00" maxlength="15" inputmode="numeric" autocomplete="tel-national">
+                            </div>
                             <div id="phone-verified-icon" class="absolute right-4 top-1/2 -translate-y-1/2 hidden">
                                 <div class="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                                 </div>
                             </div>
-                            <p id="phone-error-msg" class="hidden text-red-500 text-xs font-bold mt-1.5 ml-2">Введите корректный номер (+7 XXX XXX XX XX)</p>
+                            <p id="phone-error-msg" class="hidden text-red-500 text-xs font-bold mt-1.5 ml-2">Введите 10 цифр номера</p>
                         </div>
-                        <button id="send-sms-btn" class="hidden bg-brand-purple text-white font-bold px-5 py-4 rounded-2xl hover:bg-brand-purpleHover transition-all whitespace-nowrap text-sm shadow-md shadow-brand-purple/20">Отправить СМС</button>
-                    </div>
-                    <div id="sms-code-block" class="hidden flex gap-2 items-start mt-3">
-                        <div class="flex-1 relative">
-                            <input type="text" id="sms-code-input" class="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:outline-none focus:bg-white focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/10 font-medium transition-all" placeholder="Введите 4-значный код" maxlength="4">
-                        </div>
-                        <button id="verify-sms-btn" class="bg-brand-purple text-white font-bold px-5 py-4 rounded-2xl hover:bg-brand-purpleHover transition-all whitespace-nowrap text-sm shadow-md shadow-brand-purple/20">Подтвердить</button>
+                        <button id="send-sms-btn" class="bg-brand-purple hover:bg-brand-purpleHover text-white font-bold px-6 py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all text-sm shrink-0 hidden focus:outline-none" data-i18n="addAccSendSms">Отправить СМС</button>
                     </div>
                 </div>
-                
-                <div class="pt-6 border-t border-gray-100 mt-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <label class="block text-lg font-extrabold text-gray-900">Дети</label>
-                        <button id="add-child-field-btn" class="flex items-center gap-2 text-sm font-bold text-brand-purple hover:text-brand-purpleHover focus:outline-none bg-purple-50 px-4 py-2 rounded-full transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-                            Добавить ребенка
+
+                <!-- SMS Verification Block -->
+                <div id="sms-code-block" class="hidden flex flex-col mt-3">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 ml-2" data-i18n="addAccSmsCode">Введите 4-значный код</label>
+                    <div class="flex gap-2 items-start">
+                        <div class="flex-1">
+                            <input type="text" id="sms-code-input" class="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/10 font-medium transition-all" placeholder="Введите 4-значный код" maxlength="4">
+                            <p id="sms-error-msg" class="hidden text-red-500 text-xs font-bold mt-1.5 ml-2" data-i18n="addAccSmsError">Введен неверный код</p>
+                        </div>
+                        <button id="verify-sms-btn" class="bg-brand-purple hover:bg-brand-purpleHover text-white font-bold px-6 py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all text-sm shrink-0 focus:outline-none" data-i18n="addAccSmsBtn">Подтвердить</button>
+                    </div>
+                    <button id="resend-sms-btn" class="text-brand-orange hover:text-brand-orangeHover text-xs font-bold mt-2 self-start focus:outline-none" disabled>Отправить повторно</button>
+                </div>
+
+                <!-- Children Fields Area -->
+                <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 ml-2" data-i18n="childrenCount">Дети</label>
+                        <button id="add-child-field-btn" class="text-brand-purple hover:text-brand-purpleHover dark:text-purple-400 dark:hover:text-purple-300 text-xs font-extrabold uppercase tracking-wider flex items-center gap-1 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                            <span data-i18n="addAccAddChild">Добавить ребенка</span>
                         </button>
                     </div>
-                    <div id="children-fields-container" class="space-y-3"></div>
+                    <div id="children-fields-container" class="space-y-3">
+                        <!-- Children inputs dynamically added -->
+                    </div>
                 </div>
             </div>
-            <div class="mt-10 flex justify-end space-x-3">
-                <button id="cancel-add-account" class="bg-gray-100 text-gray-600 font-bold px-8 py-3.5 rounded-full hover:bg-gray-200 transition-colors">Отмена</button>
-                <button id="submit-add-account" class="bg-brand-orange text-white font-bold px-8 py-3.5 rounded-full shadow-lg shadow-brand-orange/30 hover:bg-brand-orangeHover transition-all transform hover:-translate-y-0.5">Создать аккаунт</button>
+            <div class="flex justify-end space-x-3 mt-8">
+                <button id="cancel-add-account" class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-8 py-4 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none text-sm" data-i18n="addAccCancel">Отмена</button>
+                <button id="submit-add-account" class="bg-brand-orange hover:bg-brand-orangeHover text-white font-bold px-8 py-4 rounded-2xl shadow-lg shadow-brand-orange/30 transition-all active:scale-[0.98] focus:outline-none text-sm" data-i18n="addAccSubmit">Создать аккаунт</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: RFID Scanner -->
-    <div id="rfid-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center">
-        <div class="bg-white p-8 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center border-t-8 border-brand-purple">
-            <div id="rfid-icon-container" class="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-purple relative overflow-hidden transition-all duration-500">
-                <svg id="rfid-icon-scan" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" /></svg>
-                <svg id="rfid-icon-success" class="h-10 w-10 relative z-10 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                <svg id="rfid-icon-error" class="h-10 w-10 relative z-10 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                <div id="rfid-ping" class="absolute inset-0 bg-brand-purple/10 animate-ping rounded-full"></div>
+    <!-- Modal: RFID Scanner (Redesigned matching Screenshot 2) -->
+    <div id="rfid-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 p-8 md:p-10 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300 relative overflow-hidden" id="rfid-modal-content">
+            
+            <!-- Chain progress indicator (hidden by default) -->
+            <div id="rfid-chain-progress" class="hidden mb-4">
+                <div class="inline-flex items-center bg-purple-50 dark:bg-purple-950/30 px-5 py-2 rounded-full">
+                    <span id="rfid-chain-label" class="text-sm md:text-base font-extrabold text-brand-purple dark:text-purple-400 tracking-wide">Браслет 1 из 1</span>
+                </div>
             </div>
-            <h3 id="rfid-modal-title" class="text-2xl font-extrabold text-gray-900 mb-2">Привязка браслета</h3>
-            <p id="rfid-modal-desc" class="text-gray-500 font-medium mb-8">Приложите RFID-браслет к считывателю.</p>
-            <div id="rfid-buttons-container" class="space-y-3">
-                <button id="rfid-attach-btn" class="w-full bg-brand-purple text-white font-bold px-6 py-4 rounded-full shadow-lg shadow-brand-purple/30 hover:bg-brand-purpleHover transition-all transform hover:-translate-y-0.5">
-                    Имитировать прикладывание
+
+            <!-- Normal binding content -->
+            <div id="rfid-binding-content">
+                <!-- Icon -->
+                <div class="w-16 h-16 bg-purple-50 dark:bg-purple-950/30 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-purple dark:text-purple-400 relative overflow-hidden shadow-sm">
+                    <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                    </svg>
+                    <div class="absolute inset-0 bg-brand-purple/10 animate-ping rounded-full"></div>
+                </div>
+                
+                <h3 class="text-[22px] font-extrabold text-gray-900 dark:text-white mb-1" data-i18n="rfidTitle">Привязка браслета</h3>
+                <h4 id="rfid-child-name" class="text-lg font-extrabold text-brand-purple dark:text-purple-400 tracking-wider uppercase mb-5">STIVE</h4>
+                
+                <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 tracking-widest uppercase mb-4" data-i18n="rfidSub">ПРИЛОЖИТЕ БРАСЛЕТ К СЧИТЫВАТЕЛЮ</p>
+                
+                <div class="relative mb-6">
+                    <input type="text" id="rfid-code-input" class="w-full text-center px-5 py-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-purple dark:focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/10 font-bold text-gray-800 dark:text-white transition-all text-sm" placeholder="RFID код" data-i18n-placeholder="rfidPlaceholder">
+                    <button id="rfid-generate-btn" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 text-brand-purple dark:text-purple-400 rounded-xl transition-all border border-purple-100 dark:border-purple-900 hover:scale-105 active:scale-95 focus:outline-none" title="Сгенерировать случайный код">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.656 48.656 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7C4.651 9.547 4.604 10.768 4.604 12c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.092-1.209.138-2.43.138-3.662z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 10.5h.008v.008H9V10.5zm6 0h.008v.008H15V10.5zm-6 3h.008v.008H9v-.008zm6 0h.008v.008H15v-.008z" /></svg>
+                    </button>
+                </div>
+                
+                <p id="rfid-modal-error-msg" class="hidden text-red-500 text-xs font-bold -mt-4 mb-4 text-center"></p>
+
+                <div class="space-y-3">
+                    <button id="rfid-confirm-btn" class="w-full bg-brand-purple hover:bg-brand-purpleHover text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm tracking-wide focus:outline-none" data-i18n="rfidConfirm">
+                        ПОДТВЕРДИТЬ
+                    </button>
+                    <button id="rfid-cancel-btn" class="w-full text-gray-400 dark:text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300 transition-all text-xs tracking-wider py-2 focus:outline-none" data-i18n="rfidCancel">
+                        ОТМЕНА
+                    </button>
+                </div>
+            </div>
+
+            <!-- Success overlay (hidden by default) -->
+            <div id="rfid-success-overlay" class="hidden flex flex-col items-center justify-center py-6">
+                <div class="relative mb-5">
+                    <div class="w-20 h-20 bg-green-50 dark:bg-green-950/30 rounded-full flex items-center justify-center rfid-success-icon">
+                        <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path class="rfid-checkmark" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 bg-green-400/20 rounded-full rfid-success-ring"></div>
+                </div>
+                <p class="text-lg font-extrabold text-green-600 dark:text-green-400 tracking-wide" data-i18n="rfidBound">Браслет привязан!</p>
+                <p id="rfid-success-child-name" class="text-sm font-bold text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wider"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Check Bracelet (Header verification redesigned) -->
+    <div id="check-bracelet-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 p-8 md:p-10 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300" id="check-bracelet-modal-content">
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-orange-50 dark:bg-orange-950/30 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-orange relative overflow-hidden shadow-sm">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <div class="absolute inset-0 bg-brand-orange/10 animate-ping rounded-full"></div>
+            </div>
+            
+            <h3 class="text-[22px] font-extrabold text-gray-900 dark:text-white mb-2" data-i18n="checkBracelet">Проверить браслет</h3>
+            <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 tracking-widest uppercase mb-4" data-i18n="rfidSub">ПРИЛОЖИТЕ БРАСЛЕТ К СЧИТЫВАТЕЛЮ</p>
+            
+            <div class="relative mb-4">
+                <input type="text" id="check-bracelet-input" class="w-full text-center px-5 py-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-orange dark:focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-bold text-gray-800 dark:text-white transition-all text-sm" placeholder="RFID код" data-i18n-placeholder="rfidPlaceholder">
+            </div>
+
+            <!-- Test Codes Helper inside Modal -->
+            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-3 mb-6 text-left">
+                <p class="text-[9px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Активные браслеты для проверки:</p>
+                <div id="check-bracelet-test-codes" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+                    <!-- Dynamic test buttons inserted here -->
+                </div>
+            </div>
+            
+            <div class="space-y-3">
+                <button id="check-bracelet-confirm-btn" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-orange/20 transition-all active:scale-[0.98] text-sm tracking-wide focus:outline-none">
+                    ПОДТВЕРДИТЬ
                 </button>
-                <button id="rfid-error-btn" class="w-full bg-gray-100 text-gray-500 font-bold px-6 py-3 rounded-full hover:bg-red-50 hover:text-red-500 transition-all text-sm">
-                    Имитация ошибки
+                <button id="check-bracelet-cancel-btn" class="w-full text-gray-400 dark:text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300 transition-all text-xs tracking-wider py-2 focus:outline-none" data-i18n="rfidCancel">
+                    ОТМЕНА
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Avatar Info (Updated with Prizes & Visits) -->
+    <!-- Modal: Add Child directly to account -->
+    <div id="add-child-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300" id="add-child-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-extrabold text-gray-900 dark:text-white" data-i18n="addAccAddChild">Добавить ребенка</h3>
+                <button id="add-child-cancel-icon" class="text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-2 rounded-full transition-colors focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 ml-2" data-i18n="addAccChildName">Имя ребенка</label>
+                    <input type="text" id="existing-child-name" class="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-purple dark:focus:border-brand-purple font-medium transition-all" placeholder="Маша">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 ml-2" data-i18n="addAccChildDob">Дата рождения</label>
+                    <input type="date" id="existing-child-dob" class="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-purple dark:focus:border-brand-purple font-medium transition-all text-gray-600">
+                </div>
+            </div>
+            
+            <p id="add-child-error-msg" class="hidden text-red-500 text-xs font-bold mt-4 ml-2"></p>
+            
+            <div class="flex space-x-3 mt-8">
+                <button id="add-child-cancel-btn" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-6 py-4 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none text-sm" data-i18n="addAccCancel">
+                    Отмена
+                </button>
+                <button id="add-child-submit-btn" class="flex-1 bg-brand-purple hover:bg-brand-purpleHover text-white font-bold px-6 py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm focus:outline-none">
+                    Добавить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Confirmation -->
+    <div id="confirm-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center border border-gray-100 dark:border-gray-700">
+            <div class="w-16 h-16 bg-red-50 dark:bg-red-950/30 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 dark:text-red-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-gray-900 dark:text-white mb-2" id="confirm-modal-title">Подтверждение</h3>
+            <p class="text-gray-500 dark:text-gray-400 font-medium mb-8" id="confirm-modal-message">Вы уверены?</p>
+            <div class="flex justify-center space-x-3">
+                <button id="confirm-modal-cancel" class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-6 py-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Отмена</button>
+                <button id="confirm-modal-confirm" class="bg-red-500 text-white font-bold px-6 py-3 rounded-full shadow-lg shadow-red-500/30 hover:bg-red-600 transition-all">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Avatar Info (Prizes & Visits) -->
     <div id="avatar-info-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center p-4">
-        <div class="bg-white p-8 md:p-10 rounded-[40px] shadow-2xl max-w-3xl w-full mx-auto border border-gray-100 transform scale-95 transition-transform duration-300" id="avatar-info-modal-content">
+        <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[40px] shadow-2xl max-w-3xl w-full mx-auto border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300" id="avatar-info-modal-content">
             <div class="flex justify-between items-start mb-8">
                 <div>
-                    <h3 class="text-3xl font-extrabold text-gray-900 mb-1">Аватар ребенка</h3>
-                    <p class="text-gray-500 font-medium" id="avatar-info-name">Случайный Гость (Аватар)</p>
+                    <h3 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-1" data-i18n="avatarTitle">Аватар ребенка</h3>
+                    <p class="text-gray-500 dark:text-gray-400 font-medium" id="avatar-info-name">Случайный Гость (Аватар)</p>
                 </div>
-                <button class="close-avatar-info text-gray-400 hover:text-brand-orange bg-gray-50 hover:bg-orange-50 p-3 rounded-full transition-colors self-start shrink-0 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <button class="close-avatar-info text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-3 rounded-full transition-colors self-start shrink-0 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
             <!-- Top Stats -->
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-gray-50 rounded-[28px] p-6 flex items-center justify-between border-2 border-transparent hover:border-gray-100 transition-colors">
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-[28px] p-6 flex items-center justify-between border border-transparent hover:border-gray-100 dark:hover:border-gray-700 transition-colors">
                     <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-purple shadow-sm">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-brand-purple shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
-                        <span class="text-gray-500 font-bold text-lg">Уровень</span>
+                        <span class="text-gray-500 dark:text-gray-400 font-bold text-lg" data-i18n="avatarLevel">Уровень</span>
                     </div>
-                    <span id="avatar-info-level" class="font-extrabold text-3xl text-gray-900"></span>
+                    <span id="avatar-info-level" class="font-extrabold text-3xl text-gray-900 dark:text-white"></span>
                 </div>
                 
-                <div class="bg-orange-50/50 rounded-[28px] p-6 flex items-center justify-between border-2 border-transparent hover:border-orange-100 transition-colors">
+                <div class="bg-orange-50/50 dark:bg-orange-950/20 rounded-[28px] p-6 flex items-center justify-between border border-transparent hover:border-orange-100 dark:hover:border-orange-900/50 transition-colors">
                     <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-orange shadow-sm">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-brand-orange shadow-sm">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="text-brand-orange font-bold text-lg">Баланс</span>
+                        <span class="text-brand-orange font-bold text-lg" data-i18n="avatarBalance">Баланс</span>
                     </div>
                     <span id="avatar-balance-pill" class="font-extrabold text-3xl text-brand-orange"></span>
                 </div>
@@ -247,34 +610,34 @@
             <!-- Prizes Section -->
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-5 px-2">
-                    <h4 class="text-xl font-extrabold text-gray-900">Доступные призы</h4>
-                    <span class="text-sm font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Максимум 4 приза</span>
+                    <h4 class="text-xl font-extrabold text-gray-900 dark:text-white" data-i18n="avatarPrizes">Доступные призы</h4>
+                    <span class="text-xs font-bold text-gray-400 bg-gray-50 dark:bg-gray-700/50 px-3 py-1 rounded-full">Максимум 4 приза</span>
                 </div>
-                <div id="avatar-prizes-container" class="grid grid-cols-4 gap-4">
+                <div id="avatar-prizes-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     <!-- JS injected prizes -->
                 </div>
             </div>
 
             <!-- Visits Accordion -->
-            <div class="border-2 border-gray-50 rounded-[28px] overflow-hidden mb-8 transition-all hover:border-gray-100 bg-white">
+            <div class="border border-gray-100 dark:border-gray-700 rounded-[28px] overflow-hidden mb-8 transition-all hover:border-gray-200 dark:hover:border-gray-600 bg-white dark:bg-gray-800">
                 <button id="visits-accordion-btn" class="w-full px-6 py-5 flex justify-between items-center focus:outline-none bg-transparent">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <div class="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-2xl flex items-center justify-center text-gray-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <span class="font-extrabold text-gray-800 text-lg">История посещений (<span id="visits-count-badge">0</span>)</span>
+                        <span class="font-extrabold text-gray-800 dark:text-slate-200 text-lg"><span data-i18n="avatarVisits">История посещений</span> (<span id="visits-count-badge">0</span>)</span>
                     </div>
-                    <div class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center">
-                        <svg id="visits-accordion-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>
+                    <div class="w-10 h-10 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <svg id="visits-accordion-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
                     </div>
                 </button>
-                <div id="visits-accordion-content" class="hidden bg-gray-50/50 px-6 py-5 border-t-2 border-gray-50 space-y-3 max-h-48 overflow-y-auto">
+                <div id="visits-accordion-content" class="hidden bg-gray-50/50 dark:bg-gray-800/30 px-6 py-5 border-t border-gray-100 dark:border-gray-700 space-y-3 max-h-48 overflow-y-auto">
                     <!-- JS injected visits -->
                 </div>
             </div>
 
             <div class="flex justify-end">
-                <button class="close-avatar-info bg-gray-100 text-gray-700 font-bold px-10 py-4 rounded-full hover:bg-gray-200 transition-colors focus:outline-none">
+                <button class="close-avatar-info bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold px-10 py-4 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none" data-i18n="avatarClose">
                     Закрыть окно
                 </button>
             </div>
@@ -284,49 +647,319 @@
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col items-center space-y-3 pointer-events-none w-full max-w-sm px-4"></div>
 
-    <!-- Modal: Confirmation -->
-    <div id="confirm-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center">
-        <div class="bg-white p-8 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center">
-            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-            </div>
-            <h3 class="text-xl font-extrabold text-gray-900 mb-2" id="confirm-modal-title">Подтверждение</h3>
-            <p class="text-gray-500 font-medium mb-8" id="confirm-modal-message">Вы уверены?</p>
-            <div class="flex justify-center space-x-3">
-                <button id="confirm-modal-cancel" class="bg-gray-100 text-gray-600 font-bold px-6 py-3 rounded-full hover:bg-gray-200 transition-colors">Отмена</button>
-                <button id="confirm-modal-confirm" class="bg-red-500 text-white font-bold px-6 py-3 rounded-full shadow-lg shadow-red-500/30 hover:bg-red-600 transition-all">Подтвердить</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Global State for Avatars (To track Visits and Prizes consistently)
-        const accountGroups = [];
-        const avatarsData = {}; 
+        // Language system configuration
+        let currentLang = localStorage.getItem('lang') || 'ru';
+        
+        const translations = {
+            ru: {
+                title: "RFID Панель - Hello Park",
+                searchPlaceholder: "Фио, ном...",
+                checkBracelet: "ПРОВЕРИТЬ БРАСЛЕТ",
+                accountsTitle: "Аккаунты",
+                addAccountBtn: "Добавить аккаунт",
+                filterLabel: "ФИЛЬТР:",
+                filterAll: "Все пользователи",
+                filterNoBracelet: "Без браслета",
+                filterBracelet: "Браслет",
+                filterAvatar: "Аватар",
+                onPage: "НА СТРАНИЦЕ",
+                colName: "ФИО / РЕБЁНОК",
+                colDob: "ДАТА РОЖДЕНИЯ",
+                colStatus: "СТАТУС",
+                colActions: "ДЕЙСТВИЯ",
+                childrenCount: "Детей",
+                hideList: "скрыть список",
+                showList: "открыть список",
+                statusNone: "НЕТ",
+                statusBracelet: "БРАСЛЕТ",
+                statusAvatar: "АВАТАР",
+                btnDetails: "Детали",
+                btnBind: "Привязать",
+                btnDelete: "Удалить",
+                btnNewBracelet: "Новый браслет",
+                // RFID Modal
+                rfidTitle: "Привязка браслета",
+                rfidSub: "ПРИЛОЖИТЕ БРАСЛЕТ К СЧИТЫВАТЕЛЮ",
+                rfidPlaceholder: "RFID код",
+                rfidConfirm: "ПОДТВЕРДИТЬ",
+                rfidCancel: "ОТМЕНА",
+                // Add Account Modal
+                addAccTitle: "Новый аккаунт",
+                addAccFio: "ФИО *",
+                addAccPhone: "Номер телефона *",
+                addAccSmsCode: "Введите 4-значный код",
+                addAccSmsBtn: "Подтвердить",
+                addAccSmsError: "Введен неверный код",
+                addAccSmsTime: "Отправить повторно",
+                addAccSendSms: "Отправить СМС",
+                addAccChildName: "Имя ребенка",
+                addAccChildDob: "Дата рождения",
+                addAccAddChild: "Добавить ребенка",
+                addAccSubmit: "Создать аккаунт",
+                addAccCancel: "Отмена",
+                // Avatar Modal
+                avatarTitle: "Аватар ребенка",
+                avatarLevel: "Уровень",
+                avatarBalance: "Баланс",
+                avatarPrizes: "Доступные призы",
+                avatarVisits: "История посещений",
+                avatarPoints: "баллов",
+                avatarStatusAvailable: "Доступен",
+                avatarStatusReceived: "Получен",
+                avatarStatusLocked: "Закрыто",
+                avatarBtnIssue: "Выдать",
+                avatarBtnIssued: "Выдано",
+                avatarBtnUndo: "Отменить",
+                avatarClose: "Закрыть окно",
+                // Confirms
+                confirmTitle: "Подтверждение",
+                confirmDeleteParent: "Удалить аккаунт",
+                confirmDeleteAccount: "Удалить аккаунт",
+                confirmDeleteAccountMsg: "Вы действительно хотите безвозвратно удалить этот аккаунт?",
+                confirmDeleteAvatar: "Удалить аватара",
+                confirmDeleteAvatarMsg: "Вы уверены, что хотите удалить аватара? Весь прогресс аватара будет безвозвратно потерян.",
+                confirmDeleteChild: "Удалить ребенка",
+                confirmDeleteChildMsg: "Вы действительно хотите удалить запись этого ребенка?",
+                confirmCancelPrize: "Отмена выдачи",
+                confirmCancelPrizeMsg: "Вы уверены, что хотите отменить выдачу приза?",
+                toastSmsSent: "СМС-код отправлен на указанный номер",
+                toastSmsResent: "Новый СМС-код отправлен",
+                toastPhoneVerified: "Номер успешно подтверждён!",
+                toastBraceletSuccess: "Браслет успешно привязан",
+                toastBraceletError: "Не удалось привязать браслет. Попробуйте другой.",
+                toastNoAvatar: "Гость в парке, но Аватар еще не создан. Отправьте на Квест Портал.",
+                toastEmptyBracelet: "Этот браслет пуст и никому не принадлежит",
+                toastOccupiedBracelet: "Ошибка: Браслет привязан к другому гостю",
+                rfidBound: "Браслет привязан!",
+                rfidSkip: "ПРОПУСТИТЬ",
+                rfidChainLabel: "Браслет",
+                rfidChainOf: "из",
+                rfidAllBound: "Все браслеты привязаны!",
+                searchEmpty: "Ничего не найдено",
+                searchEmptyDesc: "Попробуйте изменить параметры поиска",
+                prevPage: "Назад",
+                nextPage: "Вперёд"
+            },
+            en: {
+                title: "RFID Panel - Hello Park",
+                searchPlaceholder: "Name, phone...",
+                checkBracelet: "CHECK BRACELET",
+                accountsTitle: "Accounts",
+                addAccountBtn: "Add Account",
+                filterLabel: "FILTER:",
+                filterAll: "All users",
+                filterNoBracelet: "No bracelet",
+                filterBracelet: "Bracelet",
+                filterAvatar: "Avatar",
+                onPage: "ON PAGE",
+                colName: "NAME / CHILD",
+                colDob: "DATE OF BIRTH",
+                colStatus: "STATUS",
+                colActions: "ACTIONS",
+                childrenCount: "Children",
+                hideList: "hide list",
+                showList: "show list",
+                statusNone: "NONE",
+                statusBracelet: "BRACELET",
+                statusAvatar: "AVATAR",
+                btnDetails: "Details",
+                btnBind: "Bind",
+                btnDelete: "Delete",
+                btnNewBracelet: "New bracelet",
+                // RFID Modal
+                rfidTitle: "Bracelet Binding",
+                rfidSub: "PLACE THE BRACELET ON THE READER",
+                rfidPlaceholder: "RFID code",
+                rfidConfirm: "CONFIRM",
+                rfidCancel: "CANCEL",
+                // Add Account Modal
+                addAccTitle: "New Account",
+                addAccFio: "Full Name *",
+                addAccPhone: "Phone Number *",
+                addAccSmsCode: "Enter 4-digit code",
+                addAccSmsBtn: "Verify",
+                addAccSmsError: "Incorrect code entered",
+                addAccSmsTime: "Resend",
+                addAccSendSms: "Send SMS",
+                addAccChildName: "Child's Name",
+                addAccChildDob: "Date of Birth",
+                addAccAddChild: "Add Child",
+                addAccSubmit: "Create Account",
+                addAccCancel: "Cancel",
+                // Avatar Modal
+                avatarTitle: "Child's Avatar",
+                avatarLevel: "Level",
+                avatarBalance: "Balance",
+                avatarPrizes: "Available Prizes",
+                avatarVisits: "Visit History",
+                avatarPoints: "points",
+                avatarStatusAvailable: "Available",
+                avatarStatusReceived: "Received",
+                avatarStatusLocked: "Locked",
+                avatarBtnIssue: "Issue",
+                avatarBtnIssued: "Issued",
+                avatarBtnUndo: "Cancel",
+                avatarClose: "Close Window",
+                // Confirms
+                confirmTitle: "Confirmation",
+                confirmDeleteParent: "Delete Account",
+                confirmDeleteAccount: "Delete Account",
+                confirmDeleteAccountMsg: "Are you sure you want to permanently delete this account?",
+                confirmDeleteAvatar: "Delete Avatar",
+                confirmDeleteAvatarMsg: "Are you sure you want to delete the avatar? All avatar progress will be permanently lost.",
+                confirmDeleteChild: "Delete Child",
+                confirmDeleteChildMsg: "Are you sure you want to delete this child's record?",
+                confirmCancelPrize: "Cancel Issue",
+                confirmCancelPrizeMsg: "Are you sure you want to cancel this prize issue?",
+                toastSmsSent: "SMS code sent to the specified number",
+                toastSmsResent: "New SMS code sent",
+                toastPhoneVerified: "Number successfully verified!",
+                toastBraceletSuccess: "Bracelet successfully bound",
+                toastBraceletError: "Failed to bind bracelet. Try another one.",
+                toastNoAvatar: "Guest is in the park, but Avatar has not been created yet. Send to Quest Portal.",
+                toastEmptyBracelet: "This bracelet is empty and does not belong to anyone",
+                toastOccupiedBracelet: "Error: Bracelet is bound to another guest",
+                rfidBound: "Bracelet bound!",
+                rfidSkip: "SKIP",
+                rfidChainLabel: "Bracelet",
+                rfidChainOf: "of",
+                rfidAllBound: "All bracelets bound!",
+                searchEmpty: "Nothing found",
+                searchEmptyDesc: "Try changing your search terms",
+                prevPage: "Prev",
+                nextPage: "Next"
+            }
+        };
 
-        // Toast Notification System
+        // Global state
+        let accounts = [];
+        const avatarsData = {};
+        let currentFilter = 'all';
+        let currentPage = 1;
+        let itemsPerPage = 20;
+        let totalPages = 1;
+        let darkTheme = localStorage.getItem('theme') === 'dark';
+
+        // Child UID Generator matching developer's style
+        function generateChildUID() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 25; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Date formatter helper
+        function formatDate(dobString) {
+            if (!dobString) return '—';
+            try {
+                const d = new Date(dobString);
+                if (isNaN(d.getTime())) return dobString;
+                
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                return `${dd}.${mm}.${yyyy}`;
+            } catch (e) {
+                return dobString;
+            }
+        }
+
+        // Language Switcher Logic
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            updateLangButtons();
+            translateDOM();
+            renderAccounts();
+        }
+
+        function updateLangButtons() {
+            const ruBtn = document.getElementById('lang-ru-btn');
+            const enBtn = document.getElementById('lang-en-btn');
+            if (currentLang === 'ru') {
+                ruBtn.className = 'px-3 py-1.5 rounded-full bg-brand-purple text-white transition-all focus:outline-none shadow-sm';
+                enBtn.className = 'px-3 py-1.5 rounded-full hover:bg-gray-150 dark:hover:bg-gray-600 transition-all focus:outline-none text-gray-500 dark:text-gray-300';
+            } else {
+                enBtn.className = 'px-3 py-1.5 rounded-full bg-brand-purple text-white transition-all focus:outline-none shadow-sm';
+                ruBtn.className = 'px-3 py-1.5 rounded-full hover:bg-gray-150 dark:hover:bg-gray-600 transition-all focus:outline-none text-gray-500 dark:text-gray-300';
+            }
+        }
+
+        function translateDOM() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.textContent = translations[currentLang][key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.setAttribute('placeholder', translations[currentLang][key]);
+                }
+            });
+            document.title = translations[currentLang].title;
+        }
+
+        // Theme Switcher Logic
+        function toggleTheme() {
+            darkTheme = !darkTheme;
+            if (darkTheme) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeUI();
+        }
+
+        function updateThemeUI() {
+            const icon = document.getElementById('theme-toggle-icon');
+            if (darkTheme) {
+                // Sun Icon
+                icon.innerHTML = `<svg class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" /></svg>`;
+            } else {
+                // Moon Icon
+                icon.innerHTML = `<svg class="w-5 h-5 text-gray-500 dark:text-gray-300 hover:text-brand-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+            }
+        }
+
+        // Toast Notifications
         function showToast(message, type = 'error') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            
             const isError = type === 'error';
-            const bgColor = isError ? 'bg-white text-red-600 border-2 border-red-100' : 'bg-gray-800 text-white border-2 border-gray-700';
-            const icon = isError 
-                ? '<svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>'
-                : '<svg class="w-5 h-5 text-brand-orange shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+            const isSuccess = type === 'success';
+            
+            let bgColor = 'bg-gray-800 text-white border border-gray-700';
+            if (isError) {
+                bgColor = 'bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/50';
+            } else if (isSuccess) {
+                bgColor = 'bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-900/50';
+            }
+            
+            let icon = '';
+            if (isError) {
+                icon = '<svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+            } else if (isSuccess) {
+                icon = '<svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>';
+            } else {
+                icon = '<svg class="w-5 h-5 text-brand-orange shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+            }
 
             toast.className = `flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl font-bold text-sm transform transition-all duration-300 translate-y-[-1rem] opacity-0 w-full ${bgColor}`;
             toast.innerHTML = icon + `<span>${message}</span>`;
-
             container.appendChild(toast);
 
-            // Animate in
             requestAnimationFrame(() => {
                 toast.classList.remove('translate-y-[-1rem]', 'opacity-0');
                 toast.classList.add('translate-y-0', 'opacity-100');
             });
 
-            // Animate out after 3.5 seconds
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-[-2rem]', 'opacity-0');
@@ -334,6 +967,7 @@
             }, 3500);
         }
 
+        // Avatar progression data
         function getAvatarData(childName) {
             if (!avatarsData[childName]) {
                 avatarsData[childName] = {
@@ -341,10 +975,10 @@
                     balance: (Math.floor(Math.random() * 50) + 10) * 10,
                     visits: [],
                     prizes: [
-                        { id: 1, title: 'Брелок Hello Park', desc: 'Доступно с 2 уровня', status: 'received' },
-                        { id: 2, title: 'Стикерпак', desc: 'Доступно с 3 уровня', status: 'available' },
-                        { id: 3, title: 'Попкорн', desc: 'Доступно с 4 уровня', status: 'locked' },
-                        { id: 4, title: 'Секретный приз', desc: 'Доступно с 5 уровня', status: 'locked' }
+                        { id: 1, title: currentLang === 'ru' ? 'Брелок Hello Park' : 'Hello Park Keychain', desc: currentLang === 'ru' ? 'Доступно с 2 уровня' : 'Available at Level 2', status: 'received' },
+                        { id: 2, title: currentLang === 'ru' ? 'Стикерпак' : 'Sticker Pack', desc: currentLang === 'ru' ? 'Доступно с 3 уровня' : 'Available at Level 3', status: 'available' },
+                        { id: 3, title: currentLang === 'ru' ? 'Попкорн' : 'Popcorn', desc: currentLang === 'ru' ? 'Доступно с 4 уровня' : 'Available at Level 4', status: 'locked' },
+                        { id: 4, title: currentLang === 'ru' ? 'Секретный приз' : 'Secret Prize', desc: currentLang === 'ru' ? 'Доступно с 5 уровня' : 'Available at Level 5', status: 'locked' }
                     ]
                 };
             }
@@ -356,18 +990,17 @@
             const now = new Date();
             const dateStr = now.toLocaleDateString('ru-RU');
             const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-            // Add new visit to the beginning
             data.visits.unshift(`${dateStr} ${timeStr}`);
         }
 
-        // Modal Utilities
+        // Modal opening/closing utility
         const animateModalOpen = (id) => {
             const modal = document.getElementById(id);
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 const content = modal.querySelector('div.scale-95');
-                if(content) {
+                if (content) {
                     content.classList.remove('scale-95');
                     content.classList.add('scale-100');
                 }
@@ -378,73 +1011,23 @@
             const modal = document.getElementById(id);
             modal.classList.add('opacity-0');
             const content = modal.querySelector('div.scale-100');
-            if(content) {
+            if (content) {
                 content.classList.remove('scale-100');
                 content.classList.add('scale-95');
             }
             setTimeout(() => {
                 modal.classList.add('hidden');
-                if(callback) callback();
+                if (callback) callback();
             }, 300);
         };
 
-        function resetRfidModal() {
-            const container = document.getElementById('rfid-icon-container');
-            container.className = 'w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-purple relative overflow-hidden transition-all duration-500';
-            document.getElementById('rfid-icon-scan').classList.remove('hidden');
-            document.getElementById('rfid-icon-success').classList.add('hidden');
-            document.getElementById('rfid-icon-error').classList.add('hidden');
-            document.getElementById('rfid-ping').classList.remove('hidden');
-            document.getElementById('rfid-modal-title').innerText = 'Привязка браслета';
-            document.getElementById('rfid-modal-desc').innerText = 'Приложите RFID-браслет к считывателю.';
-            document.getElementById('rfid-buttons-container').classList.remove('hidden');
-        }
-
-        function showRfidModal(callback) {
-            resetRfidModal();
-            animateModalOpen('rfid-modal');
-
-            document.getElementById('rfid-attach-btn').onclick = () => {
-                const container = document.getElementById('rfid-icon-container');
-                container.className = 'w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 relative overflow-hidden transition-all duration-500';
-                document.getElementById('rfid-icon-scan').classList.add('hidden');
-                document.getElementById('rfid-icon-success').classList.remove('hidden');
-                document.getElementById('rfid-ping').classList.add('hidden');
-                document.getElementById('rfid-modal-title').innerText = 'Успешно!';
-                document.getElementById('rfid-modal-desc').innerText = 'Браслет успешно привязан.';
-                document.getElementById('rfid-buttons-container').classList.add('hidden');
-                setTimeout(() => {
-                    animateModalClose('rfid-modal', callback);
-                }, 1500);
-            };
-
-            document.getElementById('rfid-error-btn').onclick = () => {
-                const container = document.getElementById('rfid-icon-container');
-                container.className = 'w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600 relative overflow-hidden transition-all duration-500';
-                document.getElementById('rfid-icon-scan').classList.add('hidden');
-                document.getElementById('rfid-icon-error').classList.remove('hidden');
-                document.getElementById('rfid-ping').classList.add('hidden');
-                document.getElementById('rfid-modal-title').innerText = 'Ошибка привязки';
-                document.getElementById('rfid-modal-desc').innerText = 'Не удалось привязать браслет. Попробуйте другой.';
-                document.getElementById('rfid-buttons-container').classList.add('hidden');
-                setTimeout(() => {
-                    animateModalClose('rfid-modal');
-                }, 2000);
-            };
-        }
-
+        // Confirmation modal
         function showConfirmModal(title, message, onConfirm, onCancel) {
             document.getElementById('confirm-modal-title').innerText = title;
             document.getElementById('confirm-modal-message').innerText = message;
             
             const confirmBtn = document.getElementById('confirm-modal-confirm');
-            if (title === 'Удалить аккаунт' || title === 'Удалить аватара') {
-                confirmBtn.innerText = 'Удалить';
-            } else if (title === 'Отмена выдачи') {
-                confirmBtn.innerText = 'Да, отменить';
-            } else {
-                confirmBtn.innerText = 'Удалить';
-            }
+            confirmBtn.innerText = translations[currentLang].btnDelete;
 
             animateModalOpen('confirm-modal');
             
@@ -456,7 +1039,7 @@
             };
         }
 
-        // --- Avatar Info Modal Logic ---
+        // Avatar details rendering
         const accordionBtn = document.getElementById('visits-accordion-btn');
         const accordionContent = document.getElementById('visits-accordion-content');
         const accordionIcon = document.getElementById('visits-accordion-icon');
@@ -479,24 +1062,24 @@
 
             data.prizes.forEach((prize) => {
                 const card = document.createElement('div');
-                card.className = 'relative flex flex-col items-center text-center p-4 rounded-[28px] border-2 transition-all duration-300 h-full min-h-[210px]';
+                card.className = 'relative flex flex-col items-center text-center p-4 rounded-[28px] border-2 dark:border-gray-700 transition-all duration-300 h-full min-h-[210px] bg-white dark:bg-gray-800';
 
                 const iconBox = document.createElement('div');
                 iconBox.className = 'w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 mb-4 transition-transform duration-300 group-hover:scale-110 shadow-sm';
 
                 const titleSpan = document.createElement('span');
-                titleSpan.className = 'text-[14px] font-extrabold text-gray-900 leading-tight w-full mb-1.5';
-                titleSpan.innerText = prize.title || 'Приз';
+                titleSpan.className = 'text-[14px] font-extrabold text-gray-900 dark:text-white leading-tight w-full mb-1.5';
+                titleSpan.innerText = prize.title;
                 
                 const descSpan = document.createElement('span');
                 descSpan.className = 'text-[10px] font-bold uppercase tracking-wider mb-5 flex items-center justify-center w-full h-[22px]';
                 
                 if (prize.status === 'available') {
-                    descSpan.innerHTML = '<span class="bg-brand-purple/10 text-brand-purple px-2 py-1.5 rounded-xl text-[9px]">Доступен</span>';
+                    descSpan.innerHTML = `<span class="bg-brand-purple/10 text-brand-purple dark:bg-purple-950/40 dark:text-purple-400 px-2 py-1.5 rounded-xl text-[9px]">${translations[currentLang].avatarStatusAvailable}</span>`;
                 } else if (prize.status === 'received') {
-                    descSpan.innerHTML = '<span class="bg-green-50 text-green-600 px-2 py-1.5 rounded-xl text-[9px]">Получен</span>';
+                    descSpan.innerHTML = `<span class="bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-2 py-1.5 rounded-xl text-[9px]">${translations[currentLang].avatarStatusReceived}</span>`;
                 } else {
-                    descSpan.className += ' text-gray-400';
+                    descSpan.className += ' text-gray-400 dark:text-gray-500';
                     descSpan.innerText = prize.desc || '';
                 }
 
@@ -504,26 +1087,27 @@
                 actionWrapper.className = 'mt-auto w-full';
 
                 if (prize.status === 'received') {
-                    card.classList.add('bg-white', 'border-gray-100', 'shadow-sm');
-                    iconBox.classList.add('bg-green-50', 'text-green-500', 'border', 'border-green-100');
-                    iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                    card.classList.add('border-gray-100', 'dark:border-gray-700', 'shadow-sm');
+                    iconBox.classList.add('bg-green-50', 'dark:bg-green-950/20', 'text-green-500', 'border', 'border-green-100', 'dark:border-green-900/50');
+                    iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>';
                     
                     actionWrapper.innerHTML = `
                         <div class="flex flex-col gap-2 w-full">
-                            <div class="flex items-center justify-center gap-1.5 bg-green-50 border-2 border-transparent py-2 rounded-[14px] w-full text-green-600">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                <span class="text-[11px] font-bold uppercase tracking-wide">Выдано</span>
+                            <div class="flex items-center justify-center gap-1.5 bg-green-50 dark:bg-green-950/20 border-2 border-transparent py-2 rounded-[14px] w-full text-green-600 dark:text-green-400">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-[11px] font-bold uppercase tracking-wide">${translations[currentLang].avatarBtnIssued}</span>
                             </div>
-                            <button class="undo-btn flex items-center justify-center bg-white text-gray-400 hover:bg-gray-50 hover:text-gray-700 border-2 border-gray-100 py-1.5 rounded-[12px] transition-all duration-300 w-full focus:outline-none cursor-pointer">
-                                <span class="text-[10px] font-bold uppercase tracking-wide">Отменить</span>
+                            <button class="undo-btn flex items-center justify-center bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300 border-2 border-gray-100 dark:border-gray-700 py-1.5 rounded-[12px] transition-all duration-300 w-full focus:outline-none cursor-pointer">
+                                <span class="text-[10px] font-bold uppercase tracking-wide">${translations[currentLang].avatarBtnUndo}</span>
                             </button>
                         </div>
                     `;
 
-                    actionWrapper.querySelector('.undo-btn').onclick = () => {
+                    actionWrapper.querySelector('.undo-btn').onclick = (e) => {
+                        e.stopPropagation();
                         showConfirmModal(
-                            'Отмена выдачи',
-                            `Вы уверены, что хотите отменить выдачу приза "${prize.title}"?`,
+                            translations[currentLang].confirmCancelPrize,
+                            translations[currentLang].confirmCancelPrizeMsg,
                             () => {
                                 prize.status = 'available';
                                 renderPrizes(childName);
@@ -533,33 +1117,32 @@
                     };
 
                 } else if (prize.status === 'available') {
-                    card.classList.add('bg-white', 'border-brand-purple/30', 'shadow-xl', 'shadow-brand-purple/5', 'hover:-translate-y-1', 'group', 'cursor-pointer');
+                    card.classList.add('border-brand-purple/30', 'shadow-xl', 'shadow-brand-purple/5', 'hover:-translate-y-1', 'group', 'cursor-pointer');
                     iconBox.classList.add('bg-brand-purple', 'text-white', 'shadow-md', 'shadow-brand-purple/30');
-                    iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>';
+                    iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>';
                     
                     const issueBtn = document.createElement('button');
                     issueBtn.className = 'w-full bg-brand-purple text-white py-3 rounded-[16px] text-[12px] uppercase tracking-wider font-extrabold hover:bg-brand-purpleHover shadow-md shadow-brand-purple/20 transition-all focus:outline-none group-hover:shadow-lg group-hover:shadow-brand-purple/30 group-hover:-translate-y-0.5';
-                    issueBtn.innerText = 'Выдать';
-                    issueBtn.onclick = () => {
+                    issueBtn.innerText = translations[currentLang].avatarBtnIssue;
+                    issueBtn.onclick = (e) => {
+                        e.stopPropagation();
                         prize.status = 'received';
                         renderPrizes(childName);
                     };
-                    card.onclick = (e) => {
-                        if (e.target !== issueBtn) {
-                            issueBtn.click();
-                        }
+                    card.onclick = () => {
+                        issueBtn.click();
                     };
                     actionWrapper.appendChild(issueBtn);
                 } else {
                     // locked
-                    card.classList.add('bg-gray-50', 'border-gray-50', 'opacity-60');
-                    iconBox.classList.add('bg-gray-200', 'text-gray-400');
-                    iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>';
+                    card.classList.add('bg-gray-50', 'dark:bg-gray-800/40', 'border-gray-50', 'dark:border-gray-700/50', 'opacity-60');
+                    iconBox.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-400', 'dark:text-gray-500');
+                    iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>';
                     
                     actionWrapper.innerHTML = `
-                        <div class="flex items-center justify-center gap-1.5 bg-gray-200/50 py-3 rounded-[16px] text-gray-400 w-full border-2 border-transparent">
-                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                             <span class="text-[12px] font-bold uppercase tracking-wider">Закрыто</span>
+                        <div class="flex items-center justify-center gap-1.5 bg-gray-200/50 dark:bg-gray-700/50 py-3 rounded-[16px] text-gray-400 dark:text-gray-500 w-full border-2 border-transparent">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                             <span class="text-[12px] font-bold uppercase tracking-wider">${translations[currentLang].avatarStatusLocked}</span>
                         </div>
                     `;
                 }
@@ -568,7 +1151,6 @@
                 card.appendChild(titleSpan);
                 card.appendChild(descSpan);
                 card.appendChild(actionWrapper);
-                
                 container.appendChild(card);
             });
         }
@@ -576,9 +1158,9 @@
         function showAvatarInfo(childName) {
             const data = getAvatarData(childName);
             
-            document.getElementById('avatar-info-name').textContent = childName + " (Аватар)";
+            document.getElementById('avatar-info-name').textContent = childName + " (" + translations[currentLang].statusAvatar + ")";
             document.getElementById('avatar-info-level').textContent = data.level;
-            document.getElementById('avatar-balance-pill').innerHTML = data.balance + ' <span class="text-base font-bold text-brand-orange ml-0.5">баллов</span>';
+            document.getElementById('avatar-balance-pill').innerHTML = data.balance + ' <span class="text-base font-bold text-brand-orange ml-0.5">' + translations[currentLang].avatarPoints + '</span>';
 
             // Render Prizes
             renderPrizes(childName);
@@ -589,19 +1171,19 @@
             visitsContainer.innerHTML = '';
             
             if (data.visits.length === 0) {
-                visitsContainer.innerHTML = '<div class="text-sm text-gray-500 py-1">Нет посещений</div>';
+                visitsContainer.innerHTML = `<div class="text-sm text-gray-500 py-1">${currentLang === 'ru' ? 'Нет посещений' : 'No visits'}</div>`;
             } else {
                 data.visits.forEach(visit => {
                     visitsContainer.innerHTML += `
-                        <div class="flex items-center gap-3 py-1.5 border-b border-gray-100/50 last:border-0">
+                        <div class="flex items-center gap-3 py-1.5 border-b border-gray-100/50 dark:border-gray-700/50 last:border-0">
                             <div class="w-2 h-2 rounded-full bg-brand-orange"></div>
-                            <span class="text-sm font-medium text-gray-700">${visit}</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-slate-300">${visit}</span>
                         </div>
                     `;
                 });
             }
 
-            // Ensure accordion is closed by default when opening modal
+            // Ensure accordion is closed by default
             accordionContent.classList.add('hidden');
             accordionIcon.classList.remove('rotate-180');
 
@@ -614,130 +1196,609 @@
             });
         });
 
-        // "Проверить браслет" Header Button - Имитация разных сценариев для ТЗ
-        let checkScenarioIndex = 0;
-        document.getElementById('check-bracelet-global-btn').addEventListener('click', () => {
-            showRfidModal(() => {
-                // Имитация чтения браслета и разных исходов
-                const scenarios = [
-                    { type: 'empty', message: 'Этот браслет пуст и никому не принадлежит' },
-                    { type: 'occupied', message: 'Ошибка: Браслет привязан к другому гостю', error: true },
-                    { type: 'noAvatar', message: 'Гость в парке, но Аватар еще не создан. Отправьте на Квест Портал.' },
-                    { type: 'avatar', childName: 'Случайный Гость' } 
-                ];
-
-                const scenario = scenarios[checkScenarioIndex % scenarios.length];
-                checkScenarioIndex++;
-
-                if (scenario.type === 'avatar') {
-                    recordVisit(scenario.childName);
-                    showAvatarInfo(scenario.childName);
-                } else if (scenario.error) {
-                    showToast(scenario.message, 'error');
-                } else {
-                    showToast(scenario.message, 'info');
-                }
-            });
-        });
-
         // Add Account Form Logic
         const addChildFieldBtn = document.getElementById('add-child-field-btn');
         const childrenFieldsContainer = document.getElementById('children-fields-container');
         
         let phoneVerified = false;
+        let smsTimer = null;
+        let smsTimeLeft = 59;
 
         function openAddAccountModal() {
             document.getElementById('new-account-fio').value = '';
             document.getElementById('new-account-fio').classList.remove('border-red-500');
             const phoneInput = document.getElementById('new-account-phone');
             phoneInput.value = '';
-            phoneInput.classList.remove('border-red-500');
+            phoneInput.classList.remove('border-red-500', 'border-green-500');
+            const wrapper = document.getElementById('phone-input-wrapper');
+            wrapper.className = 'phone-input-wrapper';
+            
             document.getElementById('phone-error-msg').classList.add('hidden');
             document.getElementById('send-sms-btn').classList.add('hidden');
             document.getElementById('sms-code-block').classList.add('hidden');
+            document.getElementById('sms-error-msg').classList.add('hidden');
             document.getElementById('phone-verified-icon').classList.add('hidden');
             document.getElementById('sms-code-input').value = '';
+            document.getElementById('sms-code-input').classList.remove('border-red-500');
+            
+            if (smsTimer) clearInterval(smsTimer);
             phoneVerified = false;
             childrenFieldsContainer.innerHTML = ''; 
+            
+            // Add one default child input
+            addChildInputField();
+            
             animateModalOpen('add-account-modal');
         }
 
-        // Phone validation helpers
-        function getPhoneDigits(val) {
-            return val.replace(/[^\d]/g, '');
-        }
-        function isPhoneValid(val) {
-            const digits = getPhoneDigits(val);
-            return digits.length === 11 && (digits.startsWith('7') || digits.startsWith('8'));
-        }
-
-        // Show/hide SMS button based on phone validity
-        document.getElementById('new-account-phone').addEventListener('input', (e) => {
-            const val = e.target.value;
-            const sendBtn = document.getElementById('send-sms-btn');
-            const errorMsg = document.getElementById('phone-error-msg');
-            errorMsg.classList.add('hidden');
-            e.target.classList.remove('border-red-500');
-            
-            if (phoneVerified) {
-                // Reset verification if user changes number
-                phoneVerified = false;
-                document.getElementById('phone-verified-icon').classList.add('hidden');
-                document.getElementById('sms-code-block').classList.add('hidden');
-            }
-
-            if (isPhoneValid(val)) {
-                sendBtn.classList.remove('hidden');
-            } else {
-                sendBtn.classList.add('hidden');
-            }
-        });
-
-        // Send SMS button
-        document.getElementById('send-sms-btn').addEventListener('click', () => {
-            document.getElementById('send-sms-btn').classList.add('hidden');
-            document.getElementById('sms-code-block').classList.remove('hidden');
-            document.getElementById('sms-code-input').value = '';
-            document.getElementById('sms-code-input').focus();
-            showToast('СМС-код отправлен на указанный номер', 'info');
-        });
-
-        // Verify SMS code
-        document.getElementById('verify-sms-btn').addEventListener('click', () => {
-            const code = document.getElementById('sms-code-input').value.trim();
-            if (code.length === 4 && /^\d{4}$/.test(code)) {
-                phoneVerified = true;
-                document.getElementById('sms-code-block').classList.add('hidden');
-                document.getElementById('phone-verified-icon').classList.remove('hidden');
-                document.getElementById('new-account-phone').classList.remove('border-red-500');
-                document.getElementById('new-account-phone').classList.add('border-green-500');
-                showToast('Номер успешно подтверждён!', 'info');
-            } else {
-                document.getElementById('sms-code-input').classList.add('border-red-500');
-                showToast('Введите 4-значный цифровой код', 'error');
-            }
-        });
-
-        document.getElementById('cancel-add-account').addEventListener('click', () => animateModalClose('add-account-modal'));
-        document.getElementById('cancel-add-account-icon').addEventListener('click', () => animateModalClose('add-account-modal'));
-
-        addChildFieldBtn.addEventListener('click', (e) => {
-            e.preventDefault();
+        function addChildInputField() {
             const fieldDiv = document.createElement('div');
-            fieldDiv.classList.add('flex', 'space-x-3', 'items-center', 'child-input-group', 'bg-gray-50', 'p-2', 'rounded-2xl');
+            fieldDiv.className = 'flex space-x-3 items-center child-input-group bg-gray-50 dark:bg-gray-700/50 p-2 rounded-2xl border border-transparent dark:border-gray-700';
             fieldDiv.innerHTML = `
-                <input type="text" placeholder="Имя ребенка" class="child-name flex-1 px-4 py-3 bg-white border-2 border-transparent rounded-xl focus:outline-none focus:border-brand-purple font-medium">
-                <input type="date" class="child-dob w-44 px-4 py-3 bg-white border-2 border-transparent rounded-xl text-gray-600 focus:outline-none focus:border-brand-purple font-medium">
-                <button type="button" class="remove-child-field w-12 h-12 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 rounded-xl font-bold transition-colors">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                <input type="text" placeholder="${translations[currentLang].addAccChildName}" class="child-name flex-1 px-4 py-3 bg-white dark:bg-gray-800 dark:text-white border border-transparent dark:border-gray-600 rounded-xl focus:outline-none focus:border-brand-purple font-medium text-sm">
+                <input type="date" class="child-dob w-40 px-4 py-3 bg-white dark:bg-gray-800 dark:text-white border border-transparent dark:border-gray-600 rounded-xl text-gray-600 dark:text-gray-300 focus:outline-none focus:border-brand-purple font-medium text-xs">
+                <button type="button" class="remove-child-field w-12 h-12 flex items-center justify-center bg-red-50 dark:bg-red-950/20 text-red-500 dark:text-red-400 hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-900/30 rounded-xl font-bold transition-colors">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                 </button>
             `;
             fieldDiv.querySelector('.remove-child-field').addEventListener('click', () => {
                 fieldDiv.remove();
             });
             childrenFieldsContainer.appendChild(fieldDiv);
+        }
+
+        addChildFieldBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            addChildInputField();
         });
 
+        // Phone validation helpers — local 10 digits
+        function getPhoneDigits(val) {
+            return val.replace(/[^\d]/g, '');
+        }
+        function isPhoneLocalValid(val) {
+            const digits = getPhoneDigits(val);
+            return digits.length === 10;
+        }
+        function isPhoneValid(val) {
+            const digits = getPhoneDigits(val);
+            if (digits.length === 10) return true;
+            return digits.length === 11 && (digits.startsWith('7') || digits.startsWith('8'));
+        }
+
+        function formatPhoneLocal(value) {
+            let digits = value.replace(/[^\d]/g, '');
+            if (digits.length >= 11 && (digits.startsWith('7') || digits.startsWith('8'))) {
+                digits = digits.slice(1);
+            }
+            digits = digits.slice(0, 10);
+            if (digits.length === 0) return '';
+            
+            let formatted = '(';
+            formatted += digits.slice(0, 3);
+            if (digits.length > 3) {
+                formatted += ') ' + digits.slice(3, 6);
+            }
+            if (digits.length > 6) {
+                formatted += '-' + digits.slice(6, 8);
+            }
+            if (digits.length > 8) {
+                formatted += '-' + digits.slice(8, 10);
+            }
+            return formatted;
+        }
+
+        function formatPhoneNumber(value) {
+            let digits = value.replace(/[^\d]/g, '');
+            if (digits.length === 0) return '';
+            if (digits.length === 11 && (digits.startsWith('7') || digits.startsWith('8'))) {
+                digits = digits.slice(1);
+            }
+            digits = digits.slice(0, 10);
+            if (digits.length === 0) return '';
+            let formatted = '+7 (';
+            formatted += digits.slice(0, 3);
+            if (digits.length > 3) formatted += ') ' + digits.slice(3, 6);
+            if (digits.length > 6) formatted += '-' + digits.slice(6, 8);
+            if (digits.length > 8) formatted += '-' + digits.slice(8, 10);
+            return formatted;
+        }
+
+        function getFullPhone() {
+            const digits = getPhoneDigits(document.getElementById('new-account-phone').value);
+            return '+7' + digits;
+        }
+
+        const phoneInput = document.getElementById('new-account-phone');
+        const phonePrefixBadge = document.getElementById('phone-input-wrapper');
+
+        phonePrefixBadge.addEventListener('click', () => phoneInput.focus());
+
+        phoneInput.addEventListener('focus', () => {
+            if (!phoneVerified) {
+                phonePrefixBadge.classList.add('focused');
+            }
+        });
+        phoneInput.addEventListener('blur', () => {
+            phonePrefixBadge.classList.remove('focused');
+        });
+
+        phoneInput.addEventListener('input', (e) => {
+            const formatted = formatPhoneLocal(e.target.value);
+            e.target.value = formatted;
+            
+            const sendBtn = document.getElementById('send-sms-btn');
+            const errorMsg = document.getElementById('phone-error-msg');
+            errorMsg.classList.add('hidden');
+            phonePrefixBadge.classList.remove('error', 'verified');
+            
+            if (phoneVerified) {
+                phoneVerified = false;
+                document.getElementById('phone-verified-icon').classList.add('hidden');
+                document.getElementById('sms-code-block').classList.add('hidden');
+            }
+
+            const digits = getPhoneDigits(formatted);
+            if (digits.length === 10) {
+                sendBtn.classList.remove('hidden');
+            } else {
+                sendBtn.classList.add('hidden');
+            }
+        });
+
+        function startSmsTimer() {
+            const resendBtn = document.getElementById('resend-sms-btn');
+            smsTimeLeft = 59;
+            resendBtn.disabled = true;
+            resendBtn.innerText = `${translations[currentLang].addAccSmsTime} (${smsTimeLeft} ${currentLang === 'ru' ? 'сек' : 's'})`;
+            
+            if (smsTimer) clearInterval(smsTimer);
+            smsTimer = setInterval(() => {
+                smsTimeLeft--;
+                if (smsTimeLeft <= 0) {
+                    clearInterval(smsTimer);
+                    resendBtn.disabled = false;
+                    resendBtn.innerText = translations[currentLang].addAccSmsTime;
+                } else {
+                    resendBtn.innerText = `${translations[currentLang].addAccSmsTime} (${smsTimeLeft} ${currentLang === 'ru' ? 'сек' : 's'})`;
+                }
+            }, 1000);
+        }
+
+        // Send SMS
+        document.getElementById('send-sms-btn').addEventListener('click', () => {
+            document.getElementById('send-sms-btn').classList.add('hidden');
+            document.getElementById('sms-code-block').classList.remove('hidden');
+            document.getElementById('sms-code-input').value = '';
+            document.getElementById('sms-error-msg').classList.add('hidden');
+            document.getElementById('sms-code-input').classList.remove('border-red-500');
+            document.getElementById('sms-code-input').focus();
+            showToast(translations[currentLang].toastSmsSent, 'info');
+            startSmsTimer();
+        });
+
+        // Resend SMS
+        document.getElementById('resend-sms-btn').addEventListener('click', () => {
+            document.getElementById('sms-code-input').value = '';
+            document.getElementById('sms-error-msg').classList.add('hidden');
+            document.getElementById('sms-code-input').classList.remove('border-red-500');
+            document.getElementById('sms-code-input').focus();
+            showToast(translations[currentLang].toastSmsResent, 'info');
+            startSmsTimer();
+        });
+
+        // Verify SMS code
+        document.getElementById('verify-sms-btn').addEventListener('click', () => {
+            const code = document.getElementById('sms-code-input').value.trim();
+            const input = document.getElementById('sms-code-input');
+            const errorMsg = document.getElementById('sms-error-msg');
+            
+            if (code.length === 4 && /^\d{4}$/.test(code)) {
+                if (code === '0000') {
+                    input.classList.add('border-red-500');
+                    errorMsg.innerText = translations[currentLang].addAccSmsError;
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
+                phoneVerified = true;
+                if (smsTimer) clearInterval(smsTimer);
+                document.getElementById('sms-code-block').classList.add('hidden');
+                document.getElementById('phone-verified-icon').classList.remove('hidden');
+                phonePrefixBadge.classList.remove('focused', 'error');
+                phonePrefixBadge.classList.add('verified');
+                showToast(translations[currentLang].toastPhoneVerified, 'success');
+            } else {
+                input.classList.add('border-red-500');
+                errorMsg.innerText = currentLang === 'ru' ? 'Код должен содержать 4 цифры' : 'Code must be 4 digits';
+                errorMsg.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('cancel-add-account').addEventListener('click', () => animateModalClose('add-account-modal'));
+        document.getElementById('cancel-add-account-icon').addEventListener('click', () => animateModalClose('add-account-modal'));
+
+        // RFID Binding Modal Logic
+        let currentRfidParentId = null;
+        let currentRfidChildId = null;
+
+        // Chain-binding state
+        let rfidChainQueue = [];     // Array of { parentId, childId, childName }
+        let rfidChainIndex = 0;      // Current index in the queue
+        let rfidChainMode = false;   // Whether we're in chain-binding mode
+
+        function resetRfidModalUI() {
+            const bindingContent = document.getElementById('rfid-binding-content');
+            const successOverlay = document.getElementById('rfid-success-overlay');
+            bindingContent.classList.remove('hidden');
+            successOverlay.classList.add('hidden');
+            // Reset success overlay animations by removing and re-adding inner HTML later
+        }
+
+        function updateChainProgress() {
+            const progressEl = document.getElementById('rfid-chain-progress');
+            const labelEl = document.getElementById('rfid-chain-label');
+            const cancelBtn = document.getElementById('rfid-cancel-btn');
+            
+            if (rfidChainMode && rfidChainQueue.length > 0) {
+                progressEl.classList.remove('hidden');
+                const t = translations[currentLang];
+                labelEl.textContent = `${t.rfidChainLabel} ${rfidChainIndex + 1} ${t.rfidChainOf} ${rfidChainQueue.length}`;
+                cancelBtn.textContent = t.rfidSkip;
+            } else {
+                progressEl.classList.add('hidden');
+                cancelBtn.textContent = translations[currentLang].rfidCancel;
+            }
+        }
+
+        function openRfidModal(parentId, childId) {
+            const parent = accounts.find(a => a.id === parentId);
+            if (!parent) return;
+            const child = parent.children.find(c => c.id === childId);
+            if (!child) return;
+            
+            currentRfidParentId = parentId;
+            currentRfidChildId = childId;
+            
+            // If opening from table (not chain), reset chain mode
+            if (!rfidChainMode) {
+                rfidChainQueue = [];
+                rfidChainIndex = 0;
+            }
+            
+            resetRfidModalUI();
+            
+            const nameEl = document.getElementById('rfid-child-name');
+            nameEl.textContent = child.name.toUpperCase();
+            nameEl.classList.remove('rfid-name-out', 'rfid-name-in');
+            
+            const input = document.getElementById('rfid-code-input');
+            input.value = child.rfid || ''; 
+            input.classList.remove('border-red-500');
+            
+            const errorMsg = document.getElementById('rfid-modal-error-msg');
+            errorMsg.classList.add('hidden');
+            
+            updateChainProgress();
+            
+            animateModalOpen('rfid-modal');
+        }
+
+        // Start chain-binding for a newly created account
+        function startChainBinding(parentId) {
+            const parent = accounts.find(a => a.id === parentId);
+            if (!parent || !parent.children || parent.children.length === 0) return;
+            
+            rfidChainMode = true;
+            rfidChainQueue = parent.children.map(child => ({
+                parentId: parentId,
+                childId: child.id,
+                childName: child.name
+            }));
+            rfidChainIndex = 0;
+            
+            // Open modal for first child
+            const first = rfidChainQueue[0];
+            openRfidModal(first.parentId, first.childId);
+        }
+
+        // Transition to next child in chain (with success animation)
+        function showRfidSuccess(childName, onDone) {
+            const bindingContent = document.getElementById('rfid-binding-content');
+            const successOverlay = document.getElementById('rfid-success-overlay');
+            const successNameEl = document.getElementById('rfid-success-child-name');
+            
+            successNameEl.textContent = childName.toUpperCase();
+            
+            // Re-trigger animations by cloning inner content
+            const iconContainer = successOverlay.querySelector('.rfid-success-icon');
+            const ring = successOverlay.querySelector('.rfid-success-ring');
+            const checkmark = successOverlay.querySelector('.rfid-checkmark');
+            
+            // Force animation restart
+            if (iconContainer) {
+                iconContainer.style.animation = 'none';
+                iconContainer.offsetHeight; // reflow
+                iconContainer.style.animation = '';
+            }
+            if (ring) {
+                ring.style.animation = 'none';
+                ring.offsetHeight;
+                ring.style.animation = '';
+            }
+            if (checkmark) {
+                checkmark.style.animation = 'none';
+                checkmark.offsetHeight;
+                checkmark.style.animation = '';
+            }
+            
+            bindingContent.classList.add('hidden');
+            successOverlay.classList.remove('hidden');
+            
+            setTimeout(() => {
+                if (onDone) onDone();
+            }, 1500);
+        }
+
+        // Move to next child in chain
+        function advanceChain() {
+            rfidChainIndex++;
+            
+            if (rfidChainIndex >= rfidChainQueue.length) {
+                // All done!
+                rfidChainMode = false;
+                animateModalClose('rfid-modal', () => {
+                    showToast(translations[currentLang].rfidAllBound, 'success');
+                    renderAccounts();
+                });
+                return;
+            }
+            
+            const next = rfidChainQueue[rfidChainIndex];
+            const parent = accounts.find(a => a.id === next.parentId);
+            if (!parent) return;
+            const child = parent.children.find(c => c.id === next.childId);
+            if (!child) return;
+            
+            currentRfidParentId = next.parentId;
+            currentRfidChildId = next.childId;
+            
+            // Show binding content again
+            resetRfidModalUI();
+            
+            // Animate name transition
+            const nameEl = document.getElementById('rfid-child-name');
+            nameEl.classList.add('rfid-name-in');
+            nameEl.textContent = child.name.toUpperCase();
+            
+            const input = document.getElementById('rfid-code-input');
+            input.value = '';
+            input.classList.remove('border-red-500');
+            document.getElementById('rfid-modal-error-msg').classList.add('hidden');
+            
+            updateChainProgress();
+            
+            // Remove animation class after it completes
+            setTimeout(() => {
+                nameEl.classList.remove('rfid-name-in');
+            }, 300);
+        }
+
+        document.getElementById('rfid-generate-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = 'RFID';
+            for (let i = 0; i < 20; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('rfid-code-input').value = code;
+            document.getElementById('rfid-code-input').classList.remove('border-red-500');
+            document.getElementById('rfid-modal-error-msg').classList.add('hidden');
+        });
+
+        document.getElementById('rfid-code-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('rfid-confirm-btn').click();
+            }
+        });
+
+        document.getElementById('rfid-confirm-btn').addEventListener('click', () => {
+            const parentId = currentRfidParentId;
+            const childId = currentRfidChildId;
+            
+            const parent = accounts.find(a => a.id === parentId);
+            if (!parent) return;
+            const child = parent.children.find(c => c.id === childId);
+            if (!child) return;
+            
+            const code = document.getElementById('rfid-code-input').value.trim();
+            const input = document.getElementById('rfid-code-input');
+            const errorMsg = document.getElementById('rfid-modal-error-msg');
+            
+            if (!code) {
+                input.classList.add('border-red-500');
+                errorMsg.textContent = currentLang === 'ru' ? 'Введите RFID код' : 'Enter RFID code';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            
+            // Check if code is occupied
+            let isOccupied = false;
+            let occupiedName = '';
+            accounts.forEach(acc => {
+                acc.children.forEach(c => {
+                    if (c.id !== childId && c.rfid === code) {
+                        isOccupied = true;
+                        occupiedName = c.name;
+                    }
+                });
+            });
+            
+            if (isOccupied) {
+                input.classList.add('border-red-500');
+                errorMsg.textContent = currentLang === 'ru' 
+                    ? `Ошибка: этот браслет уже привязан к ${occupiedName}` 
+                    : `Error: this bracelet is already bound to ${occupiedName}`;
+                errorMsg.classList.remove('hidden');
+                showToast(translations[currentLang].toastOccupiedBracelet, 'error');
+                return;
+            }
+            
+            child.rfid = code;
+            if (child.status === 'Нет') {
+                child.status = 'Браслет';
+            }
+            
+            recordVisit(child.name);
+            
+            if (rfidChainMode) {
+                // Show success inside modal, then advance
+                showRfidSuccess(child.name, () => {
+                    advanceChain();
+                });
+            } else {
+                // Regular single-bind: close modal
+                animateModalClose('rfid-modal', () => {
+                    showToast(translations[currentLang].toastBraceletSuccess, 'success');
+                    renderAccounts();
+                });
+            }
+        });
+
+        document.getElementById('rfid-cancel-btn').addEventListener('click', () => {
+            if (rfidChainMode) {
+                // Skip this child, move to next
+                if (rfidChainIndex + 1 >= rfidChainQueue.length) {
+                    // Last child — close modal
+                    rfidChainMode = false;
+                    animateModalClose('rfid-modal', () => {
+                        renderAccounts();
+                    });
+                } else {
+                    advanceChain();
+                }
+            } else {
+                animateModalClose('rfid-modal');
+            }
+        });
+
+
+        // Add Child modal to existing account
+        let currentAddChildParentId = null;
+
+        function openAddChildModal(parentId) {
+            currentAddChildParentId = parentId;
+            document.getElementById('existing-child-name').value = '';
+            document.getElementById('existing-child-dob').value = '';
+            document.getElementById('add-child-error-msg').classList.add('hidden');
+            animateModalOpen('add-child-modal');
+        }
+
+        document.getElementById('add-child-submit-btn').addEventListener('click', () => {
+            const parent = accounts.find(a => a.id === currentAddChildParentId);
+            if (!parent) return;
+            
+            const name = document.getElementById('existing-child-name').value.trim();
+            const dob = document.getElementById('existing-child-dob').value;
+            const errorMsg = document.getElementById('add-child-error-msg');
+            
+            if (!name) {
+                errorMsg.textContent = currentLang === 'ru' ? 'Введите имя ребенка' : 'Enter child name';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            
+            const childId = Date.now();
+            const newChild = {
+                id: childId,
+                name: name,
+                dob: dob || null,
+                uid: generateChildUID(),
+                status: 'Нет',
+                rfid: null
+            };
+            
+            parent.children.push(newChild);
+            parent.expanded = true; 
+            
+            animateModalClose('add-child-modal', () => {
+                renderAccounts();
+            });
+        });
+
+        document.getElementById('add-child-cancel-btn').addEventListener('click', () => animateModalClose('add-child-modal'));
+        document.getElementById('add-child-cancel-icon').addEventListener('click', () => animateModalClose('add-child-modal'));
+
+        // Check Bracelet Global Modal
+        function openCheckBraceletModal() {
+            const testCodesContainer = document.getElementById('check-bracelet-test-codes');
+            testCodesContainer.innerHTML = '';
+            
+            const activeRfidCodes = [];
+            accounts.forEach(acc => {
+                acc.children.forEach(c => {
+                    if (c.rfid) {
+                        activeRfidCodes.push({ name: c.name, code: c.rfid, status: c.status });
+                    }
+                });
+            });
+            
+            if (activeRfidCodes.length === 0) {
+                testCodesContainer.innerHTML = `<span class="text-[10px] font-bold text-gray-400 dark:text-gray-500">${currentLang === 'ru' ? 'Нет привязанных браслетов' : 'No bound bracelets'}</span>`;
+            } else {
+                activeRfidCodes.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = 'text-[9px] font-bold bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors focus:outline-none';
+                    btn.textContent = `${item.name} (${item.code})`;
+                    btn.onclick = () => {
+                        document.getElementById('check-bracelet-input').value = item.code;
+                    };
+                    testCodesContainer.appendChild(btn);
+                });
+            }
+            
+            document.getElementById('check-bracelet-input').value = '';
+            animateModalOpen('check-bracelet-modal');
+        }
+
+        document.getElementById('check-bracelet-global-btn').addEventListener('click', openCheckBraceletModal);
+
+        document.getElementById('check-bracelet-confirm-btn').addEventListener('click', () => {
+            const code = document.getElementById('check-bracelet-input').value.trim();
+            if (!code) return;
+            
+            let foundChild = null;
+            let foundParent = null;
+            accounts.forEach(acc => {
+                acc.children.forEach(c => {
+                    if (c.rfid === code) {
+                        foundChild = c;
+                        foundParent = acc;
+                    }
+                });
+            });
+            
+            animateModalClose('check-bracelet-modal', () => {
+                if (foundChild) {
+                    recordVisit(foundChild.name);
+                    if (foundChild.status === 'Аватар') {
+                        showAvatarInfo(foundChild.name);
+                    } else if (foundChild.status === 'Браслет') {
+                        showToast(translations[currentLang].toastNoAvatar, 'info');
+                    } else {
+                        showToast(translations[currentLang].toastEmptyBracelet, 'info');
+                    }
+                } else {
+                    showToast(translations[currentLang].toastEmptyBracelet, 'error');
+                }
+            });
+        });
+
+        document.getElementById('check-bracelet-cancel-btn').addEventListener('click', () => {
+            animateModalClose('check-bracelet-modal');
+        });
+
+        // Submit add account logic
         document.getElementById('submit-add-account').addEventListener('click', () => {
             const fioInput = document.getElementById('new-account-fio');
             const phoneInput = document.getElementById('new-account-phone');
@@ -747,319 +1808,487 @@
             
             if (!fio) {
                 fioInput.classList.add('border-red-500');
-                fioInput.classList.remove('border-transparent');
                 hasError = true;
             } else {
                 fioInput.classList.remove('border-red-500');
             }
 
-            // Phone is required
-            if (!phone) {
-                phoneInput.classList.add('border-red-500');
-                phoneInput.classList.remove('border-transparent');
-                document.getElementById('phone-error-msg').innerText = 'Номер телефона обязателен';
+            const phoneDigits = getPhoneDigits(phone);
+            if (!phone || phoneDigits.length === 0) {
+                phonePrefixBadge.classList.add('error');
+                document.getElementById('phone-error-msg').textContent = currentLang === 'ru' ? 'Номер телефона обязателен' : 'Phone is required';
                 document.getElementById('phone-error-msg').classList.remove('hidden');
                 hasError = true;
-            } else if (!isPhoneValid(phone)) {
-                phoneInput.classList.add('border-red-500');
-                phoneInput.classList.remove('border-transparent');
-                document.getElementById('phone-error-msg').innerText = 'Введите корректный номер (+7 XXX XXX XX XX)';
+            } else if (phoneDigits.length !== 10) {
+                phonePrefixBadge.classList.add('error');
+                document.getElementById('phone-error-msg').textContent = currentLang === 'ru' ? 'Введите 10 цифр номера' : 'Enter 10 digits';
                 document.getElementById('phone-error-msg').classList.remove('hidden');
                 hasError = true;
             } else if (!phoneVerified) {
-                phoneInput.classList.add('border-red-500');
-                phoneInput.classList.remove('border-transparent');
-                document.getElementById('phone-error-msg').innerText = 'Подтвердите номер по СМС';
+                phonePrefixBadge.classList.add('error');
+                document.getElementById('phone-error-msg').textContent = currentLang === 'ru' ? 'Подтвердите номер по СМС' : 'Verify phone number via SMS';
                 document.getElementById('phone-error-msg').classList.remove('hidden');
                 hasError = true;
             }
 
             if (hasError) return;
 
-            phoneInput.classList.remove('border-red-500');
+            phonePrefixBadge.classList.remove('error');
             document.getElementById('phone-error-msg').classList.add('hidden');
 
+            const fullPhone = getFullPhone();
             const childrenData = [];
             document.querySelectorAll('.child-input-group').forEach(group => {
                 const name = group.querySelector('.child-name').value.trim();
                 const dob = group.querySelector('.child-dob').value;
                 if (name) {
-                    childrenData.push({ name, dob });
+                    childrenData.push({
+                        id: Date.now() + Math.random(),
+                        name: name,
+                        dob: dob || null,
+                        uid: generateChildUID(),
+                        status: 'Нет',
+                        rfid: null
+                    });
                 }
             });
 
-            const newRows = createAccountRow(fio, phone, childrenData);
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            const dateStr = `${dd}.${mm}.${yyyy}`;
             
-            // Запоминаем текущий первый элемент и вставляем всю группу перед ним, сохраняя порядок
-            const referenceNode = accountsTableBody.firstChild;
-            newRows.forEach(row => accountsTableBody.insertBefore(row, referenceNode));
+            const newParent = {
+                id: Date.now(),
+                fio: fio,
+                phone: formatPhoneNumber(fullPhone),
+                createdAt: dateStr,
+                children: childrenData,
+                expanded: true
+            };
             
-            performSearch();
-            animateModalClose('add-account-modal');
+            accounts.unshift(newParent);
+            
+            animateModalClose('add-account-modal', () => {
+                renderAccounts();
+                // Auto-start chain-binding if children were added
+                if (newParent.children.length > 0) {
+                    setTimeout(() => {
+                        startChainBinding(newParent.id);
+                    }, 400);
+                }
+            });
         });
 
-        // Search Logic
-        function performSearch() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
-            let visibleCount = 0;
-
-            accountGroups.forEach(group => {
-                if (group.searchString.includes(query)) {
-                    group.mainRow.style.display = '';
-                    visibleCount++;
-                    const isExpanded = group.mainRow.dataset.expanded === 'true';
-                    group.childRows.forEach(row => {
-                        row.style.display = isExpanded ? 'table-row' : 'none';
-                    });
-                } else {
-                    group.mainRow.style.display = 'none';
-                    group.childRows.forEach(row => {
-                        row.style.display = 'none';
-                    });
-                }
+        // Filter Pills
+        document.querySelectorAll('.filter-pill').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.getAttribute('data-filter');
+                currentPage = 1; 
+                renderAccounts();
             });
+        });
 
-            document.getElementById('empty-search-state').style.display = (visibleCount === 0 && accountGroups.length > 0) ? 'block' : 'none';
-            document.getElementById('table-container').style.display = (visibleCount === 0 && accountGroups.length > 0) ? 'none' : 'block';
+        // Items per page select
+        document.getElementById('items-per-page-select').addEventListener('change', () => {
+            currentPage = 1;
+            renderAccounts();
+        });
+
+        // Pagination buttons
+        document.getElementById('prev-page-btn').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderAccounts();
+            }
+        });
+        document.getElementById('next-page-btn').addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderAccounts();
+            }
+        });
+
+        // Search inputs
+        document.getElementById('search-input').addEventListener('input', () => {
+            currentPage = 1;
+            renderAccounts();
+        });
+
+        // Dynamic pagination footer rendering
+        function renderPaginationFooter(pagesTotal) {
+            totalPages = pagesTotal;
+            const prevBtn = document.getElementById('prev-page-btn');
+            const nextBtn = document.getElementById('next-page-btn');
+            const pagesContainer = document.getElementById('pagination-pages');
+            
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            prevBtn.textContent = translations[currentLang].prevPage;
+            nextBtn.textContent = translations[currentLang].nextPage;
+            
+            pagesContainer.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `w-9 h-9 flex items-center justify-center rounded-xl text-xs font-bold transition-all focus:outline-none ${i === currentPage ? 'bg-brand-purple text-white shadow-sm shadow-brand-purple/20' : 'bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`;
+                btn.textContent = i;
+                btn.onclick = () => {
+                    currentPage = i;
+                    renderAccounts();
+                };
+                pagesContainer.appendChild(btn);
+            }
         }
 
-        document.getElementById('search-input').addEventListener('input', performSearch);
-        document.getElementById('search-btn').addEventListener('click', performSearch);
-
-        // Main logic to create UI rows
-        function createAccountRow(fio, phoneNumber, childrenData) {
-            const childrenCount = childrenData.length;
+        // Table renderer from central accounts list
+        function renderAccounts() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
             
-            const mainRow = document.createElement('tr');
-            mainRow.classList.add('hover:bg-gray-50/50', 'transition-colors', 'group');
-            mainRow.dataset.expanded = 'false';
-
-            mainRow.innerHTML = `
-                <td class="py-5 px-6 whitespace-nowrap border-t border-gray-100/50">
+            // Step 1: Search query filtering
+            let filtered = accounts.map(p => ({ ...p, children: [...p.children] })).filter(parent => {
+                const nameMatch = parent.fio.toLowerCase().includes(query);
+                const phoneMatch = parent.phone.toLowerCase().includes(query);
+                const childMatch = parent.children.some(c => c.name.toLowerCase().includes(query) || (c.rfid && c.rfid.toLowerCase().includes(query)));
+                return nameMatch || phoneMatch || childMatch;
+            });
+            
+            // Step 2: Status filtering
+            if (currentFilter !== 'all') {
+                filtered = filtered.map(parent => {
+                    const parentCopy = { ...parent, children: [...parent.children] };
+                    parentCopy.children = parentCopy.children.filter(c => {
+                        if (currentFilter === 'nobracelet') return c.status === 'Нет';
+                        if (currentFilter === 'bracelet') return c.status === 'Браслет';
+                        if (currentFilter === 'avatar') return c.status === 'Аватар';
+                        return true;
+                    });
+                    return parentCopy;
+                }).filter(parent => parent.children.length > 0);
+            }
+            
+            // Step 3: Pagination calculation
+            const totalCount = filtered.length;
+            document.getElementById('total-count-badge').textContent = totalCount;
+            
+            itemsPerPage = parseInt(document.getElementById('items-per-page-select').value, 10);
+            const pagesTotal = Math.ceil(totalCount / itemsPerPage) || 1;
+            
+            if (currentPage > pagesTotal) {
+                currentPage = pagesTotal;
+            }
+            
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginated = filtered.slice(start, end);
+            
+            const tbody = document.getElementById('accounts-table-body');
+            tbody.innerHTML = '';
+            
+            if (paginated.length === 0) {
+                document.getElementById('empty-search-state').classList.remove('hidden');
+                document.getElementById('table-container').classList.add('hidden');
+                document.getElementById('pagination-footer').classList.add('hidden');
+                return;
+            } else {
+                document.getElementById('empty-search-state').classList.add('hidden');
+                document.getElementById('table-container').classList.remove('hidden');
+                document.getElementById('pagination-footer').classList.remove('hidden');
+            }
+            
+            // Step 4: Element construction
+            paginated.forEach(parent => {
+                // Parent row
+                const parentRow = document.createElement('tr');
+                parentRow.className = 'hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors group border-b border-gray-100 dark:border-slate-700';
+                
+                const avatarLetter = parent.fio.trim().charAt(0).toUpperCase() || '?';
+                
+                // Column 1
+                const nameCell = document.createElement('td');
+                nameCell.className = 'py-5 px-6 whitespace-nowrap';
+                nameCell.innerHTML = `
                     <div class="flex items-center">
-                        <div class="profile-icon">${fio.charAt(0).toUpperCase()}</div>
+                        <div class="profile-icon select-none bg-blue-500">${avatarLetter}</div>
                         <div>
-                            <span class="font-extrabold text-gray-900 block text-base">${fio}</span>
-                            ${childrenCount > 0 ? `<button class="toggle-children-btn text-brand-purple hover:text-brand-purpleHover font-bold text-xs uppercase tracking-wider mt-1 focus:outline-none flex items-center gap-1">открыть список <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg></button>` : ''}
+                            <span class="font-extrabold text-gray-900 dark:text-white block text-base leading-tight">${parent.fio}</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">${parent.phone}</span>
+                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-semibold">• ${translations[currentLang].childrenCount}: ${parent.children.length}</span>
+                                ${parent.children.length > 0 ? `
+                                <button class="toggle-children-btn text-brand-purple hover:text-brand-purpleHover dark:text-purple-400 dark:hover:text-purple-300 font-extrabold text-[11px] uppercase tracking-wider focus:outline-none flex items-center gap-0.5 ml-2 cursor-pointer">
+                                    <span>${parent.expanded ? translations[currentLang].hideList : translations[currentLang].showList}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transform transition-transform duration-200 ${parent.expanded ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
-                </td>
-                <td class="py-5 px-6 whitespace-nowrap font-medium text-gray-600 border-t border-gray-100/50">${phoneNumber || '—'}</td>
-                <td class="py-5 px-6 whitespace-nowrap font-bold text-gray-800 border-t border-gray-100/50">${childrenCount}</td>
-                <td class="py-5 px-6 whitespace-nowrap text-right border-t border-gray-100/50">
-                    <button class="w-10 h-10 inline-flex items-center justify-center bg-gray-50 text-gray-400 hover:text-brand-purple hover:bg-purple-50 rounded-full transition-colors mr-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                    </button>
-                    <button class="w-10 h-10 inline-flex items-center justify-center bg-gray-50 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors delete-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
-                </td>
-            `;
-
-            const rows = [mainRow];
-            
-            if (childrenCount > 0) {
-                const headerRow = document.createElement('tr');
-                headerRow.classList.add('child-list-row', 'bg-[#f8f9fb]');
-                headerRow.style.display = 'none'; 
-                headerRow.innerHTML = `
-                    <td class="py-3 px-6 pl-[84px] text-[11px] font-extrabold text-gray-400 uppercase tracking-widest rounded-tl-2xl">Имя</td>
-                    <td class="py-3 px-6 text-[11px] font-extrabold text-gray-400 uppercase tracking-widest">Дата рождения</td>
-                    <td class="py-3 px-6 text-[11px] font-extrabold text-gray-400 uppercase tracking-widest">Статус</td>
-                    <td class="py-3 px-6 text-[11px] font-extrabold text-gray-400 uppercase tracking-widest text-right rounded-tr-2xl">Функции</td>
                 `;
-                rows.push(headerRow);
-            }
-
-            childrenData.forEach((child, index) => {
-                const childRow = document.createElement('tr');
-                const isLastChild = index === childrenData.length - 1;
                 
-                const rowClasses = ['child-list-row', 'bg-[#f8f9fb]'];
-                if(isLastChild) {
-                    childRow.innerHTML = `<td class="rounded-bl-2xl"></td><td></td><td></td><td class="rounded-br-2xl"></td>`; 
-                }
-                childRow.className = rowClasses.join(' ');
-                childRow.style.display = 'none';
-                
-                const dobText = child.dob ? new Date(child.dob).toLocaleDateString('ru-RU') : '—';
-                let currentStatus = child.initialStatus || 'Нет'; 
-
-                childRow.innerHTML = `
-                    <td class="py-4 px-6 pl-[84px] whitespace-nowrap font-bold text-gray-800 ${isLastChild ? 'rounded-bl-2xl pb-6' : ''}">
-                        ${child.name}
-                    </td>
-                    <td class="py-4 px-6 whitespace-nowrap font-medium text-gray-500 ${isLastChild ? 'pb-6' : ''}">${dobText}</td>
-                    <td class="py-4 px-6 whitespace-nowrap status-cell ${isLastChild ? 'pb-6' : ''}"></td>
-                    <td class="py-4 px-6 whitespace-nowrap text-right space-x-2 ${isLastChild ? 'rounded-br-2xl pb-6' : ''}">
-                        <button class="attach-bracelet-btn font-bold px-5 py-2.5 rounded-full text-[13px] transition-colors shadow-sm"></button>
-                        <button class="remove-avatar-btn bg-red-50 text-red-500 font-bold px-5 py-2.5 rounded-full text-[13px] hover:bg-red-100 hover:text-red-600 transition-colors">
-                            Удалить
-                        </button>
-                    </td>
-                `;
-
-                const updateChildRowUI = () => {
-                    const statusCell = childRow.querySelector('.status-cell');
-                    const attachBtn = childRow.querySelector('.attach-bracelet-btn');
-
-                    if (currentStatus === 'Нет') {
-                        statusCell.innerHTML = '<span class="text-gray-400 font-bold bg-white px-3 py-1 rounded-full text-xs border border-gray-100">Нет</span>';
-                        attachBtn.textContent = 'Привязать браслет';
-                        attachBtn.className = 'attach-bracelet-btn bg-white border border-gray-200 text-gray-700 font-bold px-5 py-2.5 rounded-full text-[13px] hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm';
-                        attachBtn.style.display = 'inline-block';
-                    } else if (currentStatus === 'Браслет') {
-                        statusCell.innerHTML = '<button class="simulate-avatar-trigger text-brand-orange font-bold bg-orange-50 px-3 py-1 rounded-full text-xs hover:bg-orange-100 transition-colors cursor-pointer focus:outline-none" title="Нажмите для имитации получения данных">Браслет</button>';
-                        
-                        attachBtn.textContent = 'Привязать браслет';
-                        attachBtn.className = 'attach-bracelet-btn bg-brand-orange text-white font-bold px-5 py-2.5 rounded-full text-[13px] hover:bg-brand-orangeHover shadow-md shadow-brand-orange/20 transition-all transform hover:-translate-y-0.5';
-                        attachBtn.style.display = 'inline-block';
-
-                        childRow.querySelector('.simulate-avatar-trigger').addEventListener('click', (e) => {
-                            e.preventDefault();
-                            currentStatus = 'Аватар';
-                            updateChildRowUI();
-                        });
-                    } else if (currentStatus === 'Аватар') {
-                        statusCell.innerHTML = `
-                            <button class="text-brand-purple bg-purple-50 px-3 py-1.5 rounded-full font-bold hover:bg-purple-100 flex items-center gap-1 avatar-info-trigger focus:outline-none transition-colors text-xs">
-                                Аватар
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </button>
-                        `;
-                        
-                        // Если статус Аватар, кнопка позволяет привязать прогресс к новому физическому браслету
-                        attachBtn.textContent = 'Новый браслет';
-                        attachBtn.className = 'attach-bracelet-btn bg-orange-50 text-brand-orange font-bold px-5 py-2.5 rounded-full text-[13px] hover:bg-orange-100 transition-all';
-                        attachBtn.style.display = 'inline-block';
-
-                        childRow.querySelector('.avatar-info-trigger').addEventListener('click', (e) => {
-                            e.preventDefault();
-                            showAvatarInfo(child.name);
-                        });
-                    }
-                };
-
-                childRow.querySelector('.attach-bracelet-btn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showRfidModal(() => {
-                        recordVisit(child.name); // При каждой успешной привязке фиксируем посещение
-                        if (currentStatus === 'Нет') {
-                            currentStatus = 'Браслет';
-                        }
-                        updateChildRowUI();
+                if (parent.children.length > 0) {
+                    nameCell.querySelector('.toggle-children-btn').addEventListener('click', () => {
+                        parent.expanded = !parent.expanded;
+                        const orig = accounts.find(a => a.id === parent.id);
+                        if (orig) orig.expanded = parent.expanded;
+                        renderAccounts();
                     });
+                }
+                
+                // Column 2
+                const dobCell = document.createElement('td');
+                dobCell.className = 'py-5 px-6 whitespace-nowrap text-gray-500 dark:text-gray-400 font-bold text-sm';
+                dobCell.textContent = parent.createdAt || '29.05.2026';
+                
+                // Column 3
+                const statusCell = document.createElement('td');
+                statusCell.className = 'py-5 px-6 whitespace-nowrap';
+                statusCell.innerHTML = `
+                    <button class="add-child-btn w-9 h-9 inline-flex items-center justify-center bg-gray-50 dark:bg-gray-700 hover:bg-brand-purple hover:text-white dark:hover:bg-brand-purple text-gray-500 dark:text-gray-300 rounded-xl transition-all focus:outline-none shadow-sm hover:shadow" title="${translations[currentLang].addAccAddChild}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    </button>
+                `;
+                statusCell.querySelector('.add-child-btn').addEventListener('click', () => {
+                    openAddChildModal(parent.id);
                 });
-
-                childRow.querySelector('.remove-avatar-btn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (currentStatus === 'Нет') return; 
-                    
-                    const confirmMessage = currentStatus === 'Аватар' 
-                        ? 'Вы уверены, что хотите удалить аватара? Весь прогресс аватара будет безвозвратно потерян.' 
-                        : 'Вы уверены, что хотите отвязать браслет?';
-
+                
+                // Column 4
+                const actionsCell = document.createElement('td');
+                actionsCell.className = 'py-5 px-6 whitespace-nowrap text-right';
+                actionsCell.innerHTML = `
+                    <button class="delete-parent-btn w-9 h-9 inline-flex items-center justify-center bg-gray-50 dark:bg-gray-700 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors focus:outline-none shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                `;
+                actionsCell.querySelector('.delete-parent-btn').addEventListener('click', () => {
                     showConfirmModal(
-                        'Удалить аватара',
-                        confirmMessage,
+                        translations[currentLang].confirmDeleteAccount,
+                        translations[currentLang].confirmDeleteAccountMsg,
                         () => {
-                            currentStatus = 'Нет';
-                            updateChildRowUI();
+                            accounts = accounts.filter(a => a.id !== parent.id);
+                            renderAccounts();
                         }
                     );
                 });
-
-                updateChildRowUI(); 
-                rows.push(childRow);
-            });
-
-            const groupObj = {
-                mainRow: mainRow,
-                childRows: rows.slice(1),
-                searchString: (fio + ' ' + (phoneNumber || '')).toLowerCase()
-            };
-            accountGroups.push(groupObj);
-
-            mainRow.querySelector('.delete-btn').addEventListener('click', (e) => {
-                e.preventDefault();
-                showConfirmModal(
-                    'Удалить аккаунт',
-                    'Вы действительно хотите безвозвратно удалить этот аккаунт?',
-                    () => {
-                        mainRow.remove();
-                        rows.forEach(row => row !== mainRow && row.remove());
-                        const idx = accountGroups.indexOf(groupObj);
-                        if (idx > -1) accountGroups.splice(idx, 1);
-                    }
-                );
-            });
-
-            const toggleBtn = mainRow.querySelector('.toggle-children-btn');
-            if (childrenCount > 0) {
-                toggleBtn.addEventListener('click', () => {
-                    const isExpanded = mainRow.dataset.expanded === 'true';
-                    mainRow.dataset.expanded = isExpanded ? 'false' : 'true';
+                
+                parentRow.appendChild(nameCell);
+                parentRow.appendChild(dobCell);
+                parentRow.appendChild(statusCell);
+                parentRow.appendChild(actionsCell);
+                
+                tbody.appendChild(parentRow);
+                
+                // Expanded children rows
+                if (parent.children.length > 0 && parent.expanded) {
+                    const childHeader = document.createElement('tr');
+                    childHeader.className = 'child-list-row bg-[#f8f9fb] dark:bg-slate-800/40 border-b border-gray-100 dark:border-slate-700';
+                    childHeader.innerHTML = `
+                        <td class="py-3 px-6 pl-[84px] text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-widest">${translations[currentLang].colName}</td>
+                        <td class="py-3 px-6 text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-widest">${translations[currentLang].colDob}</td>
+                        <td class="py-3 px-6 text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-widest">${translations[currentLang].colStatus}</td>
+                        <td class="py-3 px-6 text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-right">${translations[currentLang].colActions}</td>
+                    `;
+                    tbody.appendChild(childHeader);
                     
-                    rows.forEach((row, index) => {
-                        if (index > 0) {
-                            row.style.display = isExpanded ? 'none' : 'table-row';
+                    parent.children.forEach((child, idx) => {
+                        const childRow = document.createElement('tr');
+                        const isLast = idx === parent.children.length - 1;
+                        childRow.className = `child-list-row bg-[#f8f9fb] dark:bg-slate-800/40 border-b border-gray-100 dark:border-slate-700 ${isLast ? 'rounded-b-2xl' : ''}`;
+                        
+                        // Child name & UID
+                        const nameCell = document.createElement('td');
+                        nameCell.className = `py-4 px-6 pl-[84px] whitespace-nowrap ${isLast ? 'pb-5' : ''}`;
+                        nameCell.innerHTML = `
+                            <span class="font-extrabold text-gray-800 dark:text-slate-200 block text-base">${child.name}</span>
+                            <span class="text-[10px] text-gray-400 dark:text-gray-500 font-mono tracking-wider block mt-0.5 uppercase select-all">${child.uid}</span>
+                        `;
+                        
+                        // DOB
+                        const dobCell = document.createElement('td');
+                        dobCell.className = `py-4 px-6 whitespace-nowrap text-gray-500 dark:text-slate-400 font-bold text-sm ${isLast ? 'pb-5' : ''}`;
+                        dobCell.textContent = formatDate(child.dob);
+                        
+                        // Status pill
+                        const statusCell = document.createElement('td');
+                        statusCell.className = `py-4 px-6 whitespace-nowrap ${isLast ? 'pb-5' : ''}`;
+                        
+                        let pillClass = '';
+                        let pillText = '';
+                        let pillIcon = '';
+                        
+                        if (child.status === 'Аватар') {
+                            pillClass = 'bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/40 dark:text-purple-400 dark:hover:bg-purple-900/40 text-brand-purple';
+                            pillText = translations[currentLang].statusAvatar;
+                            pillIcon = '<svg class="w-3.5 h-3.5 text-brand-purple dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                        } else if (child.status === 'Браслет') {
+                            pillClass = 'bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/30 dark:text-brand-orange text-brand-orange';
+                            pillText = translations[currentLang].statusBracelet;
+                        } else {
+                            pillClass = 'bg-gray-100 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 cursor-default';
+                            pillText = translations[currentLang].statusNone;
                         }
+                        
+                        if (child.status === 'Нет') {
+                            statusCell.innerHTML = `<span class="font-extrabold text-[10px] tracking-wider px-3.5 py-1.5 rounded-full inline-block ${pillClass}">${pillText}</span>`;
+                        } else {
+                            statusCell.innerHTML = `
+                                <button class="status-btn font-extrabold text-[10px] tracking-wider px-3.5 py-1.5 rounded-full focus:outline-none transition-all flex items-center gap-1 cursor-pointer ${pillClass}">
+                                    <span>${pillText}</span>
+                                    ${pillIcon}
+                                </button>
+                            `;
+                            
+                            statusCell.querySelector('.status-btn').addEventListener('click', (e) => {
+                                e.preventDefault();
+                                if (child.status === 'Браслет') {
+                                    // Simulated Avatar creation
+                                    child.status = 'Аватар';
+                                    recordVisit(child.name);
+                                    renderAccounts();
+                                } else if (child.status === 'Аватар') {
+                                    showAvatarInfo(child.name);
+                                }
+                            });
+                        }
+                        
+                        // Actions
+                        const actionCell = document.createElement('td');
+                        actionCell.className = `py-4 px-6 whitespace-nowrap text-right space-x-2 ${isLast ? 'pb-5' : ''}`;
+                        
+                        const detailsClass = child.status === 'Аватар'
+                            ? 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
+                            : 'bg-gray-50 dark:bg-gray-700/30 text-gray-400 dark:text-gray-600 cursor-not-allowed';
+                        
+                        const bindClass = child.status === 'Нет'
+                            ? 'bg-[#ff5a28] hover:bg-[#e64a1c] text-white'
+                            : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 shadow-sm';
+                        
+                        const bindText = child.status === 'Нет'
+                            ? translations[currentLang].btnBind
+                            : translations[currentLang].btnNewBracelet;
+                        
+                        actionCell.innerHTML = `
+                            <button class="child-details-btn font-extrabold px-5 py-2.5 rounded-xl text-xs transition-all focus:outline-none ${detailsClass}">
+                                ${translations[currentLang].btnDetails}
+                            </button>
+                            <button class="child-bind-btn font-extrabold px-5 py-2.5 rounded-xl text-xs transition-all focus:outline-none ${bindClass}">
+                                ${bindText}
+                            </button>
+                            <button class="child-delete-btn text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-extrabold px-2.5 py-2.5 text-xs transition-colors focus:outline-none">
+                                ${translations[currentLang].btnDelete}
+                            </button>
+                        `;
+                        
+                        actionCell.querySelector('.child-details-btn').addEventListener('click', () => {
+                            if (child.status === 'Аватар') {
+                                showAvatarInfo(child.name);
+                            } else {
+                                showToast(translations[currentLang].toastNoAvatar, 'info');
+                            }
+                        });
+                        
+                        actionCell.querySelector('.child-bind-btn').addEventListener('click', () => {
+                            openRfidModal(parent.id, child.id);
+                        });
+                        
+                        actionCell.querySelector('.child-delete-btn').addEventListener('click', () => {
+                            showConfirmModal(
+                                translations[currentLang].confirmDeleteChild,
+                                translations[currentLang].confirmDeleteChildMsg,
+                                () => {
+                                    const orig = accounts.find(a => a.id === parent.id);
+                                    if (orig) {
+                                        orig.children = orig.children.filter(c => c.id !== child.id);
+                                        renderAccounts();
+                                    }
+                                }
+                            );
+                        });
+                        
+                        childRow.appendChild(nameCell);
+                        childRow.appendChild(dobCell);
+                        childRow.appendChild(statusCell);
+                        childRow.appendChild(actionCell);
+                        tbody.appendChild(childRow);
                     });
-
-                    toggleBtn.innerHTML = isExpanded 
-                        ? 'открыть список <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>'
-                        : 'скрыть список <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>';
-                });
-            }
-
-            return rows;
+                }
+            });
+            
+            renderPaginationFooter(pagesTotal);
         }
 
-        const accountsTableBody = document.getElementById('accounts-table-body');
-        document.getElementById('add-account-btn').addEventListener('click', openAddAccountModal);
-
-        // Pre-populate data with default parent structures
+        // Initialize elements
         document.addEventListener('DOMContentLoaded', () => {
+            // Theme setup
+            if (darkTheme) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            updateThemeUI();
+            
+            document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
+            
+            // Language setup
+            updateLangButtons();
+            translateDOM();
+            
+            document.getElementById('lang-ru-btn').addEventListener('click', () => setLanguage('ru'));
+            document.getElementById('lang-en-btn').addEventListener('click', () => setLanguage('en'));
+            
+            // Populate defaults
             const defaultAccounts = [
                 {
+                    id: 1,
                     fio: "Смирнова Анна Юрьевна",
-                    phone: "+7 926 765 43 21",
+                    phone: "+7 (926) 765-43-21",
+                    createdAt: "29.05.2026",
+                    expanded: true,
                     children: [
-                        { name: "Егор", dob: "2016-08-10", initialStatus: "Аватар" },
-                        { name: "София", dob: "2019-01-25", initialStatus: "Нет" }
+                        { id: 11, name: "Егор", dob: "2016-08-10", status: "Аватар", rfid: "RFID_EGOR", uid: "EGOR20160810LCRXLVFEG2123" },
+                        { id: 12, name: "София", dob: "2019-01-25", status: "Нет", rfid: null, uid: "SOFIA20190125LCRXLVFEG2123" }
                     ]
                 },
                 {
+                    id: 2,
                     fio: "Кузнецов Дмитрий Алексеевич",
-                    phone: "+7 903 555 11 22",
+                    phone: "+7 (903) 555-11-22",
+                    createdAt: "22.05.2026",
+                    expanded: false,
                     children: [
-                        { name: "Артем", dob: "2014-05-12", initialStatus: "Браслет" },
-                        { name: "Виктория", dob: "2017-09-30", initialStatus: "Нет" },
-                        { name: "Илья", dob: "2020-12-05", initialStatus: "Нет" }
+                        { id: 21, name: "Артем", dob: "2014-05-12", status: "Браслет", rfid: "RFID_ARTEM", uid: "ARTEM20140512LCRXLVFEG2123" },
+                        { id: 22, name: "Виктория", dob: "2017-09-30", status: "Нет", rfid: null, uid: "VICTORIA20170930LCRXLV" },
+                        { id: 23, name: "Илья", dob: "2020-12-05", status: "Нет", rfid: null, uid: "ILYA20201205LCRXLVFEG2123" }
                     ]
                 },
                 {
+                    id: 3,
                     fio: "Иванов Михаил Сергеевич",
-                    phone: "+7 916 123 45 67",
+                    phone: "+7 (916) 123-45-67",
+                    createdAt: "18.05.2026",
+                    expanded: false,
                     children: [
-                        { name: "Алиса", dob: "2015-11-15", initialStatus: "Аватар" },
-                        { name: "Максим", dob: "2018-04-20", initialStatus: "Браслет" }
+                        { id: 31, name: "Алиса", dob: "2015-11-15", status: "Аватар", rfid: "RFID_ALISA", uid: "ALISA20151115LCRXLVFEG212" },
+                        { id: 32, name: "Максим", dob: "2018-04-20", status: "Браслет", rfid: "RFID_MAXIM", uid: "MAXIM20180420LCRXLVFEG212" }
                     ]
                 }
             ];
-
-            // Add history for pre-existing avatars to demonstrate accordion logic
+            
+            accounts = defaultAccounts;
+            
+            // Add default visit history for Егор & Алиса
             recordVisit("Егор");
             recordVisit("Алиса");
             
-            // Add backwards to keep the order in the array from top to bottom
-            defaultAccounts.reverse().forEach(acc => {
-                const newRows = createAccountRow(acc.fio, acc.phone, acc.children);
-                const referenceNode = accountsTableBody.firstChild;
-                newRows.forEach(row => accountsTableBody.insertBefore(row, referenceNode));
-            });
+            // Initial render
+            renderAccounts();
+            
+            // Link modal buttons
+            document.getElementById('add-account-btn').addEventListener('click', openAddAccountModal);
         });
-
     </script>
 </body>
 </html>
