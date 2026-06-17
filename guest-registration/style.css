@@ -823,6 +823,70 @@ body {
   border-radius: var(--radius-pill);
 }
 
+.wallet-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-wallet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  border-radius: 26px; /* Pill shape */
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-wallet:active {
+  transform: scale(0.97);
+}
+
+.btn-wallet:hover {
+  opacity: 0.9;
+}
+
+.wallet-icon-svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.wallet-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.wallet-text-small {
+  font-size: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+}
+
+.wallet-text-large {
+  font-size: 19px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.btn-apple-wallet {
+  background-color: #000000;
+}
+
+.btn-google-wallet {
+  background-color: #1f1f1f;
+}
+
+
 /* ════════════════════════════════════════
    BOTTOM NAVIGATION BAR
    (Floating Glass Bar matching Birthday Constructor)

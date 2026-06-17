@@ -44,10 +44,10 @@
                         пожаловать<br>
                         в <span class="text-orange">Hello Park</span>
                     </h1>
-                    <img src="rocky.webp" alt="Рокки" class="card-hero-image">
+                    <img src="fox.png" alt="Лис" class="card-hero-image">
                 </div>
 
-                <p class="step-explanation">Для регистрации введите ваш номер телефона. Подтверждая его кодом из СМС, вы принимаете правила парка и даете согласие на обработку персональных данных.</p>
+                <p class="step-explanation">Для регистрации введите ваш номер телефона. Подтверждая его кодом из СМС, вы принимаете правила парка, программы лояльности и даете согласие на обработку персональных данных.</p>
 
                 <!-- Rules Accordion -->
                 <div class="rules-box">
@@ -58,31 +58,33 @@
                         </svg>
                     </button>
                     <div class="rules-content" id="rules-content">
-                        <ol>
-                            <li>Дети до 14 лет допускаются на территорию парка только в сопровождении взрослого (родителя или законного представителя).</li>
-                            <li>Сопровождающий взрослый несёт полную ответственность за безопасность и поведение ребёнка на территории парка.</li>
-                            <li>Перед использованием аттракционов необходимо ознакомиться с возрастными и ростовыми ограничениями.</li>
-                            <li>RFID-браслет выдаётся на входе и подлежит возврату при выходе. За утерю взимается штраф.</li>
-                            <li>Запрещается проносить на территорию продукты питания, напитки, стеклянную тару и пиротехнику.</li>
-                            <li>На территории парка запрещено курение и употребление алкоголя.</li>
-                            <li>Администрация не несёт ответственности за оставленные без присмотра личные вещи.</li>
-                            <li>В случае плохого самочувствия необходимо немедленно обратиться к персоналу парка.</li>
-                            <li>Посещая парк, вы даёте согласие на фото- и видеосъёмку в рекламных целях.</li>
-                        </ol>
+                        <p class="placeholder-text"><a href="https://hello-park.ru/seligerskaya/visiting" target="_blank" style="color: inherit; text-decoration: underline;">Ознакомиться с правилами посещения парка</a></p>
                     </div>
                 </div>
 
                 <!-- Consent Accordion -->
                 <div class="rules-box">
                     <button class="rules-header" id="consent-toggle" type="button" aria-expanded="false" aria-controls="consent-content">
-                        <span>Согласие на обработку перс. данных</span>
+                        <span>Политика обработки перс. данных</span>
                         <svg class="rules-chevron" id="consent-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
                     <div class="rules-content" id="consent-content">
-                        <p class="placeholder-text">Настоящим выражаю свое безусловное согласие на обработку моих персональных данных (ФИО, телефон, данные о детях) администрацией парка Hello Park в целях предоставления услуг доступа на территорию парка, ведения статистики посещений, сохранения игрового прогресса детей и отправки важных уведомлений.</p>
-                        <p class="placeholder-text">Данное согласие действует бессрочно и может быть отозвано в любой момент путем направления соответствующего письменного заявления администрации парка.</p>
+                        <p class="placeholder-text"><a href="https://hello-park.ru/seligerskaya/policy" target="_blank" style="color: inherit; text-decoration: underline;">Ознакомиться с политикой в отношении обработки персональных данных</a></p>
+                    </div>
+                </div>
+
+                <!-- Loyalty Accordion -->
+                <div class="rules-box">
+                    <button class="rules-header" id="loyalty-toggle" type="button" aria-expanded="false" aria-controls="loyalty-content">
+                        <span>Правила программы лояльности</span>
+                        <svg class="rules-chevron" id="loyalty-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="rules-content" id="loyalty-content">
+                        <p class="placeholder-text"><a href="https://hello-park.ru/seligerskaya/loyalty-rules" target="_blank" style="color: inherit; text-decoration: underline;">Ознакомиться с правилами программы лояльности</a></p>
                     </div>
                 </div>
 
@@ -151,7 +153,7 @@
                         пожаловать<br>
                         в <span class="text-orange">Hello Park</span>
                     </h1>
-                    <img src="rocky.webp" alt="Рокки" class="card-hero-image">
+                    <img src="fox.png" alt="Лис" class="card-hero-image">
                 </div>
 
                 <p class="step-explanation">Укажите ваше ФИО и добавьте детей. Данные о датах рождения детей нужны для того, чтобы сохранять их игровой прогресс, достижения и персонажей на интерактивных аттракционах парка.</p>
@@ -198,30 +200,32 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
-                <h1 class="card-title">Ваш QR-код готов!</h1>
-                <p class="card-subtitle">Покажите этот код кассиру для создания аккаунта</p>
+                <h1 class="card-title">Вы успешно зарегистрированы!</h1>
+                <p class="card-subtitle">Покажите этот код на кассе, чтобы копить баллы</p>
 
                 <div class="qr-frame">
                     <div class="qr-pulse-ring"></div>
                     <div class="qr-canvas" id="qr-canvas"></div>
                 </div>
+                <p class="qr-expiry">QR-код вашей карты лояльности</p>
 
-                <div class="qr-summary">
-                    <div class="qr-row">
-                        <span class="qr-label">ФИО</span>
-                        <span class="qr-value" id="qr-fio">—</span>
-                    </div>
-                    <div class="qr-row">
-                        <span class="qr-label">Телефон</span>
-                        <span class="qr-value" id="qr-phone">—</span>
-                    </div>
-                    <div class="qr-row qr-row-last">
-                        <span class="qr-label">Дети</span>
-                        <span class="qr-value" id="qr-children">—</span>
-                    </div>
+                <div class="wallet-buttons-container">
+                    <a href="#" class="btn-wallet btn-apple-wallet" id="btn-apple-wallet">
+                        <svg class="wallet-icon-svg" viewBox="0 0 384 512" fill="white"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                        <div class="wallet-text">
+                            <span class="wallet-text-small">Добавить в</span>
+                            <span class="wallet-text-large">Apple Wallet</span>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="btn-wallet btn-google-wallet" id="btn-google-wallet">
+                        <svg class="wallet-icon-svg" viewBox="0 0 24 24" fill="white"><path d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.16,22 12.25,22C17.6,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1Z"/></svg>
+                        <div class="wallet-text">
+                            <span class="wallet-text-small">Добавить в</span>
+                            <span class="wallet-text-large">Google Wallet</span>
+                        </div>
+                    </a>
                 </div>
-
-                <p class="qr-expiry">⏱ Код действителен 30 минут</p>
             </div>
         </section>
 
@@ -410,6 +414,16 @@
         content.classList.toggle('open');
         chevron.classList.toggle('rotated');
         $('#consent-toggle').setAttribute('aria-expanded', !isOpen);
+    });
+
+    // Loyalty toggle
+    $('#loyalty-toggle').addEventListener('click', () => {
+        const content = $('#loyalty-content');
+        const chevron = $('#loyalty-chevron');
+        const isOpen = content.classList.contains('open');
+        content.classList.toggle('open');
+        chevron.classList.toggle('rotated');
+        $('#loyalty-toggle').setAttribute('aria-expanded', !isOpen);
     });
 
     // Phone formatting
@@ -696,10 +710,7 @@
             container.appendChild(canvas);
         });
 
-        // Summary
-        $('#qr-fio').textContent      = fio;
-        $('#qr-phone').textContent    = fmtPhoneFull(phoneDig);
-        $('#qr-children').textContent = children.map(c => c.name).join(', ');
+        // Summary no longer used since we deleted those elements in step 3
     }
 
     // Restart
