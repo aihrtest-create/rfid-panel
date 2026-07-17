@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RFID Panel - Hello Park</title>
+    <title>Design Experiment - Hello Park RFID Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -196,70 +195,80 @@
             50% { transform: scale(1.15); }
             100% { transform: scale(1); opacity: 1; }
         }
-        @keyframes rfid-success-ring {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { opacity: 0.4; }
-            100% { transform: scale(2); opacity: 0; }
-        }
         @keyframes rfid-checkmark-draw {
             0% { stroke-dashoffset: 24; }
             100% { stroke-dashoffset: 0; }
         }
-        @keyframes scan-beam {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-        @keyframes rfid-name-out {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-12px); }
-        }
-        @keyframes rfid-name-in {
-            0% { opacity: 0; transform: translateY(12px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
         .rfid-success-icon {
             animation: rfid-success-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        .rfid-success-ring {
-            animation: rfid-success-ring 0.8s ease-out forwards;
         }
         .rfid-checkmark {
             stroke-dasharray: 24;
             stroke-dashoffset: 24;
             animation: rfid-checkmark-draw 0.4s 0.2s ease-out forwards;
         }
-        .rfid-name-out {
-            animation: rfid-name-out 0.25s ease-in forwards;
+        
+        /* PremiumBonus Card Styling */
+        .pb-card-gradient {
+            background: linear-gradient(135deg, #ff5a28 0%, #d83d0f 100%);
+            box-shadow: 0 8px 24px rgba(255, 90, 40, 0.2);
         }
-        .rfid-name-in {
-            animation: rfid-name-in 0.25s ease-out forwards;
+        
+        /* Experiment Control Bar styling */
+        .control-bar {
+            background: #ffffff;
+            border-bottom: 2px solid #e5e7eb;
         }
-        #rfid-chain-progress {
-            transition: opacity 0.3s;
+        .dark .control-bar {
+            background: #1e293b;
+            border-bottom: 2px solid #334155;
         }
     </style>
 </head>
-<body class="min-h-screen bg-brand-bg dark:bg-slate-900 transition-colors duration-300 text-gray-800 dark:text-slate-100">
+<body class="min-h-screen bg-brand-bg dark:bg-slate-900 transition-colors duration-300 text-gray-800 dark:text-slate-100 pb-16">
     
-    <!-- Header -->
+    <!-- STICKY EXPERIMENT CONTROL BAR -->
+    <div class="control-bar sticky top-0 z-50 py-3 px-6 shadow-md transition-colors duration-300">
+        <div class="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="bg-brand-orange text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Design Lab</span>
+                <span class="text-sm font-extrabold text-slate-800 dark:text-white">Интеграция PremiumBonus в реальный интерфейс:</span>
+            </div>
+            
+            <div class="flex flex-wrap gap-1.5 justify-center">
+                <button onclick="changeActiveOption(1)" id="exp-btn-1" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800">
+                    Вариант 1 (Карта лояльности в списке)
+                </button>
+                <button onclick="changeActiveOption(2)" id="exp-btn-2" class="px-4 py-1.5 rounded-xl text-xs font-black transition-all bg-brand-purple text-white shadow shadow-brand-purple/20">
+                    Вариант 2 (Кнопка «Карта PB» в профиле + Модалка)
+                </button>
+                <button onclick="changeActiveOption(3)" id="exp-btn-3" class="px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800">
+                    Вариант 3 (Компактный инлайн-виджет)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header (Same as original index.html) -->
     <div class="bg-white dark:bg-slate-800 rounded-b-[32px] shadow-sm pb-2 relative z-10 transition-colors duration-300 border-b border-transparent dark:border-slate-700">
         <div class="container py-4 flex items-center justify-between">
             <div class="flex items-center gap-6">
-                <img src="assets/HPark Logo.png" alt="Hello Park" class="h-10">
+                <img src="../assets/HPark Logo.png" alt="Hello Park" class="h-10">
+                
+                <!-- Search bar next to logo -->
+                <div class="relative w-[300px]">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </span>
+                    <input type="text" id="search-input" placeholder="Фио, ном..." class="w-full pl-11 pr-6 py-2.5 bg-gray-50 dark:bg-gray-700 border-2 border-transparent dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-medium transition-all text-sm" data-i18n-placeholder="searchPlaceholder">
+                </div>
             </div>
             
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <button id="check-bracelet-global-btn" class="bg-brand-orange text-white px-6 py-3.5 rounded-full font-bold shadow-lg shadow-brand-orange/30 hover:bg-brand-orangeHover transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-2 text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        <span data-i18n="checkBracelet">ПРОВЕРИТЬ БРАСЛЕТ</span>
-                    </button>
-                    <button id="clear-bracelet-global-btn" class="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 px-4 py-3.5 rounded-full font-bold shadow-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center justify-center" title="Очистить браслет">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
-                </div>
+                <button id="check-bracelet-global-btn" class="bg-brand-orange text-white px-6 py-3.5 rounded-full font-bold shadow-lg shadow-brand-orange/30 hover:bg-brand-orangeHover transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex items-center gap-2 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <span data-i18n="checkBracelet">ПРОВЕРИТЬ БРАСЛЕТ</span>
+                </button>
 
                 <!-- Language switcher -->
                 <div class="flex border border-gray-200 dark:border-gray-600 rounded-full overflow-hidden p-0.5 bg-gray-50 dark:bg-gray-700 text-[11px] font-extrabold text-gray-500">
@@ -270,7 +279,7 @@
                 <!-- Theme switcher -->
                 <button id="theme-toggle-btn" class="p-2.5 rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 transition-colors focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-600">
                     <span id="theme-toggle-icon">
-                        <svg class="w-5 h-5 text-gray-500 hover:text-brand-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                        <svg class="w-5 h-5 text-gray-500 hover:text-brand-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                     </span>
                 </button>
             </div>
@@ -278,86 +287,41 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container mt-8">
-        
-        <!-- Cards Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div class="flex items-center space-x-4 md:space-x-6">
-                <h2 class="text-[32px] font-extrabold text-gray-900 dark:text-white" data-i18n="accountsTitle">Аккаунты</h2>
-                
-                <div class="flex items-center gap-2">
-                    <!-- POS Token Indicator (Concept A) -->
-                    <div id="pos-token-indicator" onclick="handleTokenIndicatorClick()" class="flex items-center gap-2.5 bg-gray-100 border border-gray-200 dark:bg-slate-800 dark:border-slate-700 px-3.5 py-1.5 rounded-full cursor-pointer group relative transition-all duration-300 select-none">
-                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs whitespace-nowrap py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none shadow-lg">
-                            Доступно привязок с кассы (3 клика для теста)
-                        </div>
-                        <div id="pos-token-dot" class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0"></div>
-                        <div class="flex items-baseline gap-1.5">
-                            <span id="pos-token-label" class="text-[10px] font-bold text-gray-500 uppercase tracking-widest hidden sm:inline leading-none translate-y-[-0.5px]">Активаций:</span>
-                            <span id="pos-token-count" class="text-[15px] font-black text-gray-500 tabular-nums leading-none">0</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Admin PIN Button -->
-                    <button onclick="openAdminPinModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-gray-400 hover:text-brand-purple transition-colors border border-gray-200 dark:border-slate-700 shadow-sm focus:outline-none group relative">
-                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs whitespace-nowrap py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none shadow-lg">
-                            Ручная активация (ПИН)
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+    <div class="container mt-4">
+        <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[40px] shadow-sm border border-gray-100 dark:border-slate-700 transition-colors duration-300">
+            
+            <!-- Cards Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center space-x-5">
+                    <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white" data-i18n="accountsTitle">Аккаунты</h2>
+                    <button id="add-account-btn" class="bg-brand-purple text-white font-bold px-5 py-2.5 text-sm rounded-full shadow-lg shadow-brand-purple/30 hover:bg-brand-purpleHover transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                        <span data-i18n="addAccountBtn">Добавить аккаунт</span>
                     </button>
                 </div>
-                
-                <button id="add-account-btn" class="bg-brand-purple text-white font-extrabold px-6 py-2.5 text-[11px] uppercase tracking-wider rounded-full shadow-lg shadow-brand-purple/30 hover:bg-brand-purpleHover transition-all transform hover:-translate-y-0.5 flex items-center gap-2 focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
-                    <span data-i18n="addAccountBtn">ДОБАВИТЬ АККАУНТ</span>
-                </button>
             </div>
-            
-            <!-- Search bar -->
-            <div class="relative w-full md:w-[400px]">
-                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                </span>
-                <input type="text" id="search-input" placeholder="ФИО, номер телефона..." class="w-full pl-12 pr-6 py-3.5 bg-white dark:bg-gray-800 border-none shadow-[0_2px_10px_rgba(0,0,0,0.03)] dark:text-white rounded-full focus:outline-none focus:ring-2 focus:ring-brand-purple/20 font-medium transition-all text-sm placeholder-gray-400" data-i18n-placeholder="searchPlaceholder">
-                <button id="search-btn" class="hidden"></button>
-            </div>
-        </div>
 
-        <!-- Filters & Page Limits -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-            <!-- Filters on the left -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 tracking-wider mr-2 uppercase" data-i18n="filterLabel">ФИЛЬТР:</span>
-                <button class="filter-pill active border-none shadow-[0_2px_8px_rgba(0,0,0,0.02)]" data-filter="all" data-i18n="filterAll">Все пользователи</button>
-                <button class="filter-pill border-none shadow-[0_2px_8px_rgba(0,0,0,0.02)]" data-filter="nobracelet" data-i18n="filterNoBracelet">Без браслета</button>
-                <button class="filter-pill border-none shadow-[0_2px_8px_rgba(0,0,0,0.02)]" data-filter="bracelet" data-i18n="filterBracelet">Браслет</button>
-                <button class="filter-pill border-none shadow-[0_2px_8px_rgba(0,0,0,0.02)]" data-filter="avatar" data-i18n="filterAvatar">Аватар</button>
-            </div>
-            <!-- Pagination limit dropdown on the right -->
-            <div class="flex items-center gap-2 text-[11px] font-extrabold text-gray-400 dark:text-gray-500 tracking-wider">
-                <span data-i18n="onPage">НА СТРАНИЦЕ</span>
-                <div class="relative inline-block text-gray-700 dark:text-gray-300 mx-1">
-                    <select id="items-per-page-select" class="appearance-none bg-white dark:bg-gray-800 border-none shadow-[0_2px_8px_rgba(0,0,0,0.03)] rounded-full px-4 py-1.5 pr-8 font-extrabold focus:outline-none cursor-pointer text-[13px]">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20" selected>20</option>
-                        <option value="50">50</option>
-                    </select>
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-900 dark:text-white text-[10px]">▼</span>
+            <!-- Filters & Page Limits -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 mb-4 border-b border-gray-100 dark:border-gray-700">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-[11px] font-extrabold text-gray-400 dark:text-gray-500 tracking-wider mr-1" data-i18n="filterLabel">ФИЛЬТР:</span>
+                    <button class="filter-pill active" data-filter="all" data-i18n="filterAll">Все пользователи</button>
+                    <button class="filter-pill" data-filter="nobracelet" data-i18n="filterNoBracelet">Без браслета</button>
+                    <button class="filter-pill" data-filter="bracelet" data-i18n="filterBracelet">Браслет</button>
+                    <button class="filter-pill" data-filter="avatar" data-i18n="filterAvatar">Аватар</button>
                 </div>
-                <span id="total-count-badge" class="text-gray-500 dark:text-gray-400 font-medium text-xs">3315</span>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[32px] shadow-sm border border-gray-100 dark:border-slate-700 transition-colors duration-300">
-
-            <!-- Empty Search State -->
-            <div id="empty-search-state" class="hidden py-16 text-center">
-                <div class="w-16 h-16 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div class="flex items-center gap-2 text-[11px] font-extrabold text-gray-400 dark:text-gray-500 tracking-wider">
+                    <span data-i18n="onPage">НА СТРАНИЦЕ</span>
+                    <div class="relative inline-block text-gray-700 dark:text-gray-300">
+                        <select id="items-per-page-select" class="appearance-none bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-1.5 pr-8 font-extrabold focus:outline-none cursor-pointer text-xs">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                        </select>
+                        <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 text-[10px]">▼</span>
+                    </div>
+                    <span id="total-count-badge" class="text-gray-700 dark:text-gray-300 ml-1">0</span>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white" data-i18n="searchEmpty">Ничего не найдено</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm" data-i18n="searchEmptyDesc">Попробуйте изменить параметры поиска</p>
             </div>
 
             <!-- Accounts Table -->
@@ -371,28 +335,23 @@
                             <th class="py-4 px-6 text-right" data-i18n="colActions">ДЕЙСТВИЯ</th>
                         </tr>
                     </thead>
-                    <tbody id="accounts-table-body" class="divide-y divide-gray-50 dark:divide-slate-700">
+                    <tbody id="accounts-table-body" class="divide-y divide-gray-50 dark:divide-slate-700 font-semibold">
                         <!-- Accounts dynamically loaded here -->
                     </tbody>
                 </table>
             </div>
 
-            <!-- Pagination Navigation Footer -->
+            <!-- Pagination Footer -->
             <div id="pagination-footer" class="flex justify-between items-center mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                <button id="prev-page-btn" class="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
-                    Назад
-                </button>
-                <div id="pagination-pages" class="flex gap-1.5 items-center">
-                    <!-- Page buttons dynamically loaded -->
-                </div>
-                <button id="next-page-btn" class="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
-                    Вперёд
-                </button>
+                <button id="prev-page-btn" class="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">Назад</button>
+                <div id="pagination-pages" class="flex gap-1.5 items-center"></div>
+                <button id="next-page-btn" class="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">Вперёд</button>
             </div>
 
         </div>
     </div>
 
+    <!-- MODALS FROM ORIGINAL INDEX.HTML -->
     <!-- Modal: Add Account -->
     <div id="add-account-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center overflow-y-auto opacity-0 transition-opacity duration-300">
         <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[40px] shadow-2xl max-w-xl w-full mx-4 my-8 border-t-8 border-brand-orange transform scale-95 transition-transform duration-300" id="add-account-modal-content">
@@ -448,9 +407,7 @@
                             <span data-i18n="addAccAddChild">Добавить ребенка</span>
                         </button>
                     </div>
-                    <div id="children-fields-container" class="space-y-3">
-                        <!-- Children inputs dynamically added -->
-                    </div>
+                    <div id="children-fields-container" class="space-y-3"></div>
                 </div>
             </div>
             <div class="flex justify-end space-x-3 mt-8">
@@ -460,60 +417,41 @@
         </div>
     </div>
 
-    <!-- Modal: RFID Scanner (Redesigned matching Screenshot 2) -->
+    <!-- Modal: RFID Scanner -->
     <div id="rfid-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
         <div class="bg-white dark:bg-gray-800 p-8 md:p-10 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300 relative overflow-hidden" id="rfid-modal-content">
-            
-            <!-- Chain progress indicator (hidden by default) -->
             <div id="rfid-chain-progress" class="hidden mb-4">
                 <div class="inline-flex items-center bg-purple-50 dark:bg-purple-950/30 px-5 py-2 rounded-full">
                     <span id="rfid-chain-label" class="text-sm md:text-base font-extrabold text-brand-purple dark:text-purple-400 tracking-wide">Браслет 1 из 1</span>
                 </div>
             </div>
-
-            <!-- Normal binding content -->
             <div id="rfid-binding-content">
-                <!-- Icon -->
                 <div class="w-16 h-16 bg-purple-50 dark:bg-purple-950/30 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-purple dark:text-purple-400 relative overflow-hidden shadow-sm">
                     <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
                     </svg>
                     <div class="absolute inset-0 bg-brand-purple/10 animate-ping rounded-full"></div>
                 </div>
-                
                 <h3 class="text-[22px] font-extrabold text-gray-900 dark:text-white mb-1" data-i18n="rfidTitle">Привязка браслета</h3>
                 <h4 id="rfid-child-name" class="text-lg font-extrabold text-brand-purple dark:text-purple-400 tracking-wider uppercase mb-5">STIVE</h4>
-                
                 <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 tracking-widest uppercase mb-4" data-i18n="rfidSub">ПРИЛОЖИТЕ БРАСЛЕТ К СЧИТЫВАТЕЛЮ</p>
-                
                 <div class="relative mb-6">
                     <input type="text" id="rfid-code-input" class="w-full text-center px-5 py-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-purple dark:focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/10 font-bold text-gray-800 dark:text-white transition-all text-sm" placeholder="RFID код" data-i18n-placeholder="rfidPlaceholder">
-                    <button id="rfid-generate-btn" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 text-brand-purple dark:text-purple-400 rounded-xl transition-all border border-purple-100 dark:border-purple-900 hover:scale-105 active:scale-95 focus:outline-none" title="Сгенерировать случайный код">
+                    <button id="rfid-generate-btn" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-purple-50 dark:bg-purple-950 hover:bg-purple-100 dark:hover:bg-purple-900 text-brand-purple dark:text-purple-400 rounded-xl transition-all border border-purple-100 dark:border-purple-900 hover:scale-105 active:scale-95 focus:outline-none">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.656 48.656 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7C4.651 9.547 4.604 10.768 4.604 12c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.092-1.209.138-2.43.138-3.662z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 10.5h.008v.008H9V10.5zm6 0h.008v.008H15V10.5zm-6 3h.008v.008H9v-.008zm6 0h.008v.008H15v-.008z" /></svg>
                     </button>
                 </div>
-                
                 <p id="rfid-modal-error-msg" class="hidden text-red-500 text-xs font-bold -mt-4 mb-4 text-center"></p>
-
                 <div class="space-y-3">
-                    <button id="rfid-confirm-btn" class="w-full bg-brand-purple hover:bg-brand-purpleHover text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm tracking-wide focus:outline-none" data-i18n="rfidConfirm">
-                        ПОДТВЕРДИТЬ
-                    </button>
-                    <button id="rfid-cancel-btn" class="w-full text-gray-400 dark:text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300 transition-all text-xs tracking-wider py-2 focus:outline-none" data-i18n="rfidCancel">
-                        ОТМЕНА
-                    </button>
+                    <button id="rfid-confirm-btn" class="w-full bg-brand-purple hover:bg-brand-purpleHover text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm tracking-wide focus:outline-none" data-i18n="rfidConfirm">ПОДТВЕРДИТЬ</button>
+                    <button id="rfid-cancel-btn" class="w-full text-gray-400 dark:text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300 transition-all text-xs tracking-wider py-2 focus:outline-none" data-i18n="rfidCancel">ОТМЕНА</button>
                 </div>
             </div>
-
-            <!-- Success overlay (hidden by default) -->
             <div id="rfid-success-overlay" class="hidden flex flex-col items-center justify-center py-6">
                 <div class="relative mb-5">
                     <div class="w-20 h-20 bg-green-50 dark:bg-green-950/30 rounded-full flex items-center justify-center rfid-success-icon">
-                        <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                            <path class="rfid-checkmark" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
+                        <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path class="rfid-checkmark" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                     </div>
-                    <div class="absolute inset-0 bg-green-400/20 rounded-full rfid-success-ring"></div>
                 </div>
                 <p class="text-lg font-extrabold text-green-600 dark:text-green-400 tracking-wide" data-i18n="rfidBound">Браслет привязан!</p>
                 <p id="rfid-success-child-name" class="text-sm font-bold text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-wider"></p>
@@ -521,103 +459,30 @@
         </div>
     </div>
 
-    <!-- Modal: Check Bracelet (Header verification redesigned) -->
+    <!-- Modal: Check Bracelet -->
     <div id="check-bracelet-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
         <div class="bg-white dark:bg-gray-800 p-8 md:p-10 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300" id="check-bracelet-modal-content">
-            <!-- Icon -->
             <div class="w-16 h-16 bg-orange-50 dark:bg-orange-950/30 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-orange relative overflow-hidden shadow-sm">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                 <div class="absolute inset-0 bg-brand-orange/10 animate-ping rounded-full"></div>
             </div>
-            
             <h3 class="text-[22px] font-extrabold text-gray-900 dark:text-white mb-2" data-i18n="checkBracelet">Проверить браслет</h3>
             <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 tracking-widest uppercase mb-4" data-i18n="rfidSub">ПРИЛОЖИТЕ БРАСЛЕТ К СЧИТЫВАТЕЛЮ</p>
-            
             <div class="relative mb-4">
                 <input type="text" id="check-bracelet-input" class="w-full text-center px-5 py-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-orange dark:focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-bold text-gray-800 dark:text-white transition-all text-sm" placeholder="RFID код" data-i18n-placeholder="rfidPlaceholder">
             </div>
-
-            <!-- Test Codes Helper inside Modal -->
             <div class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-3 mb-6 text-left">
                 <p class="text-[9px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Активные браслеты для проверки:</p>
-                <div id="check-bracelet-test-codes" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-                    <!-- Dynamic test buttons inserted here -->
-                </div>
+                <div id="check-bracelet-test-codes" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto"></div>
             </div>
-            
             <div class="space-y-3">
-                <button id="check-bracelet-confirm-btn" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-orange/20 transition-all active:scale-[0.98] text-sm tracking-wide focus:outline-none">
-                    ПОДТВЕРДИТЬ
-                </button>
-                <button id="check-bracelet-cancel-btn" class="w-full text-gray-400 dark:text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300 transition-all text-xs tracking-wider py-2 focus:outline-none" data-i18n="rfidCancel">
-                    ОТМЕНА
-                </button>
+                <button id="check-bracelet-confirm-btn" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-orange/20 transition-all active:scale-[0.98] text-sm tracking-wide focus:outline-none">ПОДТВЕРДИТЬ</button>
+                <button id="check-bracelet-cancel-btn" class="w-full text-gray-400 dark:text-gray-500 font-bold hover:text-gray-600 dark:hover:text-gray-300 transition-all text-xs tracking-wider py-2 focus:outline-none" data-i18n="rfidCancel">ОТМЕНА</button>
             </div>
         </div>
     </div>
 
-    <!-- CLEAR BRACELET MODAL -->
-    <div id="clear-bracelet-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white dark:bg-gray-800 p-8 md:p-10 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 text-center border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300 relative" id="clear-bracelet-modal-content">
-            
-            <button onclick="animateModalClose('clear-bracelet-modal')" class="absolute right-4 top-4 text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-2 rounded-full transition-colors focus:outline-none">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            
-            <!-- Icon -->
-            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-500 dark:text-gray-300 relative overflow-hidden shadow-sm">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </div>
-            
-            <h3 class="text-[22px] font-extrabold text-gray-900 dark:text-white mb-2" data-i18n="clearBraceletTitle">Очистить браслет</h3>
-            <p class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 tracking-widest uppercase mb-4" data-i18n="clearBraceletSub">ПРИЛОЖИТЕ БРАСЛЕТ ДЛЯ ОЧИСТКИ</p>
-            
-            <div class="relative mb-6">
-                <input type="text" id="clear-bracelet-input" class="w-full text-center px-5 py-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-orange dark:focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/10 font-bold text-gray-800 dark:text-white transition-all text-sm" placeholder="RFID код" data-i18n-placeholder="rfidPlaceholder">
-            </div>
-            
-            <!-- Local Success Overlay -->
-            <div id="clear-bracelet-success-overlay" class="absolute inset-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm z-10 hidden flex flex-col items-center justify-center rounded-[32px]">
-                <div class="w-16 h-16 bg-green-50 dark:bg-green-950/30 rounded-full flex items-center justify-center rfid-success-icon relative mb-4">
-                    <svg class="w-8 h-8 text-green-500 rfid-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div class="absolute inset-0 bg-green-400/20 rounded-full rfid-success-ring"></div>
-                </div>
-                <p class="text-sm font-bold text-green-600 dark:text-green-400 uppercase tracking-wider" data-i18n="toastBraceletCleared">Браслет успешно очищен</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- PREMIUM BONUS SCAN MODAL -->
-    <div id="pb-scan-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-[36px] shadow-2xl max-w-sm w-full mx-4 border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300 text-center relative overflow-hidden" id="pb-scan-modal-content">
-            <button onclick="animateModalClose('pb-scan-modal')" class="absolute right-4 top-4 text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-2 rounded-full transition-colors focus:outline-none">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            
-            <h3 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-6">Карта Premium bonus</h3>
-            
-            <div class="w-64 h-64 bg-gray-50 dark:bg-slate-900 rounded-3xl p-4 mx-auto mb-6 relative border border-gray-100 dark:border-gray-700 flex items-center justify-center overflow-hidden">
-                <canvas id="pb-modal-qr-canvas" class="w-full h-full block relative z-10"></canvas>
-            </div>
-
-            <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-2xl mb-6 text-center border border-gray-100 dark:border-gray-700/60">
-                <div class="text-sm font-bold text-gray-900 dark:text-white mb-1" id="pb-modal-parent-fio"></div>
-                <div class="font-mono text-xs text-gray-500" id="pb-modal-parent-phone"></div>
-            </div>
-            
-            <button onclick="animateModalClose('pb-scan-modal')" class="w-full bg-brand-purple hover:bg-brand-purpleHover text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm focus:outline-none">
-                ГОТОВО
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal: Add Child directly to account -->
+    <!-- Modal: Add Child -->
     <div id="add-child-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
         <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300" id="add-child-modal-content">
             <div class="flex justify-between items-center mb-6">
@@ -626,7 +491,6 @@
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            
             <div class="space-y-5">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 ml-2" data-i18n="addAccChildName">Имя ребенка</label>
@@ -637,16 +501,10 @@
                     <input type="date" id="existing-child-dob" class="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700 border-2 border-transparent dark:border-gray-600 dark:text-white rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-brand-purple dark:focus:border-brand-purple font-medium transition-all text-gray-600">
                 </div>
             </div>
-            
             <p id="add-child-error-msg" class="hidden text-red-500 text-xs font-bold mt-4 ml-2"></p>
-            
             <div class="flex space-x-3 mt-8">
-                <button id="add-child-cancel-btn" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-6 py-4 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none text-sm" data-i18n="addAccCancel">
-                    Отмена
-                </button>
-                <button id="add-child-submit-btn" class="flex-1 bg-brand-purple hover:bg-brand-purpleHover text-white font-bold px-6 py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm focus:outline-none">
-                    Добавить
-                </button>
+                <button id="add-child-cancel-btn" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold px-6 py-4 rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none text-sm" data-i18n="addAccCancel">Отмена</button>
+                <button id="add-child-submit-btn" class="flex-1 bg-brand-purple hover:bg-brand-purpleHover text-white font-bold px-6 py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm focus:outline-none">Добавить</button>
             </div>
         </div>
     </div>
@@ -666,45 +524,19 @@
         </div>
     </div>
 
-    <!-- Modal: Admin PIN -->
-    <div id="admin-pin-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-[32px] shadow-2xl max-w-sm w-full mx-4 border border-gray-100 dark:border-gray-700">
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <h3 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-1">Доступ администратора</h3>
-                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Введите ПИН-код для ручной выдачи токена активации.</p>
-                </div>
-                <button onclick="closeAdminPinModal()" class="text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-2 rounded-full transition-colors self-start shrink-0 focus:outline-none">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <div class="mb-6">
-                <input type="password" id="admin-pin-input" maxlength="4" placeholder="••••" class="w-full bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-2xl px-6 py-4 text-center text-3xl tracking-[1em] font-black text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple transition-all" autocomplete="off">
-                <p id="admin-pin-error" class="text-red-500 text-xs font-bold text-center mt-3 hidden">Неверный ПИН-код</p>
-            </div>
-            
-            <button onclick="verifyAdminPin()" class="w-full bg-brand-purple text-white font-extrabold px-6 py-4 rounded-2xl shadow-lg shadow-brand-purple/30 hover:bg-brand-purpleHover transition-all flex items-center justify-center gap-2 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>ПОДТВЕРДИТЬ</span>
-            </button>
-        </div>
-    </div>
-
     <!-- Modal: Avatar Info (Prizes & Visits) -->
     <div id="avatar-info-modal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center p-4">
         <div class="bg-white dark:bg-slate-800 p-8 md:p-10 rounded-[40px] shadow-2xl max-w-3xl w-full mx-auto border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300" id="avatar-info-modal-content">
             <div class="flex justify-between items-start mb-8">
                 <div>
                     <h3 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-1" data-i18n="avatarTitle">Аватар ребенка</h3>
-                    <p class="text-gray-500 dark:text-gray-400 font-medium" id="avatar-info-name">Случайный Гость (Аватар)</p>
+                    <p class="text-gray-500 dark:text-gray-400 font-medium" id="avatar-info-name">Случайный Гость</p>
                 </div>
                 <button class="close-avatar-info text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-3 rounded-full transition-colors self-start shrink-0 focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <!-- Top Stats -->
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-[28px] p-6 flex items-center justify-between border border-transparent hover:border-gray-100 dark:hover:border-gray-700 transition-colors">
                     <div class="flex items-center gap-4">
@@ -713,73 +545,94 @@
                         </div>
                         <span class="text-gray-500 dark:text-gray-400 font-bold text-lg" data-i18n="avatarLevel">Уровень</span>
                     </div>
-                    <span id="avatar-info-level" class="font-extrabold text-3xl text-gray-900 dark:text-white"></span>
+                    <span id="avatar-info-level" class="font-extrabold text-3xl text-gray-900 dark:text-white">4</span>
                 </div>
                 
                 <div class="bg-orange-50/50 dark:bg-orange-950/20 rounded-[28px] p-6 flex items-center justify-between border border-transparent hover:border-orange-100 dark:hover:border-orange-900/50 transition-colors">
                     <div class="flex items-center gap-4">
                         <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-brand-orange shadow-sm">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1" /></svg>
                         </div>
-                        <span class="text-brand-orange font-bold text-lg" data-i18n="avatarBalance">Баланс</span>
+                        <span class="text-gray-500 dark:text-gray-400 font-bold text-lg" data-i18n="avatarBalance">Баланс</span>
                     </div>
-                    <span id="avatar-balance-pill" class="font-extrabold text-3xl text-brand-orange"></span>
+                    <span id="avatar-balance-pill" class="font-extrabold text-3xl text-slate-800 dark:text-white">450 <span class="text-base font-bold text-brand-orange ml-0.5">баллов</span></span>
                 </div>
             </div>
 
-            <!-- Prizes Section -->
             <div class="mb-8">
-                <div class="flex justify-between items-center mb-5 px-2">
-                    <h4 class="text-xl font-extrabold text-gray-900 dark:text-white" data-i18n="avatarPrizes">Доступные призы</h4>
-                    <span class="text-xs font-bold text-gray-400 bg-gray-50 dark:bg-gray-700/50 px-3 py-1 rounded-full">Максимум 4 приза</span>
-                </div>
-                <div id="avatar-prizes-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- JS injected prizes -->
-                </div>
+                <h4 class="text-sm font-black text-gray-400 dark:text-gray-500 tracking-widest uppercase mb-4" data-i18n="avatarPrizes">Доступные призы</h4>
+                <div id="avatar-prizes-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <!-- Visits Accordion -->
-            <div class="border border-gray-100 dark:border-gray-700 rounded-[28px] overflow-hidden mb-8 transition-all hover:border-gray-200 dark:hover:border-gray-600 bg-white dark:bg-gray-800">
-                <button id="visits-accordion-btn" class="w-full px-6 py-5 flex justify-between items-center focus:outline-none bg-transparent">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-2xl flex items-center justify-center text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <span class="font-extrabold text-gray-800 dark:text-slate-200 text-lg"><span data-i18n="avatarVisits">История посещений</span> (<span id="visits-count-badge">0</span>)</span>
+            <div>
+                <button id="visits-accordion-btn" class="w-full flex items-center justify-between py-4 border-t border-gray-150 dark:border-gray-700 focus:outline-none">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-black text-gray-400 dark:text-gray-500 tracking-widest uppercase" data-i18n="avatarVisits">История посещений</span>
+                        <span id="visits-count-badge" class="bg-brand-orange text-white text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
                     </div>
-                    <div class="w-10 h-10 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                        <svg id="visits-accordion-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                    </div>
+                    <svg id="visits-accordion-icon" class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
                 </button>
-                <div id="visits-accordion-content" class="hidden bg-gray-50/50 dark:bg-gray-800/30 px-6 py-5 border-t border-gray-100 dark:border-gray-700 space-y-3 max-h-48 overflow-y-auto">
-                    <!-- JS injected visits -->
-                </div>
-            </div>
-
-            <div class="flex justify-end">
-                <button class="close-avatar-info bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold px-10 py-4 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none" data-i18n="avatarClose">
-                    Закрыть окно
-                </button>
+                <div id="visits-accordion-content" class="hidden pb-6 max-h-40 overflow-y-auto"></div>
             </div>
         </div>
     </div>
 
+    <!-- PREMIUM BONUS SCAN MODAL (FOR OPTION 2 / OPTION 3) -->
+    <div id="pb-scan-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-[36px] shadow-2xl max-w-sm w-full mx-4 border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300 text-center relative overflow-hidden" id="pb-scan-modal-content">
+            <button onclick="animateModalClose('pb-scan-modal')" class="absolute right-4 top-4 text-gray-400 hover:text-brand-orange bg-gray-50 dark:bg-gray-700 hover:bg-orange-50 dark:hover:bg-gray-600 p-2 rounded-full transition-colors focus:outline-none">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <h3 class="text-xl font-extrabold text-gray-900 dark:text-white mb-1">Скан Loyalty Card</h3>
+            <p class="text-[10px] font-black text-brand-orange tracking-widest uppercase mb-6">PremiumBonus Program</p>
+            
+            <!-- QR Frame -->
+            <div class="w-56 h-56 bg-gray-50 dark:bg-slate-900 rounded-3xl p-4 mx-auto mb-6 relative border border-gray-100 dark:border-gray-700 flex items-center justify-center overflow-hidden">
+                <canvas id="pb-modal-qr-canvas" class="w-full h-full block relative z-10"></canvas>
+                <!-- Animated red scanner line -->
+                <div class="absolute left-0 right-0 h-0.5 bg-brand-orange shadow-md shadow-brand-orange/60 z-20 scanner-line" style="animation: scan-beam 2s infinite linear;"></div>
+            </div>
+
+            <!-- Card Info -->
+            <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-2xl mb-6 text-left border border-gray-100 dark:border-gray-700/60">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] font-extrabold text-gray-400 uppercase">Баланс бонусов</span>
+                    <span id="pb-modal-balance-text" class="text-lg font-black text-brand-orange">450 б.</span>
+                </div>
+                <div class="h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
+                <div class="flex justify-between items-center text-xs font-bold text-gray-700 dark:text-slate-350">
+                    <span id="pb-modal-parent-fio">Смирнова А. Ю.</span>
+                    <span class="font-mono text-[10px] text-gray-400" id="pb-modal-parent-phone">+7 (926) 765-43-21</span>
+                </div>
+            </div>
+            
+            <button onclick="animateModalClose('pb-scan-modal')" class="w-full bg-brand-purple hover:bg-brand-purpleHover text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-purple/20 transition-all active:scale-[0.98] text-sm focus:outline-none">
+                ГОТОВО
+            </button>
+        </div>
+    </div>
+
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col items-center space-y-3 pointer-events-none w-full max-w-sm px-4"></div>
+    <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 max-w-sm w-full px-4"></div>
 
     <script>
-        // Language system configuration
+        // GLOBAL CONFIG & EXPERIMENT STATE
+        let activeExperimentOption = 2; // Default to Option 2 as user prefers it
         let currentLang = localStorage.getItem('lang') || 'ru';
-        
+        let accounts = [];
+        const avatarsData = {};
+        let currentFilter = 'all';
+        let currentPage = 1;
+        let itemsPerPage = 20;
+        let totalPages = 1;
+        let darkTheme = localStorage.getItem('theme') === 'dark';
+
         const translations = {
             ru: {
                 title: "RFID Панель - Hello Park",
                 searchPlaceholder: "Фио, ном...",
                 checkBracelet: "ПРОВЕРИТЬ БРАСЛЕТ",
-                clearBraceletTitle: "Очистить браслет",
-                clearBraceletSub: "ПРИЛОЖИТЕ БРАСЛЕТ ДЛЯ ОЧИСТКИ",
-                clearBraceletBtn: "ОЧИСТИТЬ",
-                toastBraceletCleared: "Браслет успешно очищен",
                 accountsTitle: "Аккаунты",
                 addAccountBtn: "Добавить аккаунт",
                 filterLabel: "ФИЛЬТР:",
@@ -801,7 +654,7 @@
                 btnDetails: "Детали",
                 btnBind: "Привязать",
                 btnDelete: "Удалить",
-                btnNewBracelet: "Новый",
+                btnNewBracelet: "Новый браслет",
                 // RFID Modal
                 rfidTitle: "Привязка браслета",
                 rfidSub: "ПРИЛОЖИТЕ БРАСЛЕТ К СЧИТЫВАТЕЛЮ",
@@ -869,10 +722,6 @@
                 title: "RFID Panel - Hello Park",
                 searchPlaceholder: "Name, phone...",
                 checkBracelet: "CHECK BRACELET",
-                clearBraceletTitle: "Clear bracelet",
-                clearBraceletSub: "TAP BRACELET TO CLEAR",
-                clearBraceletBtn: "CLEAR",
-                toastBraceletCleared: "Bracelet successfully cleared",
                 accountsTitle: "Accounts",
                 addAccountBtn: "Add Account",
                 filterLabel: "FILTER:",
@@ -960,14 +809,23 @@
             }
         };
 
-        // Global state
-        let accounts = [];
-        const avatarsData = {};
-        let currentFilter = 'all';
-        let currentPage = 1;
-        let itemsPerPage = 20;
-        let totalPages = 1;
-        let darkTheme = localStorage.getItem('theme') === 'dark';
+        // Switch experiment options from top control bar
+        function changeActiveOption(optId) {
+            activeExperimentOption = optId;
+            
+            // Style control buttons
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`exp-btn-${i}`);
+                if (i === optId) {
+                    btn.className = "px-4 py-1.5 rounded-xl text-xs font-black transition-all bg-brand-purple text-white shadow shadow-brand-purple/20";
+                } else {
+                    btn.className = "px-4 py-1.5 rounded-xl text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800";
+                }
+            }
+            
+            showToast(`Вариант ${optId} активирован в таблице`, 'success');
+            renderAccounts();
+        }
 
         // Child UID Generator matching developer's style
         function generateChildUID() {
@@ -985,7 +843,6 @@
             try {
                 const d = new Date(dobString);
                 if (isNaN(d.getTime())) return dobString;
-                
                 const dd = String(d.getDate()).padStart(2, '0');
                 const mm = String(d.getMonth() + 1).padStart(2, '0');
                 const yyyy = d.getFullYear();
@@ -1048,10 +905,8 @@
         function updateThemeUI() {
             const icon = document.getElementById('theme-toggle-icon');
             if (darkTheme) {
-                // Sun Icon
                 icon.innerHTML = `<svg class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" /></svg>`;
             } else {
-                // Moon Icon
                 icon.innerHTML = `<svg class="w-5 h-5 text-gray-500 dark:text-gray-300 hover:text-brand-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
             }
         }
@@ -1153,7 +1008,6 @@
         function showConfirmModal(title, message, onConfirm, onCancel) {
             document.getElementById('confirm-modal-title').innerText = title;
             document.getElementById('confirm-modal-message').innerText = message;
-            
             const confirmBtn = document.getElementById('confirm-modal-confirm');
             confirmBtn.innerText = translations[currentLang].btnDelete;
 
@@ -1187,43 +1041,34 @@
             const data = getAvatarData(childName);
             const container = document.getElementById('avatar-prizes-container');
             container.innerHTML = '';
-
-            data.prizes.forEach((prize) => {
+            
+            data.prizes.forEach(prize => {
                 const card = document.createElement('div');
-                card.className = 'relative flex flex-col items-center text-center p-4 rounded-[28px] border-2 dark:border-gray-700 transition-all duration-300 h-full min-h-[210px] bg-white dark:bg-gray-800';
-
+                card.className = 'bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700 p-5 rounded-[28px] flex flex-col justify-between transition-all min-h-[180px]';
+                
                 const iconBox = document.createElement('div');
-                iconBox.className = 'w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 mb-4 transition-transform duration-300 group-hover:scale-110 shadow-sm';
-
+                iconBox.className = 'w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-colors';
+                
                 const titleSpan = document.createElement('span');
-                titleSpan.className = 'text-[14px] font-extrabold text-gray-900 dark:text-white leading-tight w-full mb-1.5';
-                titleSpan.innerText = prize.title;
+                titleSpan.className = 'font-extrabold text-sm text-gray-900 dark:text-white mb-1';
+                titleSpan.textContent = prize.title;
                 
                 const descSpan = document.createElement('span');
-                descSpan.className = 'text-[10px] font-bold uppercase tracking-wider mb-5 flex items-center justify-center w-full h-[22px]';
+                descSpan.className = 'text-[11px] font-bold text-gray-400 dark:text-gray-500 mb-4';
+                descSpan.textContent = prize.desc;
                 
-                if (prize.status === 'available') {
-                    descSpan.innerHTML = `<span class="bg-brand-purple/10 text-brand-purple dark:bg-purple-950/40 dark:text-purple-400 px-2 py-1.5 rounded-xl text-[9px]">${translations[currentLang].avatarStatusAvailable}</span>`;
-                } else if (prize.status === 'received') {
-                    descSpan.innerHTML = `<span class="bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-2 py-1.5 rounded-xl text-[9px]">${translations[currentLang].avatarStatusReceived}</span>`;
-                } else {
-                    descSpan.className += ' text-gray-400 dark:text-gray-500';
-                    descSpan.innerText = prize.desc || '';
-                }
-
                 const actionWrapper = document.createElement('div');
-                actionWrapper.className = 'mt-auto w-full';
-
+                actionWrapper.className = 'mt-auto';
+                
                 if (prize.status === 'received') {
-                    card.classList.add('border-gray-100', 'dark:border-gray-700', 'shadow-sm');
-                    iconBox.classList.add('bg-green-50', 'dark:bg-green-950/20', 'text-green-500', 'border', 'border-green-100', 'dark:border-green-900/50');
-                    iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>';
+                    card.classList.add('border-green-150', 'bg-green-50/20', 'dark:bg-green-950/10');
+                    iconBox.classList.add('bg-green-100', 'dark:bg-green-950/40', 'text-green-600', 'dark:text-green-400');
+                    iconBox.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>';
                     
                     actionWrapper.innerHTML = `
-                        <div class="flex flex-col gap-2 w-full">
-                            <div class="flex items-center justify-center gap-1.5 bg-green-50 dark:bg-green-950/20 border-2 border-transparent py-2 rounded-[14px] w-full text-green-600 dark:text-green-400">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                                <span class="text-[11px] font-bold uppercase tracking-wide">${translations[currentLang].avatarBtnIssued}</span>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center justify-center gap-1 bg-green-100/50 dark:bg-green-950/40 py-2.5 rounded-[12px] text-green-600 dark:text-green-400 w-full border border-green-100/30">
+                                 <span class="text-[10px] font-black uppercase tracking-wider">${translations[currentLang].avatarBtnIssued}</span>
                             </div>
                             <button class="undo-btn flex items-center justify-center bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300 border-2 border-gray-100 dark:border-gray-700 py-1.5 rounded-[12px] transition-all duration-300 w-full focus:outline-none cursor-pointer">
                                 <span class="text-[10px] font-bold uppercase tracking-wide">${translations[currentLang].avatarBtnUndo}</span>
@@ -1262,7 +1107,6 @@
                     };
                     actionWrapper.appendChild(issueBtn);
                 } else {
-                    // locked
                     card.classList.add('bg-gray-50', 'dark:bg-gray-800/40', 'border-gray-50', 'dark:border-gray-700/50', 'opacity-60');
                     iconBox.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-400', 'dark:text-gray-500');
                     iconBox.innerHTML = '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>';
@@ -1285,15 +1129,12 @@
 
         function showAvatarInfo(childName) {
             const data = getAvatarData(childName);
-            
             document.getElementById('avatar-info-name').textContent = childName + " (" + translations[currentLang].statusAvatar + ")";
             document.getElementById('avatar-info-level').textContent = data.level;
             document.getElementById('avatar-balance-pill').innerHTML = data.balance + ' <span class="text-base font-bold text-brand-orange ml-0.5">' + translations[currentLang].avatarPoints + '</span>';
 
-            // Render Prizes
             renderPrizes(childName);
 
-            // Render Visits
             document.getElementById('visits-count-badge').textContent = data.visits.length;
             const visitsContainer = document.getElementById('visits-accordion-content');
             visitsContainer.innerHTML = '';
@@ -1311,10 +1152,8 @@
                 });
             }
 
-            // Ensure accordion is closed by default
             accordionContent.classList.add('hidden');
             accordionIcon.classList.remove('rotate-180');
-
             animateModalOpen('avatar-info-modal');
         }
 
@@ -1324,10 +1163,9 @@
             });
         });
 
-        // Add Account Form Logic
+        // Add Account Modal
         const addChildFieldBtn = document.getElementById('add-child-field-btn');
         const childrenFieldsContainer = document.getElementById('children-fields-container');
-        
         let phoneVerified = false;
         let smsTimer = null;
         let smsTimeLeft = 59;
@@ -1352,10 +1190,7 @@
             if (smsTimer) clearInterval(smsTimer);
             phoneVerified = false;
             childrenFieldsContainer.innerHTML = ''; 
-            
-            // Add one default child input
             addChildInputField();
-            
             animateModalOpen('add-account-modal');
         }
 
@@ -1380,18 +1215,9 @@
             addChildInputField();
         });
 
-        // Phone validation helpers — local 10 digits
+        // Phone formatting logic
         function getPhoneDigits(val) {
             return val.replace(/[^\d]/g, '');
-        }
-        function isPhoneLocalValid(val) {
-            const digits = getPhoneDigits(val);
-            return digits.length === 10;
-        }
-        function isPhoneValid(val) {
-            const digits = getPhoneDigits(val);
-            if (digits.length === 10) return true;
-            return digits.length === 11 && (digits.startsWith('7') || digits.startsWith('8'));
         }
 
         function formatPhoneLocal(value) {
@@ -1404,15 +1230,9 @@
             
             let formatted = '(';
             formatted += digits.slice(0, 3);
-            if (digits.length > 3) {
-                formatted += ') ' + digits.slice(3, 6);
-            }
-            if (digits.length > 6) {
-                formatted += '-' + digits.slice(6, 8);
-            }
-            if (digits.length > 8) {
-                formatted += '-' + digits.slice(8, 10);
-            }
+            if (digits.length > 3) formatted += ') ' + digits.slice(3, 6);
+            if (digits.length > 6) formatted += '-' + digits.slice(6, 8);
+            if (digits.length > 8) formatted += '-' + digits.slice(8, 10);
             return formatted;
         }
 
@@ -1441,11 +1261,8 @@
         const phonePrefixBadge = document.getElementById('phone-input-wrapper');
 
         phonePrefixBadge.addEventListener('click', () => phoneInput.focus());
-
         phoneInput.addEventListener('focus', () => {
-            if (!phoneVerified) {
-                phonePrefixBadge.classList.add('focused');
-            }
+            if (!phoneVerified) phonePrefixBadge.classList.add('focused');
         });
         phoneInput.addEventListener('blur', () => {
             phonePrefixBadge.classList.remove('focused');
@@ -1548,18 +1365,13 @@
         // RFID Binding Modal Logic
         let currentRfidParentId = null;
         let currentRfidChildId = null;
-
-        // Chain-binding state
-        let rfidChainQueue = [];     // Array of { parentId, childId, childName }
-        let rfidChainIndex = 0;      // Current index in the queue
-        let rfidChainMode = false;   // Whether we're in chain-binding mode
+        let rfidChainQueue = [];
+        let rfidChainIndex = 0;
+        let rfidChainMode = false;
 
         function resetRfidModalUI() {
-            const bindingContent = document.getElementById('rfid-binding-content');
-            const successOverlay = document.getElementById('rfid-success-overlay');
-            bindingContent.classList.remove('hidden');
-            successOverlay.classList.add('hidden');
-            // Reset success overlay animations by removing and re-adding inner HTML later
+            document.getElementById('rfid-binding-content').classList.remove('hidden');
+            document.getElementById('rfid-success-overlay').classList.add('hidden');
         }
 
         function updateChainProgress() {
@@ -1587,7 +1399,6 @@
             currentRfidParentId = parentId;
             currentRfidChildId = childId;
             
-            // If opening from table (not chain), reset chain mode
             if (!rfidChainMode) {
                 rfidChainQueue = [];
                 rfidChainIndex = 0;
@@ -1597,21 +1408,16 @@
             
             const nameEl = document.getElementById('rfid-child-name');
             nameEl.textContent = child.name.toUpperCase();
-            nameEl.classList.remove('rfid-name-out', 'rfid-name-in');
             
             const input = document.getElementById('rfid-code-input');
             input.value = child.rfid || ''; 
             input.classList.remove('border-red-500');
-            
-            const errorMsg = document.getElementById('rfid-modal-error-msg');
-            errorMsg.classList.add('hidden');
+            document.getElementById('rfid-modal-error-msg').classList.add('hidden');
             
             updateChainProgress();
-            
             animateModalOpen('rfid-modal');
         }
 
-        // Start chain-binding for a newly created account
         function startChainBinding(parentId) {
             const parent = accounts.find(a => a.id === parentId);
             if (!parent || !parent.children || parent.children.length === 0) return;
@@ -1624,40 +1430,16 @@
             }));
             rfidChainIndex = 0;
             
-            // Open modal for first child
             const first = rfidChainQueue[0];
             openRfidModal(first.parentId, first.childId);
         }
 
-        // Transition to next child in chain (with success animation)
         function showRfidSuccess(childName, onDone) {
             const bindingContent = document.getElementById('rfid-binding-content');
             const successOverlay = document.getElementById('rfid-success-overlay');
             const successNameEl = document.getElementById('rfid-success-child-name');
             
             successNameEl.textContent = childName.toUpperCase();
-            
-            // Re-trigger animations by cloning inner content
-            const iconContainer = successOverlay.querySelector('.rfid-success-icon');
-            const ring = successOverlay.querySelector('.rfid-success-ring');
-            const checkmark = successOverlay.querySelector('.rfid-checkmark');
-            
-            // Force animation restart
-            if (iconContainer) {
-                iconContainer.style.animation = 'none';
-                iconContainer.offsetHeight; // reflow
-                iconContainer.style.animation = '';
-            }
-            if (ring) {
-                ring.style.animation = 'none';
-                ring.offsetHeight;
-                ring.style.animation = '';
-            }
-            if (checkmark) {
-                checkmark.style.animation = 'none';
-                checkmark.offsetHeight;
-                checkmark.style.animation = '';
-            }
             
             bindingContent.classList.add('hidden');
             successOverlay.classList.remove('hidden');
@@ -1667,12 +1449,9 @@
             }, 1500);
         }
 
-        // Move to next child in chain
         function advanceChain() {
             rfidChainIndex++;
-            
             if (rfidChainIndex >= rfidChainQueue.length) {
-                // All done!
                 rfidChainMode = false;
                 animateModalClose('rfid-modal', () => {
                     showToast(translations[currentLang].rfidAllBound, 'success');
@@ -1690,12 +1469,9 @@
             currentRfidParentId = next.parentId;
             currentRfidChildId = next.childId;
             
-            // Show binding content again
             resetRfidModalUI();
             
-            // Animate name transition
             const nameEl = document.getElementById('rfid-child-name');
-            nameEl.classList.add('rfid-name-in');
             nameEl.textContent = child.name.toUpperCase();
             
             const input = document.getElementById('rfid-code-input');
@@ -1704,11 +1480,6 @@
             document.getElementById('rfid-modal-error-msg').classList.add('hidden');
             
             updateChainProgress();
-            
-            // Remove animation class after it completes
-            setTimeout(() => {
-                nameEl.classList.remove('rfid-name-in');
-            }, 300);
         }
 
         document.getElementById('rfid-generate-btn').addEventListener('click', (e) => {
@@ -1723,17 +1494,9 @@
             document.getElementById('rfid-modal-error-msg').classList.add('hidden');
         });
 
-        document.getElementById('rfid-code-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('rfid-confirm-btn').click();
-            }
-        });
-
         document.getElementById('rfid-confirm-btn').addEventListener('click', () => {
             const parentId = currentRfidParentId;
             const childId = currentRfidChildId;
-            
             const parent = accounts.find(a => a.id === parentId);
             if (!parent) return;
             const child = parent.children.find(c => c.id === childId);
@@ -1750,7 +1513,6 @@
                 return;
             }
             
-            // Check if code is occupied
             let isOccupied = false;
             let occupiedName = '';
             accounts.forEach(acc => {
@@ -1772,25 +1534,15 @@
                 return;
             }
             
-            const wasEmpty = child.status === 'Нет';
             child.rfid = code;
-            if (wasEmpty) {
-                child.status = 'Браслет';
-            }
-            if (window.posTokens > 0 && window.currentBindChildId === childId) {
-                window.posTokens--;
-                if(typeof updatePosWidget === 'function') updatePosWidget();
-            }
-            
+            if (child.status === 'Нет') child.status = 'Браслет';
             recordVisit(child.name);
             
             if (rfidChainMode) {
-                // Show success inside modal, then advance
                 showRfidSuccess(child.name, () => {
                     advanceChain();
                 });
             } else {
-                // Regular single-bind: close modal
                 animateModalClose('rfid-modal', () => {
                     showToast(translations[currentLang].toastBraceletSuccess, 'success');
                     renderAccounts();
@@ -1800,13 +1552,9 @@
 
         document.getElementById('rfid-cancel-btn').addEventListener('click', () => {
             if (rfidChainMode) {
-                // Skip this child, move to next
                 if (rfidChainIndex + 1 >= rfidChainQueue.length) {
-                    // Last child — close modal
                     rfidChainMode = false;
-                    animateModalClose('rfid-modal', () => {
-                        renderAccounts();
-                    });
+                    animateModalClose('rfid-modal', () => renderAccounts());
                 } else {
                     advanceChain();
                 }
@@ -1815,8 +1563,7 @@
             }
         });
 
-
-        // Add Child modal to existing account
+        // Add Child logic
         let currentAddChildParentId = null;
 
         function openAddChildModal(parentId) {
@@ -1862,11 +1609,10 @@
         document.getElementById('add-child-cancel-btn').addEventListener('click', () => animateModalClose('add-child-modal'));
         document.getElementById('add-child-cancel-icon').addEventListener('click', () => animateModalClose('add-child-modal'));
 
-        // Check Bracelet Global Modal
+        // Check Bracelet
         function openCheckBraceletModal() {
             const testCodesContainer = document.getElementById('check-bracelet-test-codes');
             testCodesContainer.innerHTML = '';
-            
             const activeRfidCodes = [];
             accounts.forEach(acc => {
                 acc.children.forEach(c => {
@@ -1889,19 +1635,11 @@
                     testCodesContainer.appendChild(btn);
                 });
             }
-            
             document.getElementById('check-bracelet-input').value = '';
             animateModalOpen('check-bracelet-modal');
         }
 
         document.getElementById('check-bracelet-global-btn').addEventListener('click', openCheckBraceletModal);
-
-        document.getElementById('check-bracelet-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('check-bracelet-confirm-btn').click();
-            }
-        });
 
         document.getElementById('check-bracelet-confirm-btn').addEventListener('click', () => {
             const code = document.getElementById('check-bracelet-input').value.trim();
@@ -1938,56 +1676,7 @@
             animateModalClose('check-bracelet-modal');
         });
 
-        // --- CLEAR BRACELET LOGIC ---
-        function openClearBraceletModal() {
-            document.getElementById('clear-bracelet-input').value = '';
-            document.getElementById('clear-bracelet-success-overlay').classList.add('hidden');
-            animateModalOpen('clear-bracelet-modal');
-        }
-
-        document.getElementById('clear-bracelet-global-btn').addEventListener('click', openClearBraceletModal);
-
-        document.getElementById('clear-bracelet-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const code = document.getElementById('clear-bracelet-input').value.trim();
-                if (!code) return;
-                
-                // Perform clear action here (e.g. remove rfid from child)
-                accounts.forEach(acc => {
-                    acc.children.forEach(c => {
-                        if (c.rfid === code) {
-                            c.rfid = null; // Clear it
-                            if (c.status === 'Аватар') {
-                                c.status = 'Без браслета';
-                                c.avatarAssigned = false;
-                                c.avatarLevel = 0;
-                                c.avatarVisits = 0;
-                            } else if (c.status === 'Браслет') {
-                                c.status = 'Без браслета';
-                            }
-                        }
-                    });
-                });
-
-                // Re-render accounts to reflect changes
-                renderAccounts();
-
-                // Show local success
-                const successOverlay = document.getElementById('clear-bracelet-success-overlay');
-                successOverlay.classList.remove('hidden');
-                showToast(translations[currentLang].toastBraceletCleared, 'success');
-                
-                // Hide success after 1.5s and clear input for next scan
-                setTimeout(() => {
-                    successOverlay.classList.add('hidden');
-                    document.getElementById('clear-bracelet-input').value = '';
-                    document.getElementById('clear-bracelet-input').focus();
-                }, 1500);
-            }
-        });
-
-        // Submit add account logic
+        // Submit add account
         document.getElementById('submit-add-account').addEventListener('click', () => {
             const fioInput = document.getElementById('new-account-fio');
             const phoneInput = document.getElementById('new-account-phone');
@@ -2054,17 +1743,19 @@
                 phone: formatPhoneNumber(fullPhone),
                 createdAt: dateStr,
                 children: childrenData,
-                expanded: true
+                expanded: true,
+                pbBalance: 250 // Initial loyalty balance
             };
             
             accounts.unshift(newParent);
             
             animateModalClose('add-account-modal', () => {
                 renderAccounts();
-                // Show Premium Bonus QR code for newly registered user
-                setTimeout(() => {
-                    openPBScanModal(newParent.id);
-                }, 400);
+                if (newParent.children.length > 0) {
+                    setTimeout(() => {
+                        startChainBinding(newParent.id);
+                    }, 400);
+                }
             });
         });
 
@@ -2079,7 +1770,7 @@
             });
         });
 
-        // Items per page select
+        // Items per page
         document.getElementById('items-per-page-select').addEventListener('change', () => {
             currentPage = 1;
             renderAccounts();
@@ -2099,13 +1790,13 @@
             }
         });
 
-        // Search inputs
+        // Search input
         document.getElementById('search-input').addEventListener('input', () => {
             currentPage = 1;
             renderAccounts();
         });
 
-        // Dynamic pagination footer rendering
+        // Render Pagination
         function renderPaginationFooter(pagesTotal) {
             totalPages = pagesTotal;
             const prevBtn = document.getElementById('prev-page-btn');
@@ -2116,7 +1807,6 @@
             nextBtn.disabled = currentPage === totalPages;
             prevBtn.textContent = translations[currentLang].prevPage;
             nextBtn.textContent = translations[currentLang].nextPage;
-            
             pagesContainer.innerHTML = '';
             
             for (let i = 1; i <= totalPages; i++) {
@@ -2131,13 +1821,13 @@
             }
         }
 
-        // Table renderer from central accounts list
+        // Helper to generate the exact HPARK base64 payload matching the mobile guest questionnaire
         function getPBPayloadContent(parent) {
             const children = parent.children.map(c => ({ name: c.name, dob: c.dob }));
             const payload = {
                 v: 1,
                 fio: parent.fio,
-                phone: parent.phone.replace(/[^\d+]/g, ''),
+                phone: parent.phone.replace(/[^\d+]/g, ''), // clean phone format: +7xxxxxxxxxx
                 children: children,
                 ts: Date.now()
             };
@@ -2146,15 +1836,18 @@
             return 'HPARK:' + b64;
         }
 
+        // Open PremiumBonus Card Modal (Options 2 & 3)
         function openPBScanModal(parentId) {
             const parent = accounts.find(a => a.id === parentId);
             if (!parent) return;
 
             document.getElementById('pb-modal-parent-fio').textContent = parent.fio;
             document.getElementById('pb-modal-parent-phone').textContent = parent.phone;
+            document.getElementById('pb-modal-balance-text').textContent = (parent.pbBalance || 0) + ' б.';
 
             animateModalOpen('pb-scan-modal');
 
+            // Draw QR code inside modal
             setTimeout(() => {
                 const canvas = document.getElementById('pb-modal-qr-canvas');
                 if (canvas) {
@@ -2169,10 +1862,11 @@
             }, 50);
         }
 
+        // MAIN TABLE RENDERER
         function renderAccounts() {
             const query = document.getElementById('search-input').value.toLowerCase().trim();
             
-            // Step 1: Search query filtering
+            // Search query filter
             let filtered = accounts.map(p => ({ ...p, children: [...p.children] })).filter(parent => {
                 const nameMatch = parent.fio.toLowerCase().includes(query);
                 const phoneMatch = parent.phone.toLowerCase().includes(query);
@@ -2180,7 +1874,7 @@
                 return nameMatch || phoneMatch || childMatch;
             });
             
-            // Step 2: Status filtering
+            // Status filter
             if (currentFilter !== 'all') {
                 filtered = filtered.map(parent => {
                     const parentCopy = { ...parent, children: [...parent.children] };
@@ -2194,17 +1888,14 @@
                 }).filter(parent => parent.children.length > 0);
             }
             
-            // Step 3: Pagination calculation
+            // Pagination
             const totalCount = filtered.length;
             document.getElementById('total-count-badge').textContent = totalCount;
-            
             itemsPerPage = parseInt(document.getElementById('items-per-page-select').value, 10);
             const pagesTotal = Math.ceil(totalCount / itemsPerPage) || 1;
             
-            if (currentPage > pagesTotal) {
-                currentPage = pagesTotal;
-            }
-            
+            if (currentPage > pagesTotal) currentPage = pagesTotal;
+            if (currentPage < 1) currentPage = 1;
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const paginated = filtered.slice(start, end);
@@ -2213,41 +1904,74 @@
             tbody.innerHTML = '';
             
             if (paginated.length === 0) {
-                document.getElementById('empty-search-state').classList.remove('hidden');
                 document.getElementById('table-container').classList.add('hidden');
                 document.getElementById('pagination-footer').classList.add('hidden');
                 return;
             } else {
-                document.getElementById('empty-search-state').classList.add('hidden');
                 document.getElementById('table-container').classList.remove('hidden');
                 document.getElementById('pagination-footer').classList.remove('hidden');
             }
             
-            // Step 4: Element construction
+            renderPaginationFooter(pagesTotal);
+
             paginated.forEach(parent => {
-                // Parent row
+                // Parent row (identical to original layout)
                 const parentRow = document.createElement('tr');
                 parentRow.className = 'hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors group border-b border-gray-100 dark:border-slate-700';
                 
                 const avatarLetter = parent.fio.trim().charAt(0).toUpperCase() || '?';
                 
-                // Column 1
+                // Determine layout variants for Parent Row itself
+                let pbButtonHtml = '';
+                if (activeExperimentOption === 2) {
+                    // Option 2: Orange pill button "Карта PB" matching screenshot 100%
+                    pbButtonHtml = `
+                        <button class="pb-card-btn shrink-0 bg-brand-orange hover:bg-brand-orangeHover text-white px-5 py-2.5 rounded-full font-bold text-xs flex items-center gap-1.5 shadow-md shadow-brand-orange/20 ml-2 focus:outline-none transition-all active:scale-95" data-parent-id="${parent.id}">
+                            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="2" y="2" width="4" height="4" rx="1"/>
+                                <rect x="8" y="2" width="4" height="4" rx="1"/>
+                                <rect x="14" y="2" width="4" height="4" rx="1"/>
+                                <rect x="20" y="2" width="4" height="4" rx="1"/>
+                                <rect x="2" y="8" width="4" height="4" rx="1"/>
+                                <rect x="8" y="8" width="4" height="4" rx="1"/>
+                                <rect x="14" y="8" width="4" height="4" rx="1"/>
+                                <rect x="20" y="8" width="4" height="4" rx="1"/>
+                                <rect x="2" y="14" width="4" height="4" rx="1"/>
+                                <rect x="8" y="14" width="4" height="4" rx="1"/>
+                                <rect x="14" y="14" width="4" height="4" rx="1"/>
+                                <rect x="20" y="14" width="4" height="4" rx="1"/>
+                            </svg>
+                            <span>Карта PB</span>
+                        </button>
+                    `;
+                } else if (activeExperimentOption === 3) {
+                    // Option 3: Mini inline badge showing balance, click opens QR modal
+                    pbButtonHtml = `
+                        <button class="pb-card-btn text-[10px] font-black bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-full uppercase tracking-wider transition-all focus:outline-none ml-2 shrink-0" data-parent-id="${parent.id}">
+                            PB: ${parent.pbBalance || 0} б.
+                        </button>
+                    `;
+                }
+
+                // Name & phone cell
                 const nameCell = document.createElement('td');
                 nameCell.className = 'py-5 px-6 whitespace-nowrap';
                 nameCell.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="profile-icon select-none bg-blue-500">${avatarLetter}</div>
-                        <div>
-                            <span class="font-extrabold text-gray-900 dark:text-white block text-base leading-tight">${parent.fio}</span>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">${parent.phone}</span>
-                                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-semibold">• ${translations[currentLang].childrenCount}: ${parent.children.length}</span>
-                                ${parent.children.length > 0 ? `
-                                <button class="toggle-children-btn text-brand-purple hover:text-brand-purpleHover dark:text-purple-400 dark:hover:text-purple-300 font-extrabold text-[11px] uppercase tracking-wider focus:outline-none flex items-center gap-0.5 ml-2 cursor-pointer">
-                                    <span>${parent.expanded ? translations[currentLang].hideList : translations[currentLang].showList}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transform transition-transform duration-200 ${parent.expanded ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                                </button>
-                                ` : ''}
+                    <div class="flex items-center justify-between pr-4">
+                        <div class="flex items-center">
+                            <div class="profile-icon select-none bg-blue-500">${avatarLetter}</div>
+                            <div>
+                                <span class="font-extrabold text-gray-900 dark:text-white block text-base leading-tight">${parent.fio}</span>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">${parent.phone}</span>
+                                    <span class="text-[11px] text-gray-400 dark:text-gray-500 font-semibold">• ${translations[currentLang].childrenCount}: ${parent.children.length}</span>
+                                    ${parent.children.length > 0 ? `
+                                    <button class="toggle-children-btn text-brand-purple hover:text-brand-purpleHover dark:text-purple-400 dark:hover:text-purple-300 font-extrabold text-[11px] uppercase tracking-wider focus:outline-none flex items-center gap-0.5 ml-2 cursor-pointer">
+                                        <span>${parent.expanded ? translations[currentLang].hideList : translations[currentLang].showList}</span>
+                                        <svg class="h-3 w-3 transform transition-transform duration-200 ${parent.expanded ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                                    </button>
+                                    ` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2262,6 +1986,15 @@
                     });
                 }
                 
+                // Add event handler for the PB Loyalty button
+                const pbBtn = nameCell.querySelector('.pb-card-btn');
+                if (pbBtn) {
+                    pbBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const pId = parseInt(e.currentTarget.dataset.parentId, 10);
+                        openPBScanModal(pId);
+                    });
+                }
                 // Created At cell (Empty for parent)
                 const dobCell = document.createElement('td');
                 dobCell.className = 'py-5 px-6 whitespace-nowrap text-gray-500 dark:text-gray-400 font-bold text-sm';
@@ -2279,11 +2012,13 @@
                 let actionsHtml = `<div class="flex items-center justify-end gap-2">`;
                 
                 // PB QR Button
-                actionsHtml += `
-                    <button class="pb-card-btn w-9 h-9 inline-flex items-center justify-center bg-brand-orange/10 hover:bg-brand-orange/20 text-brand-orange rounded-full transition-all focus:outline-none shadow-sm" title="PremiumBonus QR" data-parent-id="${parent.id}">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-                    </button>
-                `;
+                if (activeExperimentOption === 2) {
+                    actionsHtml += `
+                        <button class="pb-card-btn w-9 h-9 inline-flex items-center justify-center bg-brand-orange/10 hover:bg-brand-orange/20 text-brand-orange rounded-full transition-all focus:outline-none shadow-sm" title="PremiumBonus QR" data-parent-id="${parent.id}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                        </button>
+                    `;
+                }
 
                 actionsHtml += `
                     <button class="add-child-btn w-9 h-9 inline-flex items-center justify-center border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-400 dark:text-gray-300 rounded-full transition-all focus:outline-none shadow-sm" title="${translations[currentLang].addAccAddChild}">
@@ -2304,9 +2039,9 @@
                     });
                 }
                 
-                const pbBtn = actionsCell.querySelector('.pb-card-btn');
-                if (pbBtn) {
-                    pbBtn.addEventListener('click', (e) => {
+                const pbBtn2 = actionsCell.querySelector('.pb-card-btn');
+                if (pbBtn2) {
+                    pbBtn2.addEventListener('click', (e) => {
                         e.stopPropagation();
                         openPBScanModal(parent.id);
                     });
@@ -2330,37 +2065,77 @@
                 parentRow.appendChild(dobCell);
                 parentRow.appendChild(statusCell);
                 parentRow.appendChild(actionsCell);
-                
                 tbody.appendChild(parentRow);
                 
-                // Expanded children rows
+                // EXPANDED REGION RENDERER (Exactly aligned children table columns)
                 if (parent.children.length > 0 && parent.expanded) {
+                    
+                    // Option 1: Render Bento card as a full-width row BEFORE children list
+                    if (activeExperimentOption === 1) {
+                        const cardRow = document.createElement('tr');
+                        cardRow.className = 'bg-[#f8f9fb] dark:bg-slate-800/40 border-b border-gray-150 dark:border-slate-700';
+                        cardRow.innerHTML = `
+                            <td colspan="4" class="py-5 px-6 pl-[84px]">
+                                <div class="flex flex-col md:flex-row items-center gap-6 bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 max-w-xl shadow-sm">
+                                    <div class="pb-card-gradient rounded-2xl p-4 text-white w-52 aspect-[1.586] flex flex-col justify-between shadow relative overflow-hidden select-none shrink-0">
+                                        <div class="absolute -right-8 -top-8 w-24 h-24 bg-white/10 rounded-full blur-lg"></div>
+                                        <div class="flex justify-between items-start z-10 leading-none">
+                                            <span class="text-[7px] font-black text-white/80 uppercase">Hello Park</span>
+                                            <span class="text-[8px] font-black tracking-wider text-amber-300">PREMIUM</span>
+                                        </div>
+                                        <div class="z-10 leading-none">
+                                            <span class="text-[7px] font-bold text-white/60 uppercase">Баланс бонусов</span>
+                                            <h4 class="text-lg font-black font-mono mt-0.5">${parent.pbBalance || 0} б.</h4>
+                                        </div>
+                                        <div class="flex justify-between items-end text-[8px] font-mono text-white/85 z-10 leading-none">
+                                            <span class="truncate max-w-[120px] font-bold">${parent.fio}</span>
+                                            <span class="text-white/40">PB Card</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-white p-2 rounded-2xl border border-slate-100 shrink-0">
+                                            <canvas id="qr-canvas-opt1-${parent.id}" class="w-20 h-20 block"></canvas>
+                                        </div>
+                                        <div>
+                                            <span class="text-[8px] font-black text-slate-400 block tracking-widest uppercase">PremiumBonus</span>
+                                            <h4 class="text-xs font-black text-slate-850 dark:text-white mt-1">Карта привязана</h4>
+                                            <p class="text-[11px] text-slate-500 mt-1 max-w-[200px]">
+                                                Просканируйте QR-код для начисления Hello-плюсиков.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(cardRow);
+                        
+                        // Draw QR for Option 1
+                        setTimeout(() => {
+                            const canvas = document.getElementById(`qr-canvas-opt1-${parent.id}`);
+                            if (canvas) {
+                                const qrContent = getPBPayloadContent(parent);
+                                QRCode.toCanvas(canvas, qrContent, {
+                                    width: 80,
+                                    margin: 0,
+                                    color: { dark: '#1F2937', light: '#FFFFFF' },
+                                    errorCorrectionLevel: 'M'
+                                });
+                            }
+                        }, 50);
+                    }
+
+                    // RENDER CHILDREN ROWS DIRECTLY IN THE TABLE (No nested structure to break alignment!)
+                    
+                    // Child rows
                     parent.children.forEach((child, idx) => {
                         const childRow = document.createElement('tr');
                         const isLast = idx === parent.children.length - 1;
                         childRow.className = `child-list-row bg-[#f8f9fb] dark:bg-slate-800/40 border-b border-gray-100 dark:border-slate-700 ${isLast ? 'rounded-b-2xl' : ''}`;
                         
-                        // Child name & UID
-                        const nameCell = document.createElement('td');
-                        nameCell.className = `py-4 px-6 pl-[84px] whitespace-nowrap ${isLast ? 'pb-5' : ''}`;
-                        nameCell.innerHTML = `
-                            <span class="font-extrabold text-gray-800 dark:text-slate-200 block text-base">${child.name}</span>
-                            <span class="text-[10px] text-gray-400 dark:text-gray-500 font-mono tracking-wider block mt-0.5 uppercase select-all">${child.uid}</span>
-                        `;
-                        
-                        // DOB
-                        const dobCell = document.createElement('td');
-                        dobCell.className = `py-4 px-6 whitespace-nowrap text-gray-500 dark:text-slate-400 font-bold text-sm ${isLast ? 'pb-5' : ''}`;
-                        dobCell.textContent = formatDate(child.dob);
-                        
-                        // Status pill
-                        const statusCell = document.createElement('td');
-                        statusCell.className = `py-4 px-6 whitespace-nowrap ${isLast ? 'pb-5' : ''}`;
-                        
+                        // Status pill styles
                         let pillClass = '';
                         let pillText = '';
                         let pillIcon = '';
-                        
                         if (child.status === 'Аватар') {
                             pillClass = 'bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/40 dark:text-purple-400 dark:hover:bg-purple-900/40 text-brand-purple';
                             pillText = translations[currentLang].statusAvatar;
@@ -2372,137 +2147,98 @@
                             pillClass = 'bg-gray-100 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 cursor-default';
                             pillText = translations[currentLang].statusNone;
                         }
+
+                        // Actions styles
+                        const detailsClass = child.status === 'Аватар'
+                            ? 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
+                            : 'bg-gray-50 dark:bg-gray-700/30 text-gray-400 dark:text-gray-600 cursor-not-allowed';
                         
-                        if (child.status === 'Нет') {
-                            statusCell.innerHTML = `<span class="font-extrabold text-[10px] tracking-wider px-3.5 py-1.5 rounded-full inline-block ${pillClass}">${pillText}</span>`;
-                        } else {
-                            statusCell.innerHTML = `
-                                <button class="status-btn font-extrabold text-[10px] tracking-wider px-3.5 py-1.5 rounded-full focus:outline-none transition-all flex items-center gap-1 cursor-pointer ${pillClass}">
-                                    <span>${pillText}</span>
-                                    ${pillIcon}
+                        const bindClass = child.status === 'Нет'
+                            ? 'bg-[#ff5a28] hover:bg-[#e64a1c] text-white'
+                            : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 shadow-sm';
+                        
+                        const bindText = child.status === 'Нет'
+                            ? translations[currentLang].btnBind
+                            : translations[currentLang].btnNewBracelet;
+
+                        // Columns rendering
+                        childRow.innerHTML = `
+                            <td class="py-4 px-6 pl-[84px] whitespace-nowrap">
+                                <span class="font-extrabold text-gray-800 dark:text-slate-200 block text-base">${child.name}</span>
+                                <span class="text-[10px] text-gray-400 dark:text-gray-500 font-mono tracking-wider block mt-0.5 uppercase select-all">${child.uid}</span>
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap text-gray-500 dark:text-slate-400 font-bold text-sm">
+                                ${formatDate(child.dob)}
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap">
+                                ${child.status === 'Нет' ? `
+                                    <span class="font-extrabold text-[10px] tracking-wider px-3.5 py-1.5 rounded-full inline-block ${pillClass}">${pillText}</span>
+                                ` : `
+                                    <button class="status-btn font-extrabold text-[10px] tracking-wider px-3.5 py-1.5 rounded-full focus:outline-none transition-all flex items-center gap-1 cursor-pointer ${pillClass}">
+                                        <span>${pillText}</span>
+                                        ${pillIcon}
+                                    </button>
+                                `}
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap text-right space-x-2">
+                                <button class="child-details-btn font-extrabold px-5 py-2.5 rounded-xl text-xs transition-all focus:outline-none ${detailsClass}">
+                                    ${translations[currentLang].btnDetails}
                                 </button>
-                            `;
-                            
-                            statusCell.querySelector('.status-btn').addEventListener('click', (e) => {
-                                e.preventDefault();
+                                <button class="child-bind-btn font-extrabold px-5 py-2.5 rounded-xl text-xs transition-all focus:outline-none ${bindClass}">
+                                    ${bindText}
+                                </button>
+                                <button class="child-delete-btn text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-extrabold px-2.5 py-2.5 text-xs transition-colors focus:outline-none">
+                                    ${translations[currentLang].btnDelete}
+                                </button>
+                            </td>
+                        `;
+
+                        // Add listeners for child buttons
+                        const statusBtn = childRow.querySelector('.status-btn');
+                        if (statusBtn) {
+                            statusBtn.onclick = () => {
                                 if (child.status === 'Браслет') {
-                                    // Simulated Avatar creation
                                     child.status = 'Аватар';
                                     recordVisit(child.name);
                                     renderAccounts();
                                 } else if (child.status === 'Аватар') {
                                     showAvatarInfo(child.name);
                                 }
-                            });
+                            };
                         }
-                        
-                        // Actions
-                        const actionCell = document.createElement('td');
-                        actionCell.className = `py-4 px-6 whitespace-nowrap text-right space-x-2 ${isLast ? 'pb-5' : ''}`;
-                        
-                        const detailsClass = child.status === 'Аватар'
-                            ? 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
-                            : 'bg-gray-50 dark:bg-gray-700/30 text-gray-400 dark:text-gray-600 cursor-not-allowed';
-                        
-                        let bindClass = '';
-                        if (window.posTokens > 0) {
-                            if (child.status === 'Нет') {
-                                bindClass = 'bg-brand-orange hover:bg-brand-orangeHover text-white shadow-md shadow-brand-orange/20';
-                            } else {
-                                bindClass = 'bg-white dark:bg-gray-700 border border-brand-orange text-brand-orange hover:bg-brand-orange/5 dark:hover:bg-brand-orange/10 shadow-sm';
-                            }
-                        } else {
-                            bindClass = 'bg-gray-200 dark:bg-slate-700/50 text-gray-400 dark:text-gray-500 cursor-not-allowed border-transparent';
-                        }
-                        
-                        const bindText = child.status === 'Нет'
-                            ? translations[currentLang].btnBind
-                            : translations[currentLang].btnNewBracelet;
-                        
-                        actionCell.innerHTML = `
-                            <button class="child-details-btn font-extrabold px-5 py-2.5 rounded-xl text-xs transition-all focus:outline-none ${detailsClass}">
-                                ${translations[currentLang].btnDetails}
-                            </button>
-                            <button class="child-bind-btn font-extrabold px-5 py-2.5 rounded-xl text-xs transition-all focus:outline-none ${bindClass}">
-                                ${bindText}
-                            </button>
-                            <button class="child-delete-btn text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-extrabold px-2.5 py-2.5 text-xs transition-colors focus:outline-none">
-                                ${translations[currentLang].btnDelete}
-                            </button>
-                        `;
-                        
-                        actionCell.querySelector('.child-details-btn').addEventListener('click', () => {
+
+                        childRow.querySelector('.child-details-btn').onclick = () => {
                             if (child.status === 'Аватар') {
                                 showAvatarInfo(child.name);
                             } else {
                                 showToast(translations[currentLang].toastNoAvatar, 'info');
                             }
-                        });
-                        
-                        actionCell.querySelector('.child-bind-btn').addEventListener('click', () => {
-                            if (window.posTokens <= 0) {
-                                showToast("Ожидание оплаты билета на кассе", "error");
-                                const indicator = document.getElementById('pos-token-indicator');
-                                if (indicator) {
-                                    indicator.classList.remove('hidden');
-                                    indicator.classList.add('flex', 'ring-2', 'ring-red-500', 'bg-red-50');
-                                    setTimeout(() => {
-                                        indicator.classList.remove('flex', 'ring-2', 'ring-red-500', 'bg-red-50');
-                                        indicator.classList.add('hidden');
-                                    }, 800);
-                                }
-                                return;
-                            }
-                            window.currentBindChildId = child.id;
+                        };
+
+                        childRow.querySelector('.child-bind-btn').onclick = () => {
                             openRfidModal(parent.id, child.id);
-                        });
-                        
-                        actionCell.querySelector('.child-delete-btn').addEventListener('click', () => {
+                        };
+
+                        childRow.querySelector('.child-delete-btn').onclick = () => {
                             showConfirmModal(
                                 translations[currentLang].confirmDeleteChild,
                                 translations[currentLang].confirmDeleteChildMsg,
                                 () => {
-                                    const orig = accounts.find(a => a.id === parent.id);
-                                    if (orig) {
-                                        orig.children = orig.children.filter(c => c.id !== child.id);
-                                        renderAccounts();
-                                    }
+                                    parent.children = parent.children.filter(c => c.id !== child.id);
+                                    renderAccounts();
                                 }
                             );
-                        });
-                        
-                        childRow.appendChild(nameCell);
-                        childRow.appendChild(dobCell);
-                        childRow.appendChild(statusCell);
-                        childRow.appendChild(actionCell);
+                        };
+
                         tbody.appendChild(childRow);
                     });
                 }
             });
-            
-            renderPaginationFooter(pagesTotal);
         }
 
-        // Initialize elements
-        document.addEventListener('DOMContentLoaded', () => {
-            // Theme setup
-            if (darkTheme) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-            updateThemeUI();
-            
-            document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
-            
-            // Language setup
-            updateLangButtons();
-            translateDOM();
-            
-            document.getElementById('lang-ru-btn').addEventListener('click', () => setLanguage('ru'));
-            document.getElementById('lang-en-btn').addEventListener('click', () => setLanguage('en'));
-            
-            // Populate defaults
+        // INITIAL LOADING & MOCK DATA
+        window.addEventListener('DOMContentLoaded', () => {
+            // Load original default accounts plus loyalty balance values first
             const defaultAccounts = [
                 {
                     id: 1,
@@ -2510,6 +2246,7 @@
                     phone: "+7 (926) 765-43-21",
                     createdAt: "29.05.2026",
                     expanded: true,
+                    pbBalance: 450,
                     children: [
                         { id: 11, name: "Егор", dob: "2016-08-10", status: "Аватар", rfid: "RFID_EGOR", uid: "EGOR20160810LCRXLVFEG2123" },
                         { id: 12, name: "София", dob: "2019-01-25", status: "Нет", rfid: null, uid: "SOFIA20190125LCRXLVFEG2123" }
@@ -2521,6 +2258,7 @@
                     phone: "+7 (903) 555-11-22",
                     createdAt: "22.05.2026",
                     expanded: false,
+                    pbBalance: 820,
                     children: [
                         { id: 21, name: "Артем", dob: "2014-05-12", status: "Браслет", rfid: "RFID_ARTEM", uid: "ARTEM20140512LCRXLVFEG2123" },
                         { id: 22, name: "Виктория", dob: "2017-09-30", status: "Нет", rfid: null, uid: "VICTORIA20170930LCRXLV" },
@@ -2533,6 +2271,7 @@
                     phone: "+7 (916) 123-45-67",
                     createdAt: "18.05.2026",
                     expanded: false,
+                    pbBalance: 1200,
                     children: [
                         { id: 31, name: "Алиса", dob: "2015-11-15", status: "Аватар", rfid: "RFID_ALISA", uid: "ALISA20151115LCRXLVFEG212" },
                         { id: 32, name: "Максим", dob: "2018-04-20", status: "Браслет", rfid: "RFID_MAXIM", uid: "MAXIM20180420LCRXLVFEG212" }
@@ -2541,149 +2280,25 @@
             ];
             
             accounts = defaultAccounts;
-            
-            // Add default visit history for Егор & Алиса
             recordVisit("Егор");
             recordVisit("Алиса");
-            
-            // Initial render
-            renderAccounts();
-            
-            // Link modal buttons
+
+            // Apply language & styling after accounts are initialized
+            setLanguage(currentLang);
+            if (darkTheme) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            updateThemeUI();
+
+            document.getElementById('lang-ru-btn').onclick = () => setLanguage('ru');
+            document.getElementById('lang-en-btn').onclick = () => setLanguage('en');
+            document.getElementById('theme-toggle-btn').onclick = toggleTheme;
+
             document.getElementById('add-account-btn').addEventListener('click', openAddAccountModal);
-        });
-    </script>
-    <script>
-        window.posTokens = 0;
-        
-        function updatePosWidget() {
-            const indicator = document.getElementById('pos-token-indicator');
-            const dot = document.getElementById('pos-token-dot');
-            const label = document.getElementById('pos-token-label');
-            const count = document.getElementById('pos-token-count');
-            
-            if (!indicator || !count) return;
 
-            count.textContent = window.posTokens;
-
-            if (window.posTokens > 0) {
-                // Active styles
-                indicator.classList.remove('bg-gray-100', 'border-gray-200', 'dark:bg-slate-800', 'dark:border-slate-700');
-                indicator.classList.add('bg-brand-purple/10', 'border-brand-purple/20');
-                if (dot) {
-                    dot.classList.remove('bg-gray-400');
-                    dot.classList.add('bg-brand-purple', 'animate-pulse');
-                }
-                if (label) {
-                    label.classList.remove('text-gray-500');
-                    label.classList.add('text-brand-purple');
-                }
-                count.classList.remove('text-gray-500');
-                count.classList.add('text-brand-purple');
-            } else {
-                // Inactive styles
-                indicator.classList.remove('bg-brand-purple/10', 'border-brand-purple/20');
-                indicator.classList.add('bg-gray-100', 'border-gray-200', 'dark:bg-slate-800', 'dark:border-slate-700');
-                if (dot) {
-                    dot.classList.remove('bg-brand-purple', 'animate-pulse');
-                    dot.classList.add('bg-gray-400');
-                }
-                if (label) {
-                    label.classList.remove('text-brand-purple');
-                    label.classList.add('text-gray-500');
-                }
-                count.classList.remove('text-brand-purple');
-                count.classList.add('text-gray-500');
-            }
-            
-            if(typeof renderAccounts === 'function') renderAccounts();
-        }
-
-        let indicatorClickCount = 0;
-        let indicatorClickTimeout;
-        
-        window.handleTokenIndicatorClick = function() {
-            indicatorClickCount++;
-            clearTimeout(indicatorClickTimeout);
-            
-            if (indicatorClickCount >= 3) {
-                if (typeof window.mockWebhook === 'function') {
-                    window.mockWebhook();
-                }
-                indicatorClickCount = 0;
-            } else {
-                indicatorClickTimeout = setTimeout(() => {
-                    indicatorClickCount = 0;
-                }, 1000);
-            }
-        }
-
-        window.mockWebhook = function() {
-            window.posTokens += 1;
-            updatePosWidget();
-            
-            const indicator = document.getElementById('pos-token-indicator');
-            if (indicator) {
-                indicator.classList.add('scale-110', 'bg-brand-purple/20');
-                setTimeout(() => indicator.classList.remove('scale-110', 'bg-brand-purple/20'), 200);
-            }
-            showToast('✅ Получен сигнал от кассы: +1 активация', 'success');
-        }
-        
-        window.openAdminPinModal = function() {
-            const modal = document.getElementById('admin-pin-modal');
-            const input = document.getElementById('admin-pin-input');
-            const error = document.getElementById('admin-pin-error');
-            
-            if (modal && input) {
-                input.value = '';
-                if(error) error.classList.add('hidden');
-                modal.classList.remove('hidden');
-                setTimeout(() => input.focus(), 100);
-            }
-        }
-
-        window.closeAdminPinModal = function() {
-            const modal = document.getElementById('admin-pin-modal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        window.verifyAdminPin = function() {
-            const input = document.getElementById('admin-pin-input');
-            const error = document.getElementById('admin-pin-error');
-            
-            if (input && input.value === '1984') {
-                window.posTokens += 1;
-                updatePosWidget();
-                closeAdminPinModal();
-                
-                const indicator = document.getElementById('pos-token-indicator');
-                if (indicator) {
-                    indicator.classList.add('scale-110', 'bg-brand-purple/20');
-                    setTimeout(() => indicator.classList.remove('scale-110', 'bg-brand-purple/20'), 200);
-                }
-                
-                showToast('✅ Администратор добавил 1 активацию', 'success');
-            } else {
-                if(error) error.classList.remove('hidden');
-                if(input) {
-                    input.value = '';
-                    input.classList.add('ring-2', 'ring-red-500', 'border-red-500');
-                    setTimeout(() => input.classList.remove('ring-2', 'ring-red-500', 'border-red-500'), 500);
-                    input.focus();
-                }
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            updatePosWidget();
-            
-            const pinInput = document.getElementById('admin-pin-input');
-            if(pinInput) {
-                pinInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') verifyAdminPin();
-                });
-            }
+            renderAccounts();
         });
     </script>
 </body>

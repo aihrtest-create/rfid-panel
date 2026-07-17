@@ -1,0 +1,48 @@
+/* ============================================================
+   Hello Park — Typography tokens
+   Display  → Space Grotesk  (SUBSTITUTE for Cy Grotesk Key)
+   Body     → Hanken Grotesk
+   Mono     → DM Mono  (uppercase chrome / labels)
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-display: 'Space Grotesk', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-body:    'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --font-mono:    'DM Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* ---- Weights ---- */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-heavy:    800; /* display heavy */
+
+  /* ---- Display / heading scale (clamped, fluid) ---- */
+  --text-display-xl: 700 clamp(3rem, 7vw, 5.5rem)/0.98 var(--font-display);
+  --text-display-l:  700 clamp(2.4rem, 5vw, 4rem)/1.0  var(--font-display);
+  --text-display-m:  700 clamp(1.9rem, 3.4vw, 2.75rem)/1.04 var(--font-display);
+  --text-heading:    600 1.5rem/1.15 var(--font-display);
+  --text-subheading: 600 1.125rem/1.25 var(--font-display);
+
+  /* ---- Body scale ---- */
+  --text-body-l:  400 1.1875rem/1.55 var(--font-body);
+  --text-body-m:  400 1.0625rem/1.55 var(--font-body);
+  --text-body-s:  400 0.9375rem/1.5  var(--font-body);
+
+  /* ---- Mono label / chrome ---- */
+  --text-label:    500 0.8125rem/1 var(--font-mono);
+  --text-label-s:  500 0.6875rem/1 var(--font-mono);
+  --tracking-label: 0.08em;  /* uppercase mono tracking */
+  --tracking-tight: -0.02em; /* display tightening */
+
+  /* ---- Type-role sizes (raw, for components) ---- */
+  --fs-display-xl: clamp(3rem, 7vw, 5.5rem); /* @kind font */
+  --fs-display-l:  clamp(2.4rem, 5vw, 4rem); /* @kind font */
+  --fs-display-m:  clamp(1.9rem, 3.4vw, 2.75rem); /* @kind font */
+  --fs-heading:    1.5rem; /* @kind font */
+  --fs-body-l:     1.1875rem; /* @kind font */
+  --fs-body:       1.0625rem; /* @kind font */
+  --fs-body-s:     0.9375rem; /* @kind font */
+  --fs-label:      0.8125rem; /* @kind font */
+}

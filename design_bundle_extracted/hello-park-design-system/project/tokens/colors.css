@@ -1,0 +1,61 @@
+/* ============================================================
+   Hello Park — Color tokens
+   Orange-dominant, flat, hyper-colorful.
+   ============================================================ */
+
+:root {
+  /* ---- Brand orange ramp ---- */
+  --orange:        #FF6022; /* primary */
+  --orange-deep:   #F74A0D;
+  --orange-bright: #FF7F00;
+  --amber:         #FFB400;
+
+  /* Orange supporting tints (for hovers, washes) */
+  --orange-700:    #D63E0B;
+  --orange-100:    #FFE3D6;
+  --orange-50:     #FFF1EA;
+
+  /* ---- Play palette (hyper-colorful accents) ---- */
+  --play-lime:     #B7E61E;
+  --play-green:    #2FBF55;
+  --play-forest:   #0E7A3D;
+  --play-lilac:    #C9A7F5;
+  --play-violet:   #7C3AED;
+  --play-magenta:  #E91E8C;
+  --play-sky:      #2BB7F0;
+  --play-navy:     #1B2A6B;
+  --play-burgundy: #7A1F3D;
+  --play-yellow:   #FFC400;
+  --play-red:      #F23B3B;
+  --play-salmon:   #FF8A6B;
+
+  /* ---- Neutrals ---- */
+  --ink:        #181A1C; /* near-black brand ink */
+  --ink-80:     #44474B;
+  --ink-60:     #6C6F74;
+  --ink-40:     #9A9DA2;
+  --ink-20:     #C9CBCE;
+  --page:       #F4F3F1; /* calm light-gray canvas */
+  --surface:    #FFFFFF; /* cards, nav */
+  --line:       #E7E6E3; /* hairline borders */
+
+  /* ---- Semantic aliases ---- */
+  --color-primary:        var(--orange);
+  --color-primary-press:  var(--orange-deep);
+  --color-primary-hover:  var(--orange-700);
+
+  --bg-page:       var(--page);
+  --bg-surface:    var(--surface);
+  --bg-inverse:    var(--ink);
+
+  --text-display:  var(--ink);
+  --text-body:     var(--ink-80);
+  --text-muted:    var(--ink-60);
+  --text-on-color: #FFFFFF;
+  --text-on-amber: var(--ink);
+
+  --border-subtle: var(--line);
+  --border-strong: var(--ink-20);
+
+  --focus-ring:    var(--orange);
+}

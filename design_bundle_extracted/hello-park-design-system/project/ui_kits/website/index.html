@@ -1,0 +1,309 @@
+<!-- @dsCard group="Website" viewport="1280x760" name="Marketing site" subtitle="Floating nav, hero, attractions, franchise — interactive recreation" -->
+<!-- @startingPoint section="Website" subtitle="Hello Park marketing site — full interactive recreation" viewport="1280x860" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hello Park</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { background: var(--page); }
+  #root { min-height: 100vh; padding-bottom: 8px; }
+  a { cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- Hello Park UI kit — all code inlined so the DS compiler never bundles these
+     module-level side effects into _ds_bundle.js. -->
+
+<script type="text/babel" data-presets="react">
+/* ---------- Local primitives ---------- */
+function HPButton({ children, variant = 'primary', size = 'md', chevron = false, onClick, style }) {
+  const sizes = { sm: { padding: '9px 18px', fontSize: 13.5 }, md: { padding: '14px 26px', fontSize: 15.5 }, lg: { padding: '18px 34px', fontSize: 17 } };
+  const V = {
+    primary: { bg: 'var(--orange)', bgh: 'var(--orange-700)', fg: '#fff', bd: 'transparent' },
+    secondary: { bg: 'var(--ink)', bgh: '#000', fg: '#fff', bd: 'transparent' },
+    ghost: { bg: 'transparent', bgh: 'var(--orange-50)', fg: 'var(--ink)', bd: 'var(--border-strong)' },
+    amber: { bg: 'var(--amber)', bgh: '#F0A800', fg: 'var(--ink)', bd: 'transparent' },
+    white: { bg: '#fff', bgh: '#F2F1EE', fg: 'var(--ink)', bd: 'transparent' },
+  }[variant];
+  return (
+    <button onClick={onClick}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: `1.5px solid ${V.bd}`, background: V.bg, color: V.fg, fontFamily: 'var(--font-body)', fontWeight: 600, lineHeight: 1, borderRadius: 'var(--radius-pill)', cursor: 'pointer', transition: 'background .12s var(--ease-out), transform .12s var(--ease-out)', whiteSpace: 'nowrap', ...sizes[size], ...style }}
+      onMouseDown={(e) => { e.currentTarget.style.transform = 'translateY(1px)'; }}
+      onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = V.bgh; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = V.bg; e.currentTarget.style.transform = 'translateY(0)'; }}>
+      {children}{chevron && <span aria-hidden="true" style={{ fontSize: '1.2em', lineHeight: 0, marginRight: -2 }}>›</span>}
+    </button>
+  );
+}
+
+function HPTag({ children, color = 'orange', outline = false }) {
+  const palette = { orange: 'var(--orange)', amber: 'var(--amber)', lime: 'var(--play-lime)', green: 'var(--play-green)', lilac: 'var(--play-lilac)', violet: 'var(--play-violet)', magenta: 'var(--play-magenta)', sky: 'var(--play-sky)', navy: 'var(--play-navy)', ink: 'var(--ink)' };
+  const lightOn = ['amber', 'lime', 'lilac'];
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 1, fontSize: 12, padding: '7px 14px', borderRadius: 'var(--radius-pill)', background: outline ? 'transparent' : palette[color], color: outline ? 'var(--ink)' : (lightOn.includes(color) ? 'var(--ink)' : '#fff'), border: outline ? '1.5px solid var(--border-strong)' : '1.5px solid transparent' }}>
+      {children}
+    </span>
+  );
+}
+
+function HPCounter({ count, tone = 'soft' }) {
+  const T = { orange: { bg: 'var(--orange)', fg: '#fff' }, ink: { bg: 'var(--ink)', fg: '#fff' }, soft: { bg: 'var(--orange-100)', fg: 'var(--orange-deep)' } }[tone];
+  return <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 22, height: 22, padding: '0 7px', fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12, lineHeight: 1, borderRadius: 'var(--radius-pill)', background: T.bg, color: T.fg }}>{count}</span>;
+}
+
+const ASSET = '../../assets/';
+
+/* ---------- Floating pill nav ---------- */
+function SiteNav({ links, active, onNav, onCta }) {
+  return (
+    <div style={{ position: 'sticky', top: 16, zIndex: 50, display: 'flex', justifyContent: 'center', padding: '0 16px' }}>
+      <nav style={{ display: 'flex', alignItems: 'center', gap: 18, width: '100%', maxWidth: 980, background: 'rgba(255,255,255,0.86)', backdropFilter: 'saturate(180%) blur(14px)', WebkitBackdropFilter: 'saturate(180%) blur(14px)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-nav)', borderRadius: 'var(--radius-pill)', padding: '10px 12px 10px 22px' }}>
+        <a href="#top" onClick={(e) => { e.preventDefault(); onNav(0); }} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <img src={ASSET + 'logo-horizontal.png'} alt="hello park" style={{ height: 26 }} />
+        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 6 }}>
+          {links.map((l, i) => (
+            <a key={l.label} href={'#' + l.label} onClick={(e) => { e.preventDefault(); onNav(i); }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', borderRadius: 'var(--radius-pill)', fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12.5, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', color: i === active ? 'var(--ink)' : 'var(--ink-60)', background: i === active ? 'var(--page)' : 'transparent', transition: 'all .12s var(--ease-out)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ink)'; }}
+              onMouseLeave={(e) => { if (i !== active) e.currentTarget.style.color = 'var(--ink-60)'; }}>
+              {l.label}{l.count != null && <HPCounter count={l.count} tone="soft" />}
+            </a>
+          ))}
+        </div>
+        <div style={{ marginLeft: 'auto' }}><HPButton size="sm" onClick={onCta}>Visit park</HPButton></div>
+      </nav>
+    </div>
+  );
+}
+
+/* ---------- Hero ---------- */
+function Hero({ onCta }) {
+  return (
+    <section id="top" style={{ maxWidth: 1200, margin: '0 auto', padding: '84px var(--gutter) 24px', display: 'grid', gridTemplateColumns: '1.15fr 0.85fr', gap: 40, alignItems: 'center' }}>
+      <div>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 22 }}>
+          <span className="hp-label" style={{ color: 'var(--orange-deep)' }}>Phygital entertainment</span>
+          <HPTag color="lilac">50+ parks</HPTag>
+        </div>
+        <h1 className="hp-display-xl" style={{ marginBottom: 20 }}>Rethinking entertainment to be meaningful, immersive&nbsp;and fun.</h1>
+        <p style={{ font: 'var(--text-body-l)', color: 'var(--ink-60)', maxWidth: 520, marginBottom: 28 }}>
+          Hello Park blends physical play spaces with digital interaction — the world's largest immersive phygital park chain, built for creativity.
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <HPButton size="lg" onClick={onCta}>Visit park</HPButton>
+          <HPButton size="lg" variant="ghost" chevron>Watch the film</HPButton>
+        </div>
+      </div>
+      <div style={{ position: 'relative', background: 'var(--orange)', borderRadius: 'var(--radius-lg)', minHeight: 420, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 22, left: 22, right: 22, display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.85)' }}>Meet Fox</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12, color: 'rgba(255,255,255,0.85)' }}>★ Dubai Park</span>
+        </div>
+        <img src={ASSET + 'rocky-point.png'} alt="Astronaut Fox mascot" style={{ height: 410, width: 'auto', objectFit: 'contain', objectPosition: 'bottom', filter: 'drop-shadow(0 24px 40px rgba(120,40,0,0.28))' }} />
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Stats strip ---------- */
+function Stats() {
+  const data = [['50+', 'parks worldwide'], ['12', 'live attractions'], ['2.4M', 'visitors a year'], ['7', 'creative studios']];
+  return (
+    <section style={{ maxWidth: 1200, margin: '0 auto', padding: '12px var(--gutter) 40px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        {data.map(([n, l]) => (
+          <div key={l} className="hp-card" style={{ padding: '22px 24px' }}>
+            <div style={{ font: '700 40px/1 var(--font-display)', letterSpacing: '-0.02em', color: 'var(--ink)' }}>{n}</div>
+            <div className="hp-label" style={{ marginTop: 8 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Attractions ---------- */
+const ATTRACTIONS = [
+  { key: 'a', variant: 'orange', tag: 'Immersive', tagColor: 'lilac', title: 'Gravity Garden', desc: 'A floating playground where the floor reacts to every step.' },
+  { key: 'b', variant: 'dark', tag: 'Creativity', tagColor: 'amber', title: 'Maker Studio', desc: 'Design, print and take home your own creations in minutes.' },
+  { key: 'c', variant: 'lilac', tag: 'Phygital', tagColor: 'violet', title: 'Echo Arena', desc: 'A live team game scored by motion, light and sound.' },
+  { key: 'd', variant: 'amber', tag: 'Family', tagColor: 'navy', title: 'Tiny Cosmos', desc: 'A gentle, glowing world built for the smallest explorers.' },
+];
+
+function FillCard({ a, selected, onSelect }) {
+  const fills = {
+    orange: { bg: 'var(--orange)', head: '#fff', body: 'rgba(255,255,255,0.9)', meta: 'rgba(255,255,255,0.8)' },
+    dark: { bg: 'var(--ink)', head: '#fff', body: 'rgba(255,255,255,0.78)', meta: 'rgba(255,255,255,0.6)' },
+    lilac: { bg: 'var(--play-lilac)', head: 'var(--ink)', body: 'rgba(24,26,28,0.78)', meta: 'rgba(24,26,28,0.6)' },
+    amber: { bg: 'var(--amber)', head: 'var(--ink)', body: 'rgba(24,26,28,0.82)', meta: 'rgba(24,26,28,0.6)' },
+  }[a.variant];
+  return (
+    <button onClick={() => onSelect(a.key)}
+      style={{ textAlign: 'left', cursor: 'pointer', background: fills.bg, color: fills.body, border: 'none', borderRadius: 'var(--radius-lg)', padding: 26, display: 'flex', flexDirection: 'column', gap: 14, minHeight: 230, outline: selected ? '3px solid var(--ink)' : '3px solid transparent', outlineOffset: 3, transition: 'transform .22s var(--ease-out)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}>
+      <div><HPTag color={a.tagColor}>{a.tag}</HPTag></div>
+      <h3 style={{ font: '700 27px/1.05 var(--font-display)', letterSpacing: '-0.02em', color: fills.head, margin: 0, marginTop: 'auto' }}>{a.title}</h3>
+      <p style={{ font: 'var(--text-body-s)', color: fills.body, margin: 0 }}>{a.desc}</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 11.5, letterSpacing: '0.06em', textTransform: 'uppercase', color: fills.meta }}>{selected ? 'Selected' : 'View attraction'}</span>
+        <span aria-hidden="true" style={{ fontSize: 22, color: fills.head, lineHeight: 0 }}>›</span>
+      </div>
+    </button>
+  );
+}
+
+function Attractions({ selected, onSelect }) {
+  return (
+    <section id="Attractions" style={{ maxWidth: 1200, margin: '0 auto', padding: '48px var(--gutter)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28, gap: 24, flexWrap: 'wrap' }}>
+        <div>
+          <span className="hp-label">02 · Attractions</span>
+          <h2 className="hp-display-l" style={{ marginTop: 12 }}>One ticket, twelve worlds.</h2>
+        </div>
+        <HPButton variant="ghost" chevron>See all attractions</HPButton>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        {ATTRACTIONS.map((a) => <FillCard key={a.key} a={a} selected={selected === a.key} onSelect={onSelect} />)}
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Meet Fox band ---------- */
+function MeetFox({ onCta }) {
+  return (
+    <section id="About" style={{ maxWidth: 1200, margin: '0 auto', padding: '24px var(--gutter) 48px' }}>
+      <div style={{ background: 'var(--play-sky)', borderRadius: 'var(--radius-lg)', display: 'grid', gridTemplateColumns: '0.8fr 1.2fr', alignItems: 'center', overflow: 'hidden', minHeight: 320 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', height: '100%' }}>
+          <img src={ASSET + 'rocky-heart.png'} alt="Astronaut Fox forming a heart" style={{ height: 330, objectFit: 'contain', objectPosition: 'bottom', filter: 'drop-shadow(0 20px 36px rgba(0,40,70,0.3))' }} />
+        </div>
+        <div style={{ padding: '40px 48px 40px 8px' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.9)' }}>Meet Fox</span>
+          <h2 style={{ font: '700 clamp(2rem,3.4vw,2.9rem)/1.02 var(--font-display)', letterSpacing: '-0.02em', color: '#fff', margin: '12px 0 14px' }}>Your guide to every park.</h2>
+          <p style={{ font: 'var(--text-body-l)', color: 'rgba(255,255,255,0.92)', maxWidth: 440, marginBottom: 24 }}>Fox is our astronaut explorer — leading guests through each attraction and lighting up the moments worth remembering.</p>
+          <HPButton variant="white" onClick={onCta}>Say hello</HPButton>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Franchise CTA ---------- */
+function Franchise({ onCta }) {
+  return (
+    <section id="Franchise" style={{ maxWidth: 1200, margin: '0 auto', padding: '24px var(--gutter) 56px' }}>
+      <div style={{ background: 'var(--ink)', borderRadius: 'var(--radius-lg)', padding: 'clamp(32px,5vw,64px)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 22 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--amber)' }}>03 · Franchise</span>
+        <h2 style={{ font: '700 clamp(2.2rem,4.5vw,3.6rem)/1.0 var(--font-display)', letterSpacing: '-0.02em', color: '#fff', maxWidth: 760, margin: 0 }}>Bring a Hello Park to your city.</h2>
+        <p style={{ font: 'var(--text-body-l)', color: 'rgba(255,255,255,0.72)', maxWidth: 520, margin: 0 }}>Join a global network of operators redefining entertainment as phygital, creative and meaningful.</p>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 }}>
+          <HPButton variant="amber" size="lg" onClick={onCta}>Start a franchise</HPButton>
+          <HPButton variant="ghost" size="lg" chevron style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.35)' }}>Download the deck</HPButton>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Footer ---------- */
+function Footer() {
+  const cols = [['Park', ['Attractions', 'Tickets', 'Dubai Park', 'Hours']], ['Company', ['About', 'Franchise', 'Press', 'Careers']], ['Play', ['Creativity', 'Events', 'Membership', 'Gift cards']]];
+  return (
+    <footer style={{ maxWidth: 1200, margin: '0 auto', padding: '24px var(--gutter) 56px' }}>
+      <div className="hp-card" style={{ borderRadius: 'var(--radius-lg)', padding: 'clamp(28px,4vw,44px)', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 32 }}>
+        <div>
+          <img src={ASSET + 'logo-horizontal.png'} alt="hello park" style={{ height: 30, marginBottom: 16 }} />
+          <p style={{ font: 'var(--text-body-s)', color: 'var(--ink-60)', maxWidth: 240 }}>The world's largest immersive phygital park chain for entertainment and creativity.</p>
+        </div>
+        {cols.map(([head, items]) => (
+          <div key={head}>
+            <div className="hp-label" style={{ marginBottom: 14 }}>{head}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {items.map((it) => <a key={it} href="#" style={{ font: 'var(--text-body-s)', color: 'var(--ink-80)' }}>{it}</a>)}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, flexWrap: 'wrap', gap: 12 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ink-40)' }}>© 2026 Hello Park · Phygital in the entertainment industry.</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ink-40)' }}>Design System v1</span>
+      </div>
+    </footer>
+  );
+}
+
+/* ---------- Ticket modal ---------- */
+function TicketModal({ open, onClose }) {
+  if (!open) return null;
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(24,26,28,0.45)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-pop)', width: 'min(440px, 100%)', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--orange)', padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.9)' }}>Plan your visit</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>Dubai Park</span>
+        </div>
+        <div style={{ padding: '28px' }}>
+          <h3 style={{ font: '700 26px/1.05 var(--font-display)', letterSpacing: '-0.02em', color: 'var(--ink)', margin: '0 0 8px' }}>Pick a day to explore.</h3>
+          <p style={{ font: 'var(--text-body-s)', color: 'var(--ink-60)', margin: '0 0 20px' }}>One ticket unlocks all twelve attractions. Fox will meet you at the gate.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 22 }}>
+            {['Fri 06', 'Sat 07', 'Sun 08'].map((d, i) => (
+              <button key={d} style={{ padding: '14px 0', borderRadius: 'var(--radius-md)', border: '1.5px solid ' + (i === 1 ? 'var(--orange)' : 'var(--line)'), background: i === 1 ? 'var(--orange-50)' : 'var(--surface)', color: 'var(--ink)', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>{d}</button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <HPButton onClick={onClose} style={{ flex: 1, justifyContent: 'center' }}>Get tickets</HPButton>
+            <HPButton variant="ghost" onClick={onClose}>Close</HPButton>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- App shell ---------- */
+const NAV = [
+  { label: 'Attractions', count: 12 },
+  { label: 'Franchise' },
+  { label: 'About' },
+];
+
+function App() {
+  const [active, setActive] = React.useState(0);
+  const [selected, setSelected] = React.useState('a');
+  const [modal, setModal] = React.useState(false);
+  const openCta = () => setModal(true);
+  const onNav = (i) => {
+    setActive(i);
+    const ids = ['top', 'Attractions', 'Franchise', 'About'];
+    const el = document.getElementById(ids[i] || 'top');
+    if (el) window.scrollTo({ top: el.offsetTop - 90, behavior: 'smooth' });
+  };
+  return (
+    <div>
+      <SiteNav links={NAV} active={active} onNav={onNav} onCta={openCta} />
+      <Hero onCta={openCta} />
+      <Stats />
+      <Attractions selected={selected} onSelect={setSelected} />
+      <MeetFox onCta={openCta} />
+      <Franchise onCta={openCta} />
+      <Footer />
+      <TicketModal open={modal} onClose={() => setModal(false)} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

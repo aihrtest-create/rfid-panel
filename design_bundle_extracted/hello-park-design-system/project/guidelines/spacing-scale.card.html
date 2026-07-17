@@ -1,0 +1,26 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Spacing · 4px grid" subtitle="1 2 4 8 12 16 — vertical rhythm on a 4px base" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--surface); }
+  .row { display: flex; gap: 18px; align-items: flex-end; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .bar { background: var(--orange); border-radius: 3px; width: 100%; }
+  .cell { display:flex; align-items:flex-end; height: 64px; }
+  .lab { font: 500 11px/1 var(--font-mono); color: var(--ink-60); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="item"><div class="cell"><div class="bar" style="width:4px;height:4px;"></div></div><span class="lab">1·4</span></div>
+    <div class="item"><div class="cell"><div class="bar" style="width:8px;height:8px;"></div></div><span class="lab">2·8</span></div>
+    <div class="item"><div class="cell"><div class="bar" style="width:16px;height:16px;"></div></div><span class="lab">4·16</span></div>
+    <div class="item"><div class="cell"><div class="bar" style="width:32px;height:32px;"></div></div><span class="lab">8·32</span></div>
+    <div class="item"><div class="cell"><div class="bar" style="width:48px;height:48px;"></div></div><span class="lab">12·48</span></div>
+    <div class="item"><div class="cell"><div class="bar" style="width:64px;height:64px;"></div></div><span class="lab">16·64</span></div>
+  </div>
+</body>
+</html>

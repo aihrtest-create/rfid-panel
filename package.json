@@ -1,6 +1,9 @@
 {
   "scripts": {
-    "compile-docs": "python3 compile_docs.py"
+    "start": "node server.mjs",
+    "compile-docs": "python3 scripts/compile_docs.py",
+    "compile-returning-docs": "python3 scripts/compile_returning_doc.py",
+    "generate-pdf": "node scripts/generate_pdf.mjs"
   },
   "dependencies": {
     "playwright": "^1.59.1",

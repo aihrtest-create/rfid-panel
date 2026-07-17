@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Путь гостя - Hello Park</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7fb;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --accent-blue: #3182ce;
+            --accent-green: #38a169;
+            --accent-orange: #ed8936;
+            --accent-red: #e53e3e;
+            --accent-purple: #805ad5;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #1a202c;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 60px;
+            font-size: 1.1rem;
+        }
+
+        /* Timeline styles */
+        .timeline {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+
+        .step {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-icon {
+            position: absolute;
+            left: -50px;
+            top: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: white;
+            border: 4px solid var(--accent-blue);
+            z-index: 2;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .step.client .step-icon { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .step.staff .step-icon { border-color: var(--accent-orange); color: var(--accent-orange); }
+        .step.system .step-icon { border-color: var(--accent-purple); color: var(--accent-purple); }
+        .step.success .step-icon { border-color: var(--accent-green); color: var(--accent-green); }
+        .step.error .step-icon { border-color: var(--accent-red); color: var(--accent-red); }
+
+        .step-content {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            border-left: 5px solid var(--accent-blue);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .step-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .step.client .step-content { border-left-color: var(--accent-blue); }
+        .step.staff .step-content { border-left-color: var(--accent-orange); }
+        .step.system .step-content { border-left-color: var(--accent-purple); }
+        .step.success .step-content { border-left-color: var(--accent-green); }
+        .step.error .step-content { border-left-color: var(--accent-red); background-color: #fff5f5; }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.client { background: #ebf8ff; color: #2b6cb0; }
+        .badge.staff { background: #fffaf0; color: #c05621; }
+        .badge.system { background: #faf5ff; color: #6b46c1; }
+        .badge.success { background: #f0fff4; color: #2f855a; }
+        .badge.error { background: #fff5f5; color: #c53030; }
+
+        .step-desc {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .branch-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            padding-left: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            .split-layout {
+                grid-template-columns: 1fr;
+                padding-left: 0;
+            }
+            .timeline {
+                padding-left: 40px;
+            }
+            .timeline::before {
+                left: 19px;
+            }
+            .step-icon {
+                left: -40px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Путь гостя (User Journey)</h1>
+        <p class="subtitle">Полный цикл: от входа в парк до интеграции с CRM без привязки к фискальной кассе</p>
+
+        <div class="timeline">
+            <!-- Step 1-3 -->
+            <div class="step client">
+                <div class="step-icon">📱</div>
+                <div class="step-content">
+                    <div class="step-title">Шаг 1-3. Самостоятельная регистрация <span class="badge client">Клиент</span></div>
+                    <div class="step-desc">
+                        Гость приходит в парк и видит QR-код. Родитель сканирует его и заполняет единую форму на своем телефоне. 
+                        <strong>Больше не нужно отдельно диктовать номер для бонусной системы.</strong> Согласие с правилами парка подписывается электронно.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CRM -->
+            <div class="step system">
+                <div class="step-icon">☁️</div>
+                <div class="step-content">
+                    <div class="step-title">Шаг 9. Сохранение во Внутренней CRM <span class="badge system">Система</span></div>
+                    <div class="step-desc">
+                        Данные из формы мгновенно сохраняются во внутренней CRM Hello Park: профиль родителя, данные детей, дни рождения и аватары.
+                    </div>
+                    <div class="branch-info">
+                        <strong>Шаг 10. Сторонняя CRM:</strong> Данные автоматически передаются во внешнюю систему для маркетинговых рассылок и поздравлений.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cashier / Avatar System -->
+            <div class="step staff">
+                <div class="step-icon">🖥️</div>
+                <div class="step-content">
+                    <div class="step-title">Шаг 4. Гость появляется в Системе Аватаров <span class="badge staff">Персонал</span></div>
+                    <div class="step-desc">
+                        Кассир открывает список зарегистрированных гостей. <strong>Важно: эта система не зависит от фискальной кассы.</strong> В ней уже отображаются родитель, ребенок и его готовый аватар.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linking -->
+            <div class="step staff">
+                <div class="step-icon">💳</div>
+                <div class="step-content">
+                    <div class="step-title">Шаг 5. Привязка браслета <span class="badge staff">Персонал</span></div>
+                    <div class="step-desc">
+                        Кассир выбирает нужного ребенка в системе, нажимает кнопку привязки и прикладывает физический браслет к считывателю.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outcomes Grid -->
+        <div class="split-layout">
+            <div class="step success" style="margin-bottom:0">
+                <div class="step-icon">✅</div>
+                <div class="step-content" style="height: 100%;">
+                    <div class="step-title">Шаг 6-7. Успех <span class="badge success">Аватар Активен</span></div>
+                    <div class="step-desc">
+                        Браслет активируется и выдается гостю. Ребенок проходит в парк, и его Аватар успешно взаимодействует со всеми интерактивными аттракционами.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step error" style="margin-bottom:0">
+                <div class="step-icon">❌</div>
+                <div class="step-content" style="height: 100%;">
+                    <div class="step-title">Шаг 8. Ошибка <span class="badge error">Доступ Закрыт</span></div>
+                    <div class="step-desc">
+                        Если браслет не активирован в Системе Аватаров, <strong>Аватар работать не будет</strong>. Это исключает неучтенные посещения в обход системы.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Return Visit -->
+        <h2 style="margin-top: 50px; margin-bottom: 30px; font-size: 1.8rem; color: #1a202c;">Повторное посещение</h2>
+        <div class="timeline" style="margin-bottom: 0;">
+            <div class="step client">
+                <div class="step-icon">🔄</div>
+                <div class="step-content">
+                    <div class="step-title">Быстрый возврат <span class="badge client">Удержание клиента</span></div>
+                    <div class="step-desc">
+                        При следующем визите родителю не нужно сканировать QR-код. Кассир моментально находит гостя в базе, активирует старый браслет, и ребенок продолжает игру с сохраненным прогрессом.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

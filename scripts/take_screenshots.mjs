@@ -1,4 +1,10 @@
 import { chromium } from 'playwright';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.join(__dirname, '..');
 
 (async () => {
     const browser = await chromium.launch({ headless: true });
@@ -6,7 +12,8 @@ import { chromium } from 'playwright';
     await page.setViewportSize({ width: 1280, height: 800 });
     
     // Подгружаем наш файл из проекта
-    await page.goto('file:///Users/dima/Desktop/Rfid-%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C/index.html');
+    const indexPath = path.join(projectRoot, 'index.html');
+    await page.goto(`file://${indexPath}`);
     
     // 1. Открываем окно Аватара
     await page.evaluate(() => {
@@ -15,10 +22,12 @@ import { chromium } from 'playwright';
     await page.waitForTimeout(600); // ждем анимации
 
     // Скрин 1: Модалка целиком
-    await page.locator('#avatar-info-modal-content').screenshot({ path: '/Users/dima/Desktop/Rfid-панель/screenshots/avatar_modal_new.png' });
+    const screen1Path = path.join(projectRoot, 'docs', 'screenshots', 'avatar_modal_new.png');
+    await page.locator('#avatar-info-modal-content').screenshot({ path: screen1Path });
 
     // Скрин 2: Контейнер с карточками призов
-    await page.locator('#avatar-prizes-container').screenshot({ path: '/Users/dima/Desktop/Rfid-панель/screenshots/prize_statuses_new.png' });
+    const screen2Path = path.join(projectRoot, 'docs', 'screenshots', 'prize_statuses_new.png');
+    await page.locator('#avatar-prizes-container').screenshot({ path: screen2Path });
 
     // 3. Вызываем Confirm Modal через клик по кнопке отмены
     await page.evaluate(() => {
@@ -28,7 +37,8 @@ import { chromium } from 'playwright';
     await page.waitForTimeout(600); // ждем анимации окна подтверждения
 
     // Скрин 3: Модалка подтверждения
-    await page.locator('#confirm-modal > div').screenshot({ path: '/Users/dima/Desktop/Rfid-панель/screenshots/confirm_undo_modal.png' });
+    const screen3Path = path.join(projectRoot, 'docs', 'screenshots', 'confirm_undo_modal.png');
+    await page.locator('#confirm-modal > div').screenshot({ path: screen3Path });
 
     await browser.close();
     console.log("Screenshots captured successfully!");

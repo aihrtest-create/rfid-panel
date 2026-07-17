@@ -1,0 +1,38 @@
+<!-- @dsCard group="Slides" viewport="1280x720" name="Title slide" subtitle="Investment deck cover — orange, Fox, big display" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  .slide { position: relative; width: 1280px; height: 720px; background: var(--orange); overflow: hidden; font-family: var(--font-body); }
+  .pad { position: absolute; inset: 0; padding: 64px 72px; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; justify-content: space-between; }
+  .logo { height: 34px; filter: brightness(0) invert(1); }
+  .mono { font-family: var(--font-mono); font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.9); }
+  h1 { color: #fff; font: 800 92px/0.96 var(--font-display); letter-spacing: -0.025em; max-width: 760px; margin: auto 0 0; }
+  .sub { color: rgba(255,255,255,0.92); font: 400 22px/1.5 var(--font-body); max-width: 540px; margin-top: 22px; }
+  .foot { display: flex; align-items: center; gap: 14px; margin-top: 28px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.18); color: #fff; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 16px; border-radius: 999px; }
+  .fox { position: absolute; right: 24px; bottom: 0; height: 620px; filter: drop-shadow(0 24px 50px rgba(120,40,0,0.32)); }
+</style>
+</head>
+<body>
+  <div class="slide">
+    <img class="fox" src="../assets/rocky-point.png" alt="">
+    <div class="pad">
+      <div class="top">
+        <img class="logo" src="../assets/logo-horizontal.png" alt="hello park">
+        <span class="mono">Investment deck · 2026</span>
+      </div>
+      <h1>The future of entertainment is phygital.</h1>
+      <p class="sub">Inside the world's largest immersive park chain for entertainment and creativity.</p>
+      <div class="foot">
+        <span class="pill">Series B</span>
+        <span class="pill">50+ parks worldwide</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

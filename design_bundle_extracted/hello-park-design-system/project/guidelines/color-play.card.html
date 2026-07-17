@@ -1,0 +1,31 @@
+<!-- @dsCard group="Colors" viewport="700x190" name="Play palette" subtitle="12 hyper-colorful accents — used one at a time, never as gradients" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 20px; background: var(--surface); font-family: var(--font-mono); }
+  .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .sw { border-radius: var(--radius-sm); height: 56px; display: flex; align-items: flex-end; padding: 8px; }
+  .name { font-size: 10.5px; font-weight: 500; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
+  .dark { color: var(--ink); text-shadow: none; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="sw" style="background: var(--play-lime);"><span class="name dark">lime</span></div>
+    <div class="sw" style="background: var(--play-green);"><span class="name">green</span></div>
+    <div class="sw" style="background: var(--play-forest);"><span class="name">forest</span></div>
+    <div class="sw" style="background: var(--play-lilac);"><span class="name dark">lilac</span></div>
+    <div class="sw" style="background: var(--play-violet);"><span class="name">violet</span></div>
+    <div class="sw" style="background: var(--play-magenta);"><span class="name">magenta</span></div>
+    <div class="sw" style="background: var(--play-sky);"><span class="name">sky</span></div>
+    <div class="sw" style="background: var(--play-navy);"><span class="name">navy</span></div>
+    <div class="sw" style="background: var(--play-burgundy);"><span class="name">burgundy</span></div>
+    <div class="sw" style="background: var(--play-yellow);"><span class="name dark">yellow</span></div>
+    <div class="sw" style="background: var(--play-red);"><span class="name">red</span></div>
+    <div class="sw" style="background: var(--play-salmon);"><span class="name dark">salmon</span></div>
+  </div>
+</body>
+</html>

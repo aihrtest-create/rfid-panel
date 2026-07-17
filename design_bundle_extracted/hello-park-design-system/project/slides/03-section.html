@@ -1,0 +1,39 @@
+<!-- @dsCard group="Slides" viewport="1280x720" name="Section divider" subtitle="Dark chapter break — zero-padded number + title" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  .slide { position: relative; width: 1280px; height: 720px; background: var(--ink); overflow: hidden; font-family: var(--font-body); padding: 64px 72px; box-sizing: border-box; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; justify-content: space-between; }
+  .logo { height: 30px; filter: brightness(0) invert(1); }
+  .mono { font-family: var(--font-mono); font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+  .body { margin-top: auto; }
+  .idx { font: 800 28px/1 var(--font-mono); color: var(--orange); letter-spacing: 0.02em; }
+  h2 { color: #fff; font: 800 96px/0.96 var(--font-display); letter-spacing: -0.025em; margin: 18px 0 0; max-width: 900px; }
+  .rule { height: 4px; width: 88px; background: var(--orange); border-radius: 999px; margin-top: 32px; }
+  .tags { display: flex; gap: 10px; margin-top: 26px; }
+  .tag { font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 15px; border-radius: 999px; }
+</style>
+</head>
+<body>
+  <div class="slide">
+    <div class="top">
+      <img class="logo" src="../assets/logo-horizontal.png" alt="hello park">
+      <span class="mono">Section</span>
+    </div>
+    <div class="body">
+      <div class="idx">02</div>
+      <h2>How a park works.</h2>
+      <div class="rule"></div>
+      <div class="tags">
+        <span class="tag" style="background: var(--play-lilac); color: var(--ink);">Immersive</span>
+        <span class="tag" style="background: var(--play-sky); color:#fff;">Phygital</span>
+        <span class="tag" style="background: var(--orange); color:#fff;">Creativity</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

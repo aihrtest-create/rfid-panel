@@ -1,0 +1,41 @@
+<!-- @dsCard group="Slides" viewport="1280x720" name="Quote slide" subtitle="Full-bleed park photo + scrim — big statement in white" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  .slide { position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: var(--font-body); }
+  .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  /* legibility scrim — dark from the lower-left where text sits */
+  .scrim { position: absolute; inset: 0; background:
+      linear-gradient(90deg, rgba(15,16,18,0.82) 0%, rgba(15,16,18,0.55) 38%, rgba(15,16,18,0) 68%),
+      linear-gradient(0deg, rgba(15,16,18,0.78) 0%, rgba(15,16,18,0) 46%); }
+  .pad { position: absolute; inset: 0; padding: 60px 72px; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; gap: 14px; }
+  .logo { height: 30px; }
+  .mono { font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.92); }
+  blockquote { margin: auto 0 0; max-width: 820px; }
+  .q { color: #fff; font: 800 60px/1.06 var(--font-display); letter-spacing: -0.022em; text-shadow: 0 2px 24px rgba(0,0,0,0.35); }
+  .by { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-weight: 500; font-size: 15px; letter-spacing: 0.04em; color: rgba(255,255,255,0.92); margin-top: 26px; }
+  .by::before { content: ""; width: 30px; height: 3px; border-radius: 999px; background: var(--orange); }
+</style>
+</head>
+<body>
+  <div class="slide">
+    <img class="bg" src="../assets/photos/kids-jumping.png" alt="Children playing at Hello Park">
+    <div class="scrim"></div>
+    <div class="pad">
+      <div class="top">
+        <img class="logo" src="../assets/logo-horizontal-reversed.png" alt="hello park">
+        <span class="mono">Our mission</span>
+      </div>
+      <blockquote>
+        <p class="q">"We're rethinking entertainment to be meaningful, immersive&nbsp;and fun."</p>
+        <div class="by">Hello Park · founding team</div>
+      </blockquote>
+    </div>
+  </div>
+</body>
+</html>

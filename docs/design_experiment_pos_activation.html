@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Активации по чекам — прототип · Hello Park</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ff5a28',
+                            orangeHover: '#e64a1c',
+                            purple: '#5123d4',
+                            purpleHover: '#3f19a8',
+                            blue: '#1ba0f2',
+                            bg: '#f4f5f9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Hanken Grotesk"', 'sans-serif'],
+                        mono: ['"DM Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f5f9; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+
+        .card-enter { animation: cardIn .4s cubic-bezier(.2,.9,.3,1.2); }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(-10px) scale(.98); }
+            to   { opacity: 1; transform: none; }
+        }
+        .scan-pulse { position: relative; }
+        .scan-pulse::before, .scan-pulse::after {
+            content: ''; position: absolute; inset: 0; border-radius: 9999px;
+            border: 3px solid #ff5a28; animation: pulseRing 1.6s ease-out infinite;
+        }
+        .scan-pulse::after { animation-delay: .8s; }
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: .8; }
+            100% { transform: scale(1.9); opacity: 0; }
+        }
+        .shake { animation: shake .35s; }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .log-line { animation: logIn .25s ease-out; }
+        @keyframes logIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="font-sans text-gray-900">
+
+    <!-- ══════════ Шапка панели ══════════ -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-[1280px] mx-auto px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-orange to-brand-purple flex items-center justify-center text-white font-extrabold text-sm shadow-lg shadow-brand-orange/20">HP</div>
+                <div>
+                    <div class="font-extrabold leading-tight">RFID-панель · Активации</div>
+                    <div class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Прототип · токены по чекам</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="headerCounter" class="flex items-center gap-2 bg-orange-50 border border-brand-orange/30 text-brand-orange font-extrabold px-4 py-2 rounded-2xl text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Доступно активаций: <span id="creditCount">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-[1280px] mx-auto px-6 py-6 grid lg:grid-cols-3 gap-6 items-start">
+
+        <!-- ══════════ Левая колонка: интерфейс кассира ══════════ -->
+        <section class="lg:col-span-2 space-y-5">
+
+            <!-- Как это работает -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm">
+                <div class="text-[10px] font-extrabold text-gray-400 tracking-widest uppercase mb-3">Как это работает</div>
+                <div class="grid grid-cols-4 gap-2 text-center">
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-xl mb-1">🧾</div>
+                        <div class="text-xs font-bold text-gray-700">Кассир пробивает билет в кассе</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-xl mb-1">📡</div>
+                        <div class="text-xs font-bold text-gray-700">Касса шлёт событие продажи в панель</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-xl mb-1">🎟</div>
+                        <div class="text-xs font-bold text-gray-700">Чек появляется здесь с N активациями</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-xl mb-1">⌚️</div>
+                        <div class="text-xs font-bold text-gray-700">Кассир привязывает браслет — активация списывается</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Статистика смены -->
+            <div class="grid grid-cols-4 gap-3">
+                <div class="bg-white rounded-3xl p-4 shadow-sm">
+                    <div class="text-2xl font-extrabold text-brand-orange" id="statAvailable">0</div>
+                    <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-1">Доступно</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 shadow-sm">
+                    <div class="text-2xl font-extrabold text-gray-800" id="statUsed">0</div>
+                    <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-1">Привязано</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 shadow-sm">
+                    <div class="text-2xl font-extrabold text-gray-800" id="statReceipts">0</div>
+                    <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-1">Чеков за смену</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 shadow-sm">
+                    <div class="text-2xl font-extrabold" id="statOverrides">0</div>
+                    <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-1">Обходов (без чека)</div>
+                </div>
+            </div>
+
+            <!-- Лента чеков -->
+            <div class="flex items-center justify-between">
+                <h2 class="font-extrabold text-lg">Оплаченные билеты — сегодня</h2>
+                <div class="text-xs font-bold text-gray-400">сортировка: новые сверху</div>
+            </div>
+            <div id="receiptList" class="space-y-3"></div>
+
+            <!-- Обход без чека -->
+            <div class="text-center pt-2">
+                <button onclick="openOverride()" class="text-xs font-extrabold text-gray-400 hover:text-red-500 tracking-wider uppercase transition-colors">
+                    ⚠ Активировать без чека (только администратор)
+                </button>
+            </div>
+        </section>
+
+        <!-- ══════════ Правая колонка: симулятор кассы ══════════ -->
+        <aside class="space-y-5 lg:sticky lg:top-20">
+            <div class="bg-gray-900 text-white rounded-3xl p-5 shadow-lg">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    <div class="text-[10px] font-extrabold text-gray-400 tracking-widest uppercase">Демо: имитация кассы</div>
+                </div>
+                <p class="text-xs text-gray-400 mb-4">Этой панели в реальном интерфейсе нет — она имитирует запросы, которые шлёт касса после фискализации чека.</p>
+                <div class="space-y-2">
+                    <button onclick="posSale('iiko_child')" class="w-full text-left px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-colors text-sm font-bold flex justify-between items-center">
+                        <span>iiko · Детский билет ×1</span><span class="text-brand-orange">+1 🎟</span>
+                    </button>
+                    <button onclick="posSale('iiko_family')" class="w-full text-left px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-colors text-sm font-bold flex justify-between items-center">
+                        <span>iiko · Семейный (2 ребёнка)</span><span class="text-brand-orange">+2 🎟</span>
+                    </button>
+                    <button onclick="posSale('odoo_child')" class="w-full text-left px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-colors text-sm font-bold flex justify-between items-center">
+                        <span>Odoo · Kids ticket ×1</span><span class="text-brand-orange">+1 🎟</span>
+                    </button>
+                    <button onclick="posSale('iiko_popcorn')" class="w-full text-left px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-colors text-sm font-bold flex justify-between items-center">
+                        <span>iiko · Попкорн (не билет)</span><span class="text-gray-500">+0</span>
+                    </button>
+                    <button onclick="posRefund()" class="w-full text-left px-4 py-3 rounded-2xl bg-red-500/20 hover:bg-red-500/30 text-red-300 transition-colors text-sm font-bold">
+                        ↩ Возврат последнего чека
+                    </button>
+                    <button onclick="posRetry()" class="w-full text-left px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-400 transition-colors text-xs font-bold">
+                        ⟳ Повторить последний запрос (тест идемпотентности)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Лог вебхуков -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm">
+                <div class="text-[10px] font-extrabold text-gray-400 tracking-widest uppercase mb-3">Журнал API-событий</div>
+                <div id="apiLog" class="font-mono text-[11px] leading-relaxed space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                    <div class="text-gray-400">Пока пусто — пробейте билет в симуляторе.</div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- ══════════ Модалка: привязка браслета ══════════ -->
+    <div id="bindModal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden justify-center items-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md p-7 shadow-2xl">
+            <div class="flex justify-between items-start mb-1">
+                <div class="text-[10px] font-extrabold text-gray-400 tracking-widest uppercase" id="bindReceiptLabel">Чек № —</div>
+                <button onclick="closeBind()" class="text-gray-300 hover:text-gray-500 font-extrabold px-2">✕</button>
+            </div>
+
+            <!-- Шаг 1: выбор ребёнка -->
+            <div id="bindStep1">
+                <h3 class="font-extrabold text-xl mb-4">Кому привязываем браслет?</h3>
+                <div class="space-y-2">
+                    <button onclick="pickChild('Мия К., 7 лет')" class="w-full text-left px-5 py-4 bg-gray-50 rounded-2xl font-bold hover:bg-orange-50 hover:text-brand-orange transition-colors">🦊 Мия К., 7 лет</button>
+                    <button onclick="pickChild('Артём С., 5 лет')" class="w-full text-left px-5 py-4 bg-gray-50 rounded-2xl font-bold hover:bg-orange-50 hover:text-brand-orange transition-colors">🐻 Артём С., 5 лет</button>
+                    <button onclick="pickChild('Новый гость')" class="w-full text-left px-5 py-4 border-2 border-dashed border-gray-300 rounded-2xl font-bold text-gray-500 hover:border-brand-purple hover:text-brand-purple transition-colors">＋ Новый гость — регистрация</button>
+                </div>
+                <p class="text-xs text-gray-400 mt-4">Это типовой путь привязки — он не меняется. Новое только то, что вход в него идёт «через чек».</p>
+            </div>
+
+            <!-- Шаг 2: сканирование -->
+            <div id="bindStep2" class="hidden text-center py-6">
+                <div class="scan-pulse w-24 h-24 mx-auto rounded-full bg-orange-50 flex items-center justify-center text-4xl mb-6">⌚️</div>
+                <h3 class="font-extrabold text-xl mb-2">Приложите браслет к считывателю</h3>
+                <p class="text-sm text-gray-400">Активация будет списана с чека <span id="bindReceiptLabel2" class="font-bold text-gray-600"></span></p>
+            </div>
+
+            <!-- Шаг 3: успех -->
+            <div id="bindStep3" class="hidden text-center py-6">
+                <div class="w-24 h-24 mx-auto rounded-full bg-green-50 text-green-500 flex items-center justify-center mb-6">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h3 class="font-extrabold text-xl mb-2">Браслет привязан</h3>
+                <p class="text-sm text-gray-500 mb-6" id="bindSuccessText"></p>
+                <button onclick="closeBind()" class="w-full py-4 bg-brand-orange hover:bg-brand-orangeHover text-white font-extrabold rounded-2xl transition-colors">Готово</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ Модалка: обход без чека ══════════ -->
+    <div id="overrideModal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 hidden justify-center items-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md p-7 shadow-2xl">
+            <div class="flex justify-between items-start mb-1">
+                <div class="text-[10px] font-extrabold text-red-400 tracking-widest uppercase">Режим администратора</div>
+                <button onclick="closeOverride()" class="text-gray-300 hover:text-gray-500 font-extrabold px-2">✕</button>
+            </div>
+            <h3 class="font-extrabold text-xl mb-2">Активация без чека</h3>
+            <div class="bg-red-50 text-red-600 text-xs font-bold rounded-2xl p-4 mb-5">
+                Каждый обход фиксируется в журнале с ФИО администратора и попадает в ежедневный отчёт сверки. Используйте только при сбое кассы.
+            </div>
+            <label class="block text-sm font-bold text-gray-700 mb-1 ml-2">PIN администратора <span class="font-normal text-gray-400">(в демо: 1234)</span></label>
+            <input id="overridePin" type="password" inputmode="numeric" maxlength="4" placeholder="••••"
+                   class="w-full text-center tracking-[0.5em] px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:outline-none focus:bg-white focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/10 font-bold transition-all mb-4">
+            <label class="block text-sm font-bold text-gray-700 mb-1 ml-2">Причина</label>
+            <select id="overrideReason" class="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:outline-none focus:bg-white focus:border-brand-purple font-medium transition-all mb-5">
+                <option>Касса офлайн / нет связи</option>
+                <option>Сбой кассового ПО</option>
+                <option>Другое (комментарий администратору)</option>
+            </select>
+            <button onclick="confirmOverride()" class="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-extrabold rounded-2xl transition-colors">Выдать 1 активацию</button>
+        </div>
+    </div>
+
+<script>
+// ─────────────────────────── Состояние ───────────────────────────
+let receipts = [];      // {id, number, source, kassa, time, itemsLabel, slots: [{status, child, usedAt}], refunded}
+let seq = 122;
+let overrides = 0;
+let receiptsToday = 2;
+let lastPayload = null; // для демо идемпотентности
+let bindCtx = null;     // {receiptId, slotIdx}
+
+const SALE_PRESETS = {
+    iiko_child:   { source: 'iiko', kassa: 'Касса 1', itemsLabel: 'Детский билет ×1 · 1 500 ₽', credits: 1,
+                    items: [{ sku: 'TICKET_CHILD_DAY', qty: 1, price: 1500, currency: 'RUB' }] },
+    iiko_family:  { source: 'iiko', kassa: 'Касса 1', itemsLabel: 'Семейный билет (2 реб.) · 4 900 ₽', credits: 2,
+                    items: [{ sku: 'TICKET_FAMILY_2', qty: 1, price: 4900, currency: 'RUB' }] },
+    odoo_child:   { source: 'odoo', kassa: 'POS-2 (IN)', itemsLabel: 'Kids ticket ×1 · ₹1200', credits: 1,
+                    items: [{ sku: 'KIDS_TICKET', qty: 1, price: 1200, currency: 'INR' }] },
+    iiko_popcorn: { source: 'iiko', kassa: 'Касса 1', itemsLabel: 'Попкорн ×1 · 350 ₽', credits: 0,
+                    items: [{ sku: 'FOOD_POPCORN', qty: 1, price: 350, currency: 'RUB' }] },
+};
+
+// ─────────────────────────── Утилиты ───────────────────────────
+const $ = id => document.getElementById(id);
+const now = () => new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+const nowSec = () => new Date().toLocaleTimeString('ru-RU');
+
+function availableCount() {
+    return receipts.reduce((n, r) => n + (r.refunded ? 0 : r.slots.filter(s => s.status === 'available').length), 0);
+}
+function usedCount() {
+    return receipts.reduce((n, r) => n + r.slots.filter(s => s.status === 'used').length, 0);
+}
+
+// ─────────────────────────── Симулятор кассы ───────────────────────────
+function posSale(preset) {
+    const p = SALE_PRESETS[preset];
+    seq++;
+    const number = String(seq).padStart(5, '0');
+    const payload = {
+        event_type: 'sale',
+        occurred_at: new Date().toISOString(),
+        receipt: { external_id: p.source + '-' + crypto.randomUUID().slice(0, 8), number, fiscal_id: p.source === 'iiko' ? String(Math.floor(1e9 + Math.random() * 9e9)) : null },
+        items: p.items
+    };
+    lastPayload = { payload, posId: p.source === 'odoo' ? 'pos-in-02' : 'kassa-msk-01' };
+
+    logRequest(lastPayload.posId, payload);
+    logResponse(200, { activation_credits: p.credits, expires_at: 'end_of_day' },
+        p.credits === 0 ? 'SKU не входит в маппинг «билеты» — активации не выданы' : null);
+
+    receiptsToday++;
+    if (p.credits > 0) {
+        receipts.unshift({
+            id: crypto.randomUUID(), number, source: p.source, kassa: p.kassa, time: now(),
+            itemsLabel: p.itemsLabel, refunded: false,
+            slots: Array.from({ length: p.credits }, () => ({ status: 'available', child: null, usedAt: null }))
+        });
+    }
+    render();
+}
+
+function posRefund() {
+    const r = receipts.find(r => !r.refunded && r.source !== 'override');
+    if (!r) return;
+    const payload = { event_type: 'refund', occurred_at: new Date().toISOString(), receipt: { number: r.number } };
+    logRequest('kassa-msk-01', payload);
+    const usedSlots = r.slots.filter(s => s.status === 'used').length;
+    logResponse(200, { revoked_credits: r.slots.length - usedSlots, flagged_active_bracelets: usedSlots },
+        usedSlots > 0 ? 'Возврат по чеку с уже активным браслетом — инцидент в отчёт администратору' : null);
+    r.refunded = true;
+    r.slots.forEach(s => { if (s.status === 'available') s.status = 'void'; });
+    render();
+}
+
+function posRetry() {
+    if (!lastPayload) return;
+    logRequest(lastPayload.posId, lastPayload.payload, true);
+    logResponse(200, { duplicate: true, activation_credits: 0 }, 'Idempotency-Key уже обработан — повторные активации не выданы');
+}
+
+// ─────────────────────────── Лог API ───────────────────────────
+function logRequest(posId, payload, isRetry) {
+    const el = document.createElement('div');
+    el.className = 'log-line border-b border-gray-100 pb-3';
+    el.innerHTML = `
+        <div class="text-brand-orange font-bold">→ POST /api/v1/pos/events <span class="text-gray-300 font-normal float-right">${nowSec()}</span></div>
+        <div class="text-gray-400">X-POS-Id: ${posId} · X-Signature: hmac-sha256(…)${isRetry ? ' · <b class="text-amber-500">RETRY</b>' : ''}</div>
+        <pre class="text-gray-600 whitespace-pre-wrap break-all mt-1">${JSON.stringify(payload, null, 1)}</pre>`;
+    prependLog(el);
+}
+function logResponse(code, body, note) {
+    const box = $('apiLog').firstElementChild;
+    const el = document.createElement('div');
+    el.className = 'log-line mt-1';
+    el.innerHTML = `<div class="text-green-600 font-bold">← ${code} ${JSON.stringify(body)}</div>` +
+        (note ? `<div class="text-amber-600 mt-0.5">⚠ ${note}</div>` : '');
+    box.appendChild(el);
+}
+function prependLog(el) {
+    const log = $('apiLog');
+    if (log.firstElementChild && log.firstElementChild.tagName === 'DIV' && log.children.length === 1 && !log.firstElementChild.classList.contains('log-line')) log.innerHTML = '';
+    log.prepend(el);
+}
+
+// ─────────────────────────── Рендер ленты чеков ───────────────────────────
+const SOURCE_BADGE = {
+    iiko:     '<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-orange-100 text-brand-orange uppercase tracking-wider">iiko</span>',
+    odoo:     '<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-purple-100 text-brand-purple uppercase tracking-wider">Odoo</span>',
+    override: '<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-red-100 text-red-500 uppercase tracking-wider">Без чека</span>'
+};
+
+function render() {
+    $('creditCount').textContent = availableCount();
+    $('statAvailable').textContent = availableCount();
+    $('statUsed').textContent = usedCount();
+    $('statReceipts').textContent = receiptsToday;
+    $('statOverrides').textContent = overrides;
+    $('statOverrides').className = 'text-2xl font-extrabold ' + (overrides > 0 ? 'text-red-500' : 'text-gray-800');
+
+    const list = $('receiptList');
+    list.innerHTML = '';
+    if (!receipts.length) {
+        list.innerHTML = '<div class="bg-white rounded-3xl p-10 text-center text-gray-400 font-bold shadow-sm">Оплаченных билетов пока нет.<br><span class="text-xs font-normal">Пробейте билет в симуляторе кассы справа →</span></div>';
+        return;
+    }
+    receipts.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'card-enter bg-white rounded-3xl p-5 shadow-sm' + (r.refunded ? ' ring-2 ring-red-200' : '');
+        const hasUsedAfterRefund = r.refunded && r.slots.some(s => s.status === 'used');
+        card.innerHTML = `
+            ${r.refunded ? `<div class="mb-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl px-4 py-2">↩ Чек возвращён на кассе${hasUsedAfterRefund ? ' — браслет уже активен, требуется проверка администратора' : ' — неиспользованные активации аннулированы'}</div>` : ''}
+            <div class="flex justify-between items-center mb-1">
+                <div class="flex items-center gap-2">
+                    <span class="font-extrabold">Чек № ${r.number}</span>
+                    ${SOURCE_BADGE[r.source]}
+                </div>
+                <div class="text-xs font-bold text-gray-400">${r.kassa} · ${r.time}</div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">${r.itemsLabel}</div>
+            <div class="grid gap-2 ${r.slots.length > 1 ? 'sm:grid-cols-2' : ''}">
+                ${r.slots.map((s, i) => renderSlot(r, s, i)).join('')}
+            </div>`;
+        list.appendChild(card);
+    });
+}
+
+function renderSlot(r, s, i) {
+    if (s.status === 'available') {
+        return `<div class="flex items-center justify-between gap-3 border-2 border-dashed border-brand-orange/40 bg-orange-50/50 rounded-2xl px-4 py-3">
+            <div><div class="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Активация ${i + 1}</div>
+            <div class="text-sm font-bold text-brand-orange">Доступна</div></div>
+            <button onclick="openBind('${r.id}', ${i})" class="px-4 py-2.5 bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-extrabold rounded-xl transition-colors whitespace-nowrap">Привязать браслет</button>
+        </div>`;
+    }
+    if (s.status === 'used') {
+        return `<div class="flex items-center justify-between gap-3 bg-gray-50 rounded-2xl px-4 py-3 ${r.refunded ? 'ring-1 ring-red-300' : ''}">
+            <div><div class="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Активация ${i + 1}</div>
+            <div class="text-sm font-bold text-gray-700">⌚️ ${s.child}</div></div>
+            <div class="text-xs font-bold text-gray-400">${s.usedAt} ✓</div>
+        </div>`;
+    }
+    return `<div class="flex items-center justify-between gap-3 bg-gray-50 rounded-2xl px-4 py-3 opacity-50">
+        <div><div class="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Активация ${i + 1}</div>
+        <div class="text-sm font-bold text-gray-400 line-through">Аннулирована</div></div>
+    </div>`;
+}
+
+// ─────────────────────────── Привязка браслета ───────────────────────────
+function openBind(receiptId, slotIdx) {
+    bindCtx = { receiptId, slotIdx };
+    const r = receipts.find(x => x.id === receiptId);
+    $('bindReceiptLabel').textContent = `Чек № ${r.number} · активация ${slotIdx + 1}`;
+    $('bindReceiptLabel2').textContent = `№ ${r.number}`;
+    $('bindStep1').classList.remove('hidden');
+    $('bindStep2').classList.add('hidden');
+    $('bindStep3').classList.add('hidden');
+    $('bindModal').classList.remove('hidden');
+    $('bindModal').classList.add('flex');
+}
+function pickChild(name) {
+    bindCtx.child = name === 'Новый гость' ? 'Новый гость (рег.)' : name.split(',')[0];
+    $('bindStep1').classList.add('hidden');
+    $('bindStep2').classList.remove('hidden');
+    setTimeout(() => {
+        const r = receipts.find(x => x.id === bindCtx.receiptId);
+        const s = r.slots[bindCtx.slotIdx];
+        s.status = 'used'; s.child = bindCtx.child; s.usedAt = now();
+        $('bindStep2').classList.add('hidden');
+        $('bindStep3').classList.remove('hidden');
+        $('bindSuccessText').textContent = `Браслет UID A4:F0:${Math.floor(Math.random() * 89 + 10)}:CE привязан: ${bindCtx.child}. Активация списана с чека № ${r.number} — связь «браслет ↔ чек» сохранена в журнале.`;
+        render();
+    }, 1600);
+}
+function closeBind() {
+    $('bindModal').classList.add('hidden');
+    $('bindModal').classList.remove('flex');
+}
+
+// ─────────────────────────── Обход без чека ───────────────────────────
+function openOverride() {
+    $('overridePin').value = '';
+    $('overrideModal').classList.remove('hidden');
+    $('overrideModal').classList.add('flex');
+}
+function closeOverride() {
+    $('overrideModal').classList.add('hidden');
+    $('overrideModal').classList.remove('flex');
+}
+function confirmOverride() {
+    const pin = $('overridePin');
+    if (pin.value !== '1234') {
+        pin.classList.add('shake', 'ring-4', 'ring-red-200', 'border-red-400');
+        setTimeout(() => pin.classList.remove('shake'), 400);
+        return;
+    }
+    overrides++;
+    receipts.unshift({
+        id: crypto.randomUUID(), number: '— (обход)', source: 'override', kassa: 'Администратор', time: now(),
+        itemsLabel: 'Причина: ' + $('overrideReason').value + ' · попадёт в отчёт сверки', refunded: false,
+        slots: [{ status: 'available', child: null, usedAt: null }]
+    });
+    closeOverride();
+    render();
+}
+
+// ─────────────────────────── Стартовые данные ───────────────────────────
+receipts = [
+    { id: crypto.randomUUID(), number: '00121', source: 'iiko', kassa: 'Касса 1', time: '13:47',
+      itemsLabel: 'Семейный билет (2 реб.) · 4 900 ₽', refunded: false,
+      slots: [
+        { status: 'used', child: 'София Л.', usedAt: '13:52' },
+        { status: 'available', child: null, usedAt: null }
+      ] },
+    { id: crypto.randomUUID(), number: '00118', source: 'iiko', kassa: 'Касса 1', time: '13:05',
+      itemsLabel: 'Детский билет ×1 · 1 500 ₽', refunded: false,
+      slots: [ { status: 'used', child: 'Максим Д.', usedAt: '13:09' } ] }
+];
+render();
+</script>
+</body>
+</html>

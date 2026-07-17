@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hello Park — Эксперимент дизайна</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/gilroy-bold">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3rem;
+            background: #E5E5E5;
+        }
+        .experiment-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: -1rem;
+        }
+        .experiment-description {
+            text-align: center;
+            max-width: 600px;
+            color: var(--ink-soft);
+            margin-bottom: 1rem;
+        }
+        .variants-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .phone-mockup {
+            width: 400px;
+            background: var(--bg);
+            border-radius: 40px;
+            padding: 1rem 1rem 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            border: 8px solid #fff;
+        }
+        .variant-label {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            color: var(--hp-purple);
+            font-size: 1.2rem;
+        }
+
+        /* Checkbox Styling */
+        .legal-checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+        .legal-checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: var(--ink-soft);
+            line-height: 1.4;
+        }
+        .legal-checkbox-label a {
+            color: var(--ink-soft);
+            text-decoration: underline;
+        }
+        .legal-checkbox-label a:hover {
+            color: var(--hp-orange);
+        }
+        .legal-checkbox-input {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid var(--ink-muted);
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+            transition: all 0.2s;
+            display: grid;
+            place-content: center;
+            background: transparent;
+        }
+        .legal-checkbox-input::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            background-color: white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        .legal-checkbox-input:checked {
+            background: var(--hp-orange);
+            border-color: var(--hp-orange);
+        }
+        .legal-checkbox-input:checked::before {
+            transform: scale(1);
+        }
+        
+        .compact-rules {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            text-align: center;
+            margin-top: 1.5rem;
+            line-height: 1.4;
+        }
+        .compact-rules a {
+            color: var(--ink-soft);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="experiment-title">Варианты дизайна 1-го шага</h1>
+    <p class="experiment-description">
+        Основной фокус смещен на геймификацию (создание персонажа и призы). Поле для ввода телефона поднято выше. Согласия и правила убраны вниз и представлены в трех вариантах в соответствии с ФЗ-152.
+    </p>
+
+    <div class="variants-container">
+
+        <!-- Variant 1: Implicit Consent -->
+        <div class="phone-mockup">
+            <div class="variant-label">Вариант 1: Скрытое согласие</div>
+            <div class="progress-container" style="position: relative; top:0; margin-bottom: 1rem;">
+                <div class="progress-glass">
+                    <span class="progress-text">Шаг 1 из 3: Регистрация</span>
+                    <div class="progress-segments">
+                        <div class="progress-seg active"></div>
+                        <div class="progress-seg"></div>
+                        <div class="progress-seg"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top:0;">
+                <div class="card-header-hero" style="min-height: 100px;">
+                    <h1 class="card-hero-title">
+                        Hello<br>
+                        <span class="text-orange">Park</span>
+                    </h1>
+                    <img src="fox.webp" alt="Лис" class="card-hero-image" style="width: 130px; top: -30px;">
+                </div>
+
+                <p class="step-explanation" style="color: var(--ink); font-weight: 600;">Введите номер телефона, чтобы создать персонажа для ребёнка, сохранять прогресс в играх и получать призы!</p>
+
+                <!-- Phone + SMS -->
+                <div class="form-group">
+                    <label class="form-label">Номер телефона</label>
+                    <div class="phone-wrapper">
+                        <span class="phone-prefix">+7</span>
+                        <input type="tel" class="phone-field" placeholder="(999) 000-00-00">
+                    </div>
+                </div>
+
+                <button class="btn btn-sms" type="button" style="margin-top: 1rem;">
+                    <span>Получить код</span>
+                </button>
+
+                <p class="compact-rules">
+                    Нажимая кнопку, вы принимаете <a href="#">правила парка</a>, <a href="#">программу лояльности</a> и даете согласие на <a href="#">обработку персональных данных</a>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Variant 2: Single Checkbox -->
+        <div class="phone-mockup">
+            <div class="variant-label">Вариант 2: Одна галочка</div>
+            <div class="progress-container" style="position: relative; top:0; margin-bottom: 1rem;">
+                <div class="progress-glass">
+                    <span class="progress-text">Шаг 1 из 3: Регистрация</span>
+                    <div class="progress-segments">
+                        <div class="progress-seg active"></div>
+                        <div class="progress-seg"></div>
+                        <div class="progress-seg"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top:0;">
+                <div class="card-header-hero" style="min-height: 100px;">
+                    <h1 class="card-hero-title">
+                        Hello<br>
+                        <span class="text-orange">Park</span>
+                    </h1>
+                    <img src="fox.webp" alt="Лис" class="card-hero-image" style="width: 130px; top: -30px;">
+                </div>
+
+                <p class="step-explanation" style="color: var(--ink); font-weight: 600;">Введите номер телефона, чтобы создать персонажа для ребёнка, сохранять прогресс в играх и получать призы!</p>
+
+                <!-- Phone + SMS -->
+                <div class="form-group">
+                    <label class="form-label">Номер телефона</label>
+                    <div class="phone-wrapper">
+                        <span class="phone-prefix">+7</span>
+                        <input type="tel" class="phone-field" placeholder="(999) 000-00-00">
+                    </div>
+                </div>
+
+                <div class="legal-checkbox-group">
+                    <label class="legal-checkbox-label">
+                        <input type="checkbox" class="legal-checkbox-input">
+                        <span>Я принимаю <a href="#">правила парка</a>, <a href="#">программу лояльности</a> и даю согласие на <a href="#">обработку персональных данных</a>.</span>
+                    </label>
+                </div>
+
+                <button class="btn btn-sms" type="button" style="opacity: 0.5; pointer-events: none;">
+                    <span>Получить код</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Variant 3: Three Checkboxes -->
+        <div class="phone-mockup">
+            <div class="variant-label">Вариант 3: Три галочки (по закону)</div>
+            <div class="progress-container" style="position: relative; top:0; margin-bottom: 1rem;">
+                <div class="progress-glass">
+                    <span class="progress-text">Шаг 1 из 3: Регистрация</span>
+                    <div class="progress-segments">
+                        <div class="progress-seg active"></div>
+                        <div class="progress-seg"></div>
+                        <div class="progress-seg"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top:0;">
+                <div class="card-header-hero" style="min-height: 100px;">
+                    <h1 class="card-hero-title">
+                        Hello<br>
+                        <span class="text-orange">Park</span>
+                    </h1>
+                    <img src="fox.webp" alt="Лис" class="card-hero-image" style="width: 130px; top: -30px;">
+                </div>
+
+                <p class="step-explanation" style="color: var(--ink); font-weight: 600;">Введите номер телефона, чтобы создать персонажа для ребёнка, сохранять прогресс в играх и получать призы!</p>
+
+                <!-- Phone + SMS -->
+                <div class="form-group">
+                    <label class="form-label">Номер телефона</label>
+                    <div class="phone-wrapper">
+                        <span class="phone-prefix">+7</span>
+                        <input type="tel" class="phone-field" placeholder="(999) 000-00-00">
+                    </div>
+                </div>
+
+                <div class="legal-checkbox-group" style="gap: 0.5rem; margin: 1rem 0;">
+                    <label class="legal-checkbox-label">
+                        <input type="checkbox" class="legal-checkbox-input">
+                        <span>Я согласен с <a href="#">правилами парка</a></span>
+                    </label>
+                    <label class="legal-checkbox-label">
+                        <input type="checkbox" class="legal-checkbox-input">
+                        <span>Я согласен с <a href="#">политикой обработки данных</a></span>
+                    </label>
+                    <label class="legal-checkbox-label">
+                        <input type="checkbox" class="legal-checkbox-input">
+                        <span>Я принимаю <a href="#">правила программы лояльности</a></span>
+                    </label>
+                </div>
+
+                <button class="btn btn-sms" type="button" style="opacity: 0.5; pointer-events: none;">
+                    <span>Получить код</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

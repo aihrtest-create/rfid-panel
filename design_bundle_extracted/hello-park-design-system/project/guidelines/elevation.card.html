@@ -1,0 +1,25 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Elevation" subtitle="Flat by default · shadow only for floating nav & dialogs" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 26px 24px; background: var(--page); }
+  .row { display: flex; gap: 22px; align-items: center; }
+  .item { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .box { width: 150px; height: 78px; background: var(--surface); border-radius: var(--radius-md); display:flex; align-items:center; justify-content:center; font: 500 12px/1 var(--font-mono); color: var(--ink-60); text-transform:uppercase; letter-spacing:0.05em; }
+  .flat { border: 1px solid var(--line); }
+  .nav { box-shadow: var(--shadow-nav); }
+  .pop { box-shadow: var(--shadow-pop); }
+  .lab { font: 500 11px/1 var(--font-mono); color: var(--ink-60); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="item"><div class="box flat">card</div><span class="lab">flat · hairline</span></div>
+    <div class="item"><div class="box nav">nav</div><span class="lab">shadow-nav</span></div>
+    <div class="item"><div class="box pop">dialog</div><span class="lab">shadow-pop</span></div>
+  </div>
+</body>
+</html>

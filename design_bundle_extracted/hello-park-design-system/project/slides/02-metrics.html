@@ -1,0 +1,38 @@
+<!-- @dsCard group="Slides" viewport="1280x720" name="Metric slide" subtitle="Big numbers on light page — the market in four stats" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  .slide { position: relative; width: 1280px; height: 720px; background: var(--page); overflow: hidden; font-family: var(--font-body); padding: 64px 72px; box-sizing: border-box; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; justify-content: space-between; }
+  .logo { height: 30px; }
+  .mono { font-family: var(--font-mono); font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-60); }
+  h2 { color: var(--ink); font: 800 60px/1.0 var(--font-display); letter-spacing: -0.025em; margin: 40px 0 36px; max-width: 820px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: auto; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 30px 28px; }
+  .card.fill { background: var(--orange); border: none; }
+  .num { font: 800 64px/1 var(--font-display); letter-spacing: -0.02em; color: var(--ink); }
+  .fill .num { color: #fff; }
+  .lbl { font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-60); margin-top: 14px; }
+  .fill .lbl { color: rgba(255,255,255,0.85); }
+</style>
+</head>
+<body>
+  <div class="slide">
+    <div class="top">
+      <img class="logo" src="../assets/logo-horizontal.png" alt="hello park">
+      <span class="mono">01 · The opportunity</span>
+    </div>
+    <h2>A $260B entertainment market is going phygital.</h2>
+    <div class="grid">
+      <div class="card fill"><div class="num">50+</div><div class="lbl">parks worldwide</div></div>
+      <div class="card"><div class="num">2.4M</div><div class="lbl">annual visitors</div></div>
+      <div class="card"><div class="num">68%</div><div class="lbl">repeat visits</div></div>
+      <div class="card"><div class="num">12</div><div class="lbl">live attractions</div></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+/* ============================================================
+   Hello Park — Base layer
+   Light element defaults + small helpers built on tokens.
+   ============================================================ */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--text-body);
+  font: var(--text-body-m);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  color: var(--text-display);
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+
+p { margin: 0; text-wrap: pretty; }
+
+a { color: inherit; text-decoration: none; }
+
+img { display: block; max-width: 100%; }
+
+::selection { background: var(--orange); color: #fff; }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---- Mono eyebrow / chrome label ---- */
+.hp-label {
+  font: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ---- Display helpers ---- */
+.hp-display-xl { font: var(--text-display-xl); letter-spacing: var(--tracking-tight); color: var(--text-display); }
+.hp-display-l  { font: var(--text-display-l);  letter-spacing: var(--tracking-tight); color: var(--text-display); }
+.hp-display-m  { font: var(--text-display-m);  letter-spacing: var(--tracking-tight); color: var(--text-display); }
+
+/* ---- Surface card (flat: border, no shadow) ---- */
+.hp-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}

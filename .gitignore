@@ -5,3 +5,10 @@ package-lock.json
 *.pdf
 ТЗ.*
 Техническое_Задание_Оригинал.*
+videos/
+*.zip
+.agents/
+.claude/
+screenshot_script.py
+server.mjs
+pb.yaml

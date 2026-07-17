@@ -1,0 +1,24 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Neutrals & surfaces" subtitle="Ink ramp, calm page gray, white surface, hairline" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 20px; background: var(--surface); font-family: var(--font-mono); }
+  .row { display: flex; gap: 12px; }
+  .sw { flex: 1; border-radius: var(--radius-md); padding: 12px; min-height: 92px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .name { font-size: 11.5px; font-weight: 500; }
+  .hex { font-size: 10.5px; opacity: 0.7; margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw" style="background: var(--ink); color:#fff;"><span class="name">ink</span><span class="hex">#181A1C</span></div>
+    <div class="sw" style="background: var(--ink-60); color:#fff;"><span class="name">ink 60</span><span class="hex">#6C6F74</span></div>
+    <div class="sw" style="background: var(--ink-20); color: var(--ink);"><span class="name">ink 20</span><span class="hex">#C9CBCE</span></div>
+    <div class="sw" style="background: var(--page); color: var(--ink); border:1px solid var(--line);"><span class="name">page</span><span class="hex">#F4F3F1</span></div>
+    <div class="sw" style="background: var(--surface); color: var(--ink); border:1px solid var(--line);"><span class="name">surface</span><span class="hex">#FFFFFF</span></div>
+  </div>
+</body>
+</html>

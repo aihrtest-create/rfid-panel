@@ -1,0 +1,21 @@
+<!-- @dsCard group="Brand" viewport="700x240" name="Fox mascot — Rocky" subtitle="Astronaut Fox · glossy 3D render · use real PNGs, never redraw" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 0; background: var(--page); display:flex; }
+  .cell { flex:1; display:flex; align-items:flex-end; justify-content:center; height: 240px; position:relative; }
+  .orange { background: var(--orange); }
+  .lilac { background: var(--play-lilac); }
+  img { height: 230px; width:auto; object-fit: contain; object-position: bottom; }
+  .tag { position:absolute; top:14px; left:14px; font:500 11px/1 var(--font-mono); letter-spacing:0.06em; text-transform:uppercase; color: var(--ink-60); }
+  .orange .tag, .lilac .tag { color: rgba(255,255,255,0.9); }
+</style>
+</head>
+<body>
+  <div class="cell"><span class="tag">Heart</span><img src="../assets/rocky-heart.png" alt="Astronaut Fox forming a heart"></div>
+  <div class="cell orange"><span class="tag">Point</span><img src="../assets/rocky-point.png" alt="Astronaut Fox pointing"></div>
+</body>
+</html>
