@@ -727,6 +727,22 @@
                 </div>
             </div>
 
+            <!-- Parent Info Widget (Variant 3 - Bento Style, customized) -->
+            <div id="avatar-parent-info" class="mb-8 bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700 rounded-[28px] p-6 flex items-center gap-4 transition-colors">
+                <!-- Initials Avatar -->
+                <div id="avatar-parent-initials" class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-blue to-blue-600 text-white flex items-center justify-center font-extrabold text-sm shrink-0 shadow-md shadow-brand-blue/15 select-none">
+                    —
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 tracking-wider" data-i18n="avatarParentTitle">Родитель / Сопровождающий</span>
+                    <h4 id="avatar-parent-name" class="font-extrabold text-base text-gray-900 dark:text-white truncate mt-0.5">---</h4>
+                    <div class="flex items-center gap-1.5 mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                        <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        <span id="avatar-parent-phone" class="font-mono font-bold text-gray-900 dark:text-slate-200">---</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Prizes Section -->
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-5 px-2">
@@ -836,6 +852,7 @@
                 avatarBtnIssued: "Выдано",
                 avatarBtnUndo: "Отменить",
                 avatarClose: "Закрыть окно",
+                avatarParentTitle: "Родитель / Сопровождающий",
                 // Confirms
                 confirmTitle: "Подтверждение",
                 confirmDeleteParent: "Удалить аккаунт",
@@ -929,6 +946,7 @@
                 avatarBtnIssued: "Issued",
                 avatarBtnUndo: "Cancel",
                 avatarClose: "Close Window",
+                avatarParentTitle: "Parent / Accompanying adult",
                 // Confirms
                 confirmTitle: "Confirmation",
                 confirmDeleteParent: "Delete Account",
@@ -1289,6 +1307,21 @@
             document.getElementById('avatar-info-name').textContent = childName + " (" + translations[currentLang].statusAvatar + ")";
             document.getElementById('avatar-info-level').textContent = data.level;
             document.getElementById('avatar-balance-pill').innerHTML = data.balance + ' <span class="text-base font-bold text-brand-orange ml-0.5">' + translations[currentLang].avatarPoints + '</span>';
+
+            // Find parent info and populate
+            const parent = accounts.find(p => p.children.some(c => c.name === childName));
+            if (parent) {
+                document.getElementById('avatar-parent-name').textContent = parent.fio;
+                document.getElementById('avatar-parent-phone').textContent = parent.phone;
+                
+                // Calculate initials
+                const initials = parent.fio.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                document.getElementById('avatar-parent-initials').textContent = initials || '—';
+            } else {
+                document.getElementById('avatar-parent-name').textContent = '—';
+                document.getElementById('avatar-parent-phone').textContent = '—';
+                document.getElementById('avatar-parent-initials').textContent = '—';
+            }
 
             // Render Prizes
             renderPrizes(childName);
